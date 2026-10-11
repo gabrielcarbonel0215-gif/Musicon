@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music & Cover Hub - Descargador de Canciones Completas (.m4a)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    @keyframes spin-slow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spin-slow 2s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-black">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur sticky top-0 z-30 px-6 py-4 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+              Music & Cover Hub
+            </h1>
+            <span id="server-badge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+              <span>🟡</span> Verificando servidor...
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Descarga canciones <b>completas</b> en .m4a y portadas en 1000px</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btn-load-preset" class="px-3.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
+          <span>🔄</span> Cargar 24 Canciones
+        </button>
+        <button id="btn-toggle-batch" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition">
+          <span>📋</span> Modo Búsqueda Masiva
+        </button>
+        <button id="btn-download-all-full" class="px-3.5 py-1.5 rounded-lg bg-teal-600/25 hover:bg-teal-600/40 text-teal-300 border border-teal-500/40 text-xs font-bold flex items-center gap-1.5 transition">
+          <span>⚡</span> Descargar Todas Completas
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto p-6 space-y-6">
+
+    <!-- Search Controls -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+      <!-- Single Search Input -->
+      <div id="single-search-panel" class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 text-lg">🔍</span>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Escribe título o artista (ej: Aparato, Imagine, Axel Fiks, Beautiful Boy)..." 
+            class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-slate-200 placeholder-slate-500 text-sm outline-none transition"
+          />
+        </div>
+        <button id="btn-search" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2">
+          <span>Buscar</span>
+        </button>
+      </div>
+
+      <!-- Batch Search Panel (Hidden by default) -->
+      <div id="batch-search-panel" class="hidden space-y-3 pt-2 border-t border-slate-800/80">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <span>📝</span> Pega varias canciones (una por línea):
+          </label>
+          <span class="text-xs text-slate-500">Ejemplo: "Aparato Alejandro y Maria Laura"</span>
+        </div>
+        <textarea 
+          id="batch-input" 
+          rows="5" 
+          placeholder="Hard to Say Goodbye Johnny Stimson&#10;PONPONPON Kyary Pamyu Pamyu&#10;Bolerito Sad Simon Grossman&#10;Aparato Alejandro y Maria Laura" 
+          class="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs font-mono outline-none"
+        ></textarea>
+        <button id="btn-run-batch" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition shadow-md">
+          ⚡ Procesar y Buscar Toda la Lista en Paralelo
+        </button>
+      </div>
+
+      <!-- Status Indicator -->
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+        <span id="status-text" class="flex items-center gap-2">
+          <span>Listo para buscar.</span>
+        </span>
+        <span id="counter-badge" class="font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 resultados</span>
+      </div>
+    </div>
+
+    <!-- Active Audio Player Bar -->
+    <div id="audio-player-bar" class="hidden bg-slate-900/95 border border-emerald-500/40 rounded-2xl p-4 shadow-2xl flex flex-col md:flex-row items-center gap-4 sticky bottom-6 z-40 backdrop-blur-md">
+      <img id="now-cover" src="" alt="Cover" class="w-14 h-14 rounded-xl object-cover shadow-md border border-slate-700">
+      <div class="flex-1 min-w-0">
+        <h4 id="now-title" class="font-bold text-sm text-white truncate">Título de la Canción</h4>
+        <p id="now-artist" class="text-xs text-slate-400 truncate">Nombre del Artista</p>
+        <audio id="html5-audio" controls class="w-full mt-2 h-8" preload="none"></audio>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-download-full-now" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg transition">
+          <span>⬇️</span> Descargar Completa (.m4a)
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Grid -->
+    <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      <!-- Dynamic Cards Injected Here -->
+    </div>
+
+  </main>
+
+  <!-- Modal for Full-Size Artwork -->
+  <div id="art-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative">
+      <button id="btn-close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
+      <h3 id="modal-title" class="font-bold text-base text-slate-100 pr-8 truncate">Portada en Alta Resolución</h3>
+      <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
+        <img id="modal-img" src="" alt="High-Res Cover" class="w-full h-full object-cover">
+      </div>
+      <div class="flex items-center justify-between gap-3 pt-2">
+        <span class="text-xs text-slate-400 font-mono">Resolución: 1000 × 1000 px</span>
+        <div class="flex gap-2">
+          <button id="modal-download-btn" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5">
+            <span>💾</span> Descargar Imagen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PRESET_SONGS = [
+      { id: 1, title: "Hard to Say Goodbye", artist: "Johnny Stimson" },
+      { id: 2, title: "PONPONPON", artist: "Kyary Pamyu Pamyu" },
+      { id: 3, title: "Bolerito Sad", artist: "Simon Grossman" },
+      { id: 4, title: "Me Voy A Valparaíso", artist: "Diego Lorenzini" },
+      { id: 5, title: "Dulcito e Coco", artist: "Vicente García" },
+      { id: 6, title: "Movimiento Astral", artist: "Gauchito Club" },
+      { id: 7, title: "Parte de Mí", artist: "Simon Grossman" },
+      { id: 8, title: "Canción de Amor", artist: "Viniloversus Simon Grossman" },
+      { id: 9, title: "Formula", artist: "Labrinth" },
+      { id: 10, title: "Cuando Regreses a Mí", artist: "Molinette Cinema" },
+      { id: 11, title: "Beautiful Boy", artist: "John Lennon" },
+      { id: 12, title: "Imagine", artist: "John Lennon" },
+      { id: 13, title: "Arruinarlo Todo", artist: "Molinette Cinema" },
+      { id: 14, title: "Chica Acuario", artist: "Axel Fiks" },
+      { id: 15, title: "Ojitos de Md", artist: "Axel Fiks" },
+      { id: 16, title: "Algo Que Decirte", artist: "AppleCats" },
+      { id: 17, title: "Love Me Not", artist: "Ravyn Lenae" },
+      { id: 18, title: "Always Forever", artist: "Cults" },
+      { id: 19, title: "Compañera", artist: "Axel Fiks" },
+      { id: 20, title: "Niño Amor", artist: "Axel Fiks" },
+      { id: 21, title: "O Pato", artist: "Ebony Loren" },
+      { id: 22, title: "Aparato", artist: "Alejandro y María Laura" },
+      { id: 23, title: "Salto", artist: "El Joven Paiva" },
+      { id: 24, title: "Si Tú Me Quisieras", artist: "Adrián Bello" }
+    ];
+
+    let currentResults = [];
+    let serverActive = false;
+    const SERVER_URL = window.location.origin.includes('localhost:8000') || window.location.origin.includes('127.0.0.1:8000') 
+      ? '' 
+      : 'http://localhost:8000';
+
+    let currentPlayingTrack = null;
+    let currentModalUrl = '';
+    let currentModalFilename = '';
+
+    // DOM Elements
+    const serverBadge = document.getElementById('server-badge');
+    const searchInput = document.getElementById('search-input');
+    const btnSearch = document.getElementById('btn-search');
+    const btnLoadPreset = document.getElementById('btn-load-preset');
+    const btnToggleBatch = document.getElementById('btn-toggle-batch');
+    const btnDownloadAllFull = document.getElementById('btn-download-all-full');
+    const batchPanel = document.getElementById('batch-search-panel');
+    const batchInput = document.getElementById('batch-input');
+    const btnRunBatch = document.getElementById('btn-run-batch');
+    const resultsGrid = document.getElementById('results-grid');
+    const statusText = document.getElementById('status-text');
+    const counterBadge = document.getElementById('counter-badge');
+
+    // Audio bar
+    const audioBar = document.getElementById('audio-player-bar');
+    const nowCover = document.getElementById('now-cover');
+    const nowTitle = document.getElementById('now-title');
+    const nowArtist = document.getElementById('now-artist');
+    const html5Audio = document.getElementById('html5-audio');
+    const btnDownloadFullNow = document.getElementById('btn-download-full-now');
+
+    // Modal
+    const artModal = document.getElementById('art-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalImg = document.getElementById('modal-img');
+    const modalDownloadBtn = document.getElementById('modal-download-btn');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+
+    // Check Server Connection
+    async function checkServer() {
+      try {
+        const resp = await fetch(`${SERVER_URL}/api/status`, { signal: AbortSignal.timeout(2000) });
+        if (resp.ok) {
+          serverActive = true;
+          serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
+          serverBadge.innerHTML = "<span>🟢</span> Servidor local conectado";
+          return true;
+        }
+      } catch (e) {}
+      serverActive = false;
+      serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1";
+      serverBadge.innerHTML = "<span>🟡</span> Servidor desconectado (Ejecuta 'iniciar_servidor.bat')";
+      return false;
+    }
+
+    btnToggleBatch.addEventListener('click', () => batchPanel.classList.toggle('hidden'));
+    btnCloseModal.addEventListener('click', () => artModal.classList.add('hidden'));
+    artModal.addEventListener('click', (e) => {
+      if (e.target === artModal) artModal.classList.add('hidden');
+    });
+
+    // Helper: Direct browser download from URL
+    function triggerDownload(url, filename) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Download full song via yt-dlp backend
+    window.downloadFullSong = async function(btn, title, artist, coverUrl) {
+      await checkServer();
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="inline-block animate-spin text-xs">⏳</span> <span class="text-[10px]">Descargando audio...</span>`;
+      statusText.innerHTML = `<span>⏳ Descargando canción completa de <b>${title} - ${artist}</b> en .m4a mediante yt-dlp...</span>`;
+
+      if (!serverActive) {
+        alert("Para descargar canciones completas (más de 30 segundos), debes iniciar el servidor local haciendo doble clic en 'iniciar_servidor.bat' en la carpeta de tu proyecto.");
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        statusText.innerHTML = `<span>⚠️ El servidor local no está iniciado. Ejecuta <b>iniciar_servidor.bat</b>.</span>`;
+        return;
+      }
+
+      try {
+        const resp = await fetch(`${SERVER_URL}/api/download_song`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query: `${title} ${artist}`,
+            title: title,
+            artist: artist,
+            cover_url: coverUrl
+          })
+        });
+
+        const data = await resp.json();
+        if (resp.ok && data.status === 'success') {
+          btn.className = "w-full py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-[11px] font-bold flex items-center justify-center gap-1.5 transition";
+          btn.innerHTML = `<span>✅</span> Completa (${data.size_mb || ''}MB)`;
+          statusText.innerHTML = `<span>✅ <b>${title}</b> descargada con éxito (${data.size_mb} MB). Guardada en carpeta /canciones.</span>`;
+          // Trigger browser download of the m4a file
+          triggerDownload(`${SERVER_URL}${data.download_url}`, data.file);
+        } else {
+          throw new Error(data.message || "Error en el servidor");
+        }
+      } catch (err) {
+        console.error(err);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        statusText.innerHTML = `<span>❌ Error descargando ${title}: ${err.message}</span>`;
+      }
+    };
+
+    // JSONP Search
+    function searchiTunesJSONP(term, limit = 12) {
+      return new Promise((resolve) => {
+        const callbackName = 'itunes_jsonp_' + Math.random().toString(36).substring(2, 10);
+        const script = document.createElement('script');
+        
+        const timer = setTimeout(() => {
+          cleanup();
+          resolve([]);
+        }, 8000);
+
+        function cleanup() {
+          clearTimeout(timer);
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        window[callbackName] = function(data) {
+          cleanup();
+          if (data && data.results && data.results.length > 0) {
+            const mapped = data.results.map(r => ({
+              title: r.trackName || term,
+              artist: r.artistName || '',
+              album: r.collectionName || '',
+              cover: r.artworkUrl100 ? r.artworkUrl100.replace('100x100bb', '1000x1000bb') : '',
+              preview: r.previewUrl || '',
+              genre: r.primaryGenreName || '',
+              year: r.releaseDate ? r.releaseDate.substring(0, 4) : ''
+            }));
+            resolve(mapped);
+          } else {
+            resolve([]);
+          }
+        };
+
+        script.onerror = function() {
+          cleanup();
+          resolve([]);
+        };
+
+        script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=${limit}&callback=${callbackName}`;
+        document.body.appendChild(script);
+      });
+    }
+
+    // Render cards into grid
+    function renderCards(tracks) {
+      resultsGrid.innerHTML = '';
+      currentResults = tracks;
+      counterBadge.textContent = `${tracks.length} resultados`;
+
+      if (tracks.length === 0) {
+        resultsGrid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500">
+            <span class="text-3xl block mb-2">🔎</span>
+            No se encontraron canciones. Intenta con otro término o el nombre del artista.
+          </div>
+        `;
+        return;
+      }
+
+      tracks.forEach((t, i) => {
+        const card = document.createElement('div');
+        card.className = "group bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-3 flex flex-col justify-between shadow-lg hover:shadow-emerald-500/10 transition-all duration-200";
+
+        const cleanTitle = (t.title || 'cancion').replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, '').trim().replace(/\s+/g, '_');
+        const cleanArtist = (t.artist || 'artista').replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, '').trim().replace(/\s+/g, '_');
+        const filenameBase = `${String(i+1).padStart(2, '0')}_${cleanTitle}_${cleanArtist}`;
+
+        card.innerHTML = `
+          <div class="space-y-2.5">
+            <!-- Cover Image Area -->
+            <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+              <img 
+                src="${t.cover || 'https://via.placeholder.com/300x300?text=No+Cover'}" 
+                alt="${t.title}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer"
+                onclick="openModal('${t.cover}', '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}')"
+              />
+              <button 
+                onclick="openModal('${t.cover}', '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}')"
+                class="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 hover:bg-black/80 text-white text-xs opacity-0 group-hover:opacity-100 transition backdrop-blur-sm"
+                title="Ampliar portada"
+              >
+                🔍
+              </button>
+            </div>
+
+            <!-- Title, Artist & Album -->
+            <div class="px-0.5">
+              <h3 class="font-bold text-xs text-slate-100 truncate" title="${t.title}">${t.title}</h3>
+              <p class="text-[11px] text-slate-400 truncate" title="${t.artist}">${t.artist}</p>
+              ${t.album ? `<p class="text-[10px] text-slate-500 truncate mt-0.5">${t.album}</p>` : ''}
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-3 space-y-1.5 border-t border-slate-800/80 mt-2">
+            <!-- Full Download Button -->
+            <button 
+              onclick="downloadFullSong(this, '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}', '${t.cover}')" 
+              class="w-full py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20 transition"
+              title="Descargar la canción completa (3-4 min) en audio .m4a oficial"
+            >
+              <span>⬇️</span> Canción Completa (.m4a)
+            </button>
+
+            <!-- Preview 30s & Logo -->
+            <div class="grid grid-cols-2 gap-1.5">
+              ${t.preview ? `
+                <button 
+                  onclick="playAudio('${t.preview}', '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}', '${t.cover}')" 
+                  class="py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold flex items-center justify-center gap-1 transition"
+                  title="Escuchar 30s de muestra"
+                >
+                  <span>▶️</span> Probar
+                </button>
+              ` : `
+                <span class="text-center text-[10px] text-slate-600 py-1">Sin audio</span>
+              `}
+
+              <button 
+                onclick="triggerDownload('${t.cover}', '${filenameBase}_portada.jpg')"
+                class="py-1 rounded-lg bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/30 text-[10px] font-medium flex items-center justify-center gap-1 transition"
+                title="Descargar carátula en 1000x1000px"
+              >
+                <span>🖼️</span> 1000px
+              </button>
+            </div>
+          </div>
+        `;
+        resultsGrid.appendChild(card);
+      });
+    }
+
+    // Modal view
+    window.openModal = function(url, title, artist) {
+      if (!url) return;
+      modalTitle.textContent = `${title} - ${artist}`;
+      modalImg.src = url;
+      currentModalUrl = url;
+      currentModalFilename = `${title}_${artist}_1000px.jpg`.replace(/[^a-zA-Z0-9]/g, '_');
+      artModal.classList.remove('hidden');
+    };
+
+    modalDownloadBtn.addEventListener('click', () => {
+      if (currentModalUrl) triggerDownload(currentModalUrl, currentModalFilename);
+    });
+
+    // Audio Playback
+    window.playAudio = function(previewUrl, title, artist, cover) {
+      audioBar.classList.remove('hidden');
+      nowCover.src = cover;
+      nowTitle.textContent = title;
+      nowArtist.textContent = artist;
+      html5Audio.src = previewUrl;
+      html5Audio.play();
+      currentPlayingTrack = { title, artist, cover };
+    };
+
+    btnDownloadFullNow.addEventListener('click', () => {
+      if (currentPlayingTrack) {
+        downloadFullSong(btnDownloadFullNow, currentPlayingTrack.title, currentPlayingTrack.artist, currentPlayingTrack.cover);
+      }
+    });
+
+    // Single Search
+    async function handleSingleSearch() {
+      const q = searchInput.value.trim();
+      if (!q) return;
+      statusText.innerHTML = `<span>🔄 Buscando <b>"${q}"</b>...</span>`;
+      btnSearch.disabled = true;
+
+      const results = await searchiTunesJSONP(q, 12);
+      renderCards(results);
+
+      if (results.length > 0) {
+        statusText.innerHTML = `<span>✅ Mostrando <b>${results.length}</b> resultados para <b>"${q}"</b>.</span>`;
+      } else {
+        statusText.innerHTML = `<span>❌ No se encontraron resultados para <b>"${q}"</b>.</span>`;
+      }
+      btnSearch.disabled = false;
+    }
+
+    btnSearch.addEventListener('click', handleSingleSearch);
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSingleSearch();
+    });
+
+    // Batch Search
+    btnRunBatch.addEventListener('click', async () => {
+      const lines = batchInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length === 0) return;
+
+      statusText.innerHTML = `<span>⚡ Buscando ${lines.length} canciones en paralelo...</span>`;
+      btnRunBatch.disabled = true;
+
+      const promises = lines.map(async (query) => {
+        const res = await searchiTunesJSONP(query, 1);
+        return res.length > 0 ? res[0] : null;
+      });
+
+      const results = (await Promise.all(promises)).filter(r => r !== null);
+      renderCards(results);
+      statusText.innerHTML = `<span>✅ Búsqueda completada: <b>${results.length}</b> canciones encontradas.</span>`;
+      btnRunBatch.disabled = false;
+    });
+
+    // Load 24 Presets
+    btnLoadPreset.addEventListener('click', async () => {
+      statusText.innerHTML = `<span>⚡ Cargando las 24 canciones del proyecto en paralelo...</span>`;
+      btnLoadPreset.disabled = true;
+
+      const promises = PRESET_SONGS.map(async (s) => {
+        const res = await searchiTunesJSONP(`${s.title} ${s.artist}`, 1);
+        return res.length > 0 ? res[0] : null;
+      });
+
+      const results = (await Promise.all(promises)).filter(r => r !== null);
+      renderCards(results);
+      statusText.innerHTML = `<span>✅ ¡Listo! Las <b>24 canciones</b> cargadas. Haz clic en "Canción Completa (.m4a)" en cualquiera de ellas.</span>`;
+      btnLoadPreset.disabled = false;
+    });
+
+    // Batch download all full songs
+    btnDownloadAllFull.addEventListener('click', async () => {
+      if (currentResults.length === 0) {
+        alert("Primero realiza una búsqueda o pulsa 'Cargar 24 Canciones'.");
+        return;
+      }
+      await checkServer();
+      if (!serverActive) {
+        alert("Debes iniciar el servidor ejecutando 'iniciar_servidor.bat'.");
+        return;
+      }
+
+      const confirmed = confirm(`¿Deseas descargar las canciones completas de los ${currentResults.length} resultados a la carpeta /canciones?`);
+      if (!confirmed) return;
+
+      btnDownloadAllFull.disabled = true;
+      for (let i = 0; i < currentResults.length; i++) {
+        const t = currentResults[i];
+        statusText.innerHTML = `<span>⏳ Descargando canción completa [${i+1}/${currentResults.length}]: <b>${t.title} - ${t.artist}</b>...</span>`;
+        try {
+          await fetch(`${SERVER_URL}/api/download_song`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: `${t.title} ${t.artist}`,
+              title: t.title,
+              artist: t.artist,
+              cover_url: t.cover
+            })
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      statusText.innerHTML = `<span>✅ ¡Descarga completada de todas las canciones en /canciones!</span>`;
+      btnDownloadAllFull.disabled = false;
+    });
+
+    // Startup check
+    checkServer();
+    btnLoadPreset.click();
+  </script>
+</body>
+</html>
