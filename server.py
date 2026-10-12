@@ -230,12 +230,31 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                             except Exception:
                                 pass
 
-                    # Tier 1: YouTube with Cookies (Downloads 100% full song)
-                    print(f"--> [Tier 1] Intentando descarga con YouTube + Cookies para '{query}'...")
+                    # Tier 1: YouTube with JS runtime (Node.js / Deno) - primary high-speed engine
+                    print(f"--> [Tier 1] Intentando YouTube con JS runtime para '{query}'...")
                     out_template = os.path.join(SONGS_DIR, f"{base_name}.%(ext)s")
                     cookies_path = os.path.join(BASE_DIR, "cookies.txt")
                     
-                    cmd1 = ["yt-dlp", "--no-warnings"]
+                    def find_valid_downloaded_file(base):
+                        for ext in ['.m4a', '.mp3', '.opus', '.webm', '.ogg']:
+                            cand = os.path.join(SONGS_DIR, f"{base}{ext}")
+                            if os.path.exists(cand):
+                                if os.path.getsize(cand) > 1500000:
+                                    return cand
+                                else:
+                                    try: os.remove(cand)
+                                    except: pass
+                        for f in os.listdir(SONGS_DIR):
+                            if f.startswith(base):
+                                cand = os.path.join(SONGS_DIR, f)
+                                if os.path.getsize(cand) > 1500000:
+                                    return cand
+                                else:
+                                    try: os.remove(cand)
+                                    except: pass
+                        return None
+
+                    cmd1 = ["yt-dlp", "--no-warnings", "--js-runtimes", "node,deno"]
                     if os.path.exists(cookies_path):
                         cmd1 += ["--cookies", cookies_path]
                     cmd1 += [
@@ -246,48 +265,48 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                         "-o", out_template
                     ]
                     proc1 = subprocess.run(cmd1, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+                    found_existing = find_valid_downloaded_file(base_name)
 
-                    if proc1.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 1500000:
-                        found_existing = target_m4a
-                        print(f"--> [Tier 1] Éxito YouTube con cookies: {target_m4a}")
+                    if found_existing:
+                        print(f"--> [Tier 1] Éxito YouTube con JS runtime: {found_existing}")
                     else:
-                        # Tier 2: YouTube with Android/TV client + cookies
-                        print(f"--> [Tier 2] Probando YouTube Android/TV para '{query}'...")
+                        # Tier 2: YouTube with visionos/android client + JS runtime
+                        print(f"--> [Tier 2] Probando YouTube visionos/android para '{query}'...")
                         cmd2 = [
                             "yt-dlp",
                             "--no-warnings",
-                            "--extractor-args", "youtube:player_client=android,tv_embedded"
+                            "--js-runtimes", "node,deno",
+                            "--extractor-args", "youtube:player_client=visionos,android,tv_embedded"
                         ]
                         if os.path.exists(cookies_path):
                             cmd2 += ["--cookies", cookies_path]
                         cmd2 += [
-                            f"ytsearch1:{query} audio",
+                            f"ytsearch1:{query}",
                             "-x",
                             "--audio-format", "m4a",
                             "--audio-quality", "0",
                             "-o", out_template
                         ]
                         proc2 = subprocess.run(cmd2, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-                        if proc2.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 1500000:
-                            found_existing = target_m4a
-                            print(f"--> [Tier 2] Éxito YouTube Android/TV: {target_m4a}")
+                        found_existing = find_valid_downloaded_file(base_name)
+                        if found_existing:
+                            print(f"--> [Tier 2] Éxito YouTube visionos/android: {found_existing}")
                         else:
-                            # Tier 3: Search general query with cookies
-                            print(f"--> [Tier 3] Probando búsqueda directa con cookies para '{query}'...")
-                            cmd3 = ["yt-dlp", "--no-warnings"]
-                            if os.path.exists(cookies_path):
-                                cmd3 += ["--cookies", cookies_path]
-                            cmd3 += [
-                                f"ytsearch1:{query}",
+                            # Tier 3: SoundCloud search fallback (strictly verified > 1.5 MB)
+                            print(f"--> [Tier 3] Probando SoundCloud fallback para '{query}'...")
+                            cmd3 = [
+                                "yt-dlp",
+                                "--no-warnings",
+                                f"scsearch1:{query}",
                                 "-x",
                                 "--audio-format", "m4a",
                                 "--audio-quality", "0",
                                 "-o", out_template
                             ]
                             proc3 = subprocess.run(cmd3, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-                            if proc3.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 1500000:
-                                found_existing = target_m4a
-                                print(f"--> [Tier 3] Éxito YouTube general: {target_m4a}")
+                            found_existing = find_valid_downloaded_file(base_name)
+                            if found_existing:
+                                print(f"--> [Tier 3] Éxito SoundCloud: {found_existing}")
 
                 if found_existing:
                     size_mb = round(os.path.getsize(found_existing) / (1024*1024), 2)

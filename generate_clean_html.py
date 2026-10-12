@@ -1065,9 +1065,9 @@ html_content = f'''<!DOCTYPE html>
       const cleanArtist = (track.artist || 'artista').replace(/[/\\?%*:|"<>]/g, '_');
       const fileName = `${{cleanTitle}}_${{cleanArtist}}.m4a`;
 
-      detailDownloadStatus.textContent = "⏳ Preparando audio para descarga...";
+      detailDownloadStatus.textContent = "⏳ Obteniendo audio completo de alta fidelidad desde la nube...";
       detailBtnDownloadFull.disabled = true;
-      detailBtnDownloadFull.innerHTML = `<span>Descargando archivo .m4a...</span>`;
+      detailBtnDownloadFull.innerHTML = `<span>Descargando canción completa...</span>`;
 
       startActiveDownloadCard(track.title, track.artist);
 

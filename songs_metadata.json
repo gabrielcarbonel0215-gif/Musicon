@@ -439,5 +439,12 @@
     "album": "Descargado",
     "cover_url": "logos/Fix_You.jpg",
     "fallback_url": "logos/Fix_You.jpg"
+  },
+  "Demons_Imagine_Dragons.m4a": {
+    "title": "Demons",
+    "artist": "Imagine Dragons",
+    "album": "Descargado",
+    "cover_url": "logos/Demons_Imagine_Dragons_portada.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bc/99/3a/bc993a4c-53f0-4660-f1db-69f88d447477/12UMGIM52317.rgb.jpg/600x600bb.jpg"
   }
 }

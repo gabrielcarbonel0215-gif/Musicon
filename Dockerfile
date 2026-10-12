@@ -1,9 +1,14 @@
 FROM python:3.11-slim
 
-# Install system dependencies (ffmpeg and curl)
+# Install system dependencies (ffmpeg, curl, Node.js 20 LTS and Deno for yt-dlp JS runtime)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg curl && \
+    apt-get install -y --no-install-recommends ffmpeg curl gnupg unzip && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y --no-install-recommends nodejs && \
+    curl -fsSL https://deno.land/install.sh | sh && \
     rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/root/.deno/bin:$PATH"
 
 WORKDIR /app
 

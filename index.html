@@ -1975,18 +1975,6 @@
     "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/72/7e/4f/727e4fcf-bc66-93ff-5c10-26ec4ac4c1e0/198081949643_Cover.jpg/1000x1000bb.jpg",
     "download_url": "/api/audio/Y_SI_SOMOS_NOVIOS_PARDOPARDO.m4a",
     "format": "m4a"
-  },
-  {
-    "id": "test_diag",
-    "file": "test_diag.m4a",
-    "title": "test diag",
-    "artist": "Artista",
-    "album": "Descargas",
-    "size": "0.48 MB",
-    "cover": "logos/test_diag.jpg",
-    "fallback": "logos/test_diag.jpg",
-    "download_url": "/api/audio/test_diag.m4a",
-    "format": "m4a"
   }
 ];
 
@@ -2408,9 +2396,9 @@
       const cleanArtist = (track.artist || 'artista').replace(/[/\?%*:|"<>]/g, '_');
       const fileName = `${cleanTitle}_${cleanArtist}.m4a`;
 
-      detailDownloadStatus.textContent = "⏳ Preparando audio para descarga...";
+      detailDownloadStatus.textContent = "⏳ Obteniendo audio completo de alta fidelidad desde la nube...";
       detailBtnDownloadFull.disabled = true;
-      detailBtnDownloadFull.innerHTML = `<span>Descargando archivo .m4a...</span>`;
+      detailBtnDownloadFull.innerHTML = `<span>Descargando canción completa...</span>`;
 
       startActiveDownloadCard(track.title, track.artist);
 
