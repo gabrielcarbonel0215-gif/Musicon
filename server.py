@@ -47,6 +47,38 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json({"status": "running", "songs_dir": SONGS_DIR, "covers_dir": COVERS_DIR})
             return
 
+        if path == '/api/downloads':
+            items = []
+            if os.path.exists(SONGS_DIR):
+                for f in sorted(os.listdir(SONGS_DIR)):
+                    if f.endswith('.m4a') or f.endswith('.mp3'):
+                        fp = os.path.join(SONGS_DIR, f)
+                        size_mb = round(os.path.getsize(fp) / (1024 * 1024), 2)
+                        raw_name = f[:-4]
+                        clean_name = raw_name
+                        if len(clean_name) > 3 and clean_name[:2].isdigit() and clean_name[2] == '_':
+                            clean_name = clean_name[3:]
+                        parts = clean_name.split('_')
+                        if len(parts) >= 2:
+                            artist = parts[-1].replace('-', ' ')
+                            title = ' '.join(parts[:-1]).replace('-', ' ')
+                        else:
+                            title = clean_name.replace('_', ' ')
+                            artist = 'Cinnamoroll Music'
+                        
+                        items.append({
+                            "id": raw_name,
+                            "file": f,
+                            "title": title,
+                            "artist": artist,
+                            "size": f"{size_mb} MB",
+                            "download_url": f"/api/audio/{urllib.parse.quote(f)}",
+                            "format": "m4a"
+                        })
+            self.send_json({"status": "success", "count": len(items), "songs": items})
+            return
+
+
         if path.startswith('/api/audio/'):
             filename = urllib.parse.unquote(path[len('/api/audio/'):])
             filepath = os.path.join(SONGS_DIR, filename)
