@@ -508,7 +508,7 @@ html_content = f'''<!DOCTYPE html>
               Guardar Portada HD
             </button>
           </div>
-          <div class="w-14 h-12 flex items-center justify-center">
+          <div class="w-16 h-14 shrink-0 flex items-center justify-center">
             <img src="{c_detail}" alt="Cinnamoroll" class="max-h-full max-w-full object-contain">
           </div>
         </div>
