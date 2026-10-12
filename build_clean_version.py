@@ -24,6 +24,11 @@ c_player = get_b64("cinnamoroll_player_cloud.png")
 with open(os.path.join(base_dir, "songs_metadata.json"), "r", encoding="utf-8") as f:
     meta_dict = json.load(f)
 
+# Load user custom playlist catalog (46 songs from user)
+with open(os.path.join(base_dir, "user_playlist_catalog.json"), "r", encoding="utf-8") as f:
+    user_catalog_songs = json.load(f)
+catalog_json_str = json.dumps(user_catalog_songs, indent=2, ensure_ascii=False)
+
 server_songs_list = []
 canciones_dir = os.path.join(base_dir, "canciones")
 
@@ -278,7 +283,7 @@ html_content = f'''<!DOCTYPE html>
             id="main-search-input"
             type="text" 
             placeholder="Buscar canciones, artistas..." 
-            value="coldplay"
+            value=""
             class="bg-transparent flex-1 text-xs text-slate-700 outline-none font-semibold"
           />
           <button id="btn-clear-search" class="text-slate-400 hover:text-slate-600 text-xs px-1">
@@ -370,10 +375,10 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <div id="mini-player-bar" class="absolute bottom-[72px] left-3 right-3 z-30 bg-white/95 backdrop-blur-md rounded-2xl p-2 px-3 shadow-md border border-[#d6e8fe] flex items-center justify-between transition-all cursor-pointer">
       <div id="mini-track-info" class="flex items-center gap-2.5 overflow-hidden flex-1 mr-2">
-        <img id="mini-cover" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-9 h-9 rounded-xl object-cover shadow-xs shrink-0 border border-blue-50">
+        <img id="mini-cover" src="logos/Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d1/3f/b5/d13fb5a5-de80-09d5-316c-87ef21ffb93e/artwork.jpg/1000x1000bb.jpg'" alt="Cover" class="w-9 h-9 rounded-xl object-cover shadow-xs shrink-0 border border-blue-50">
         <div class="overflow-hidden">
-          <h5 id="mini-title" class="text-xs font-black text-slate-800 truncate">Fix You</h5>
-          <p id="mini-artist" class="text-[10px] font-bold text-slate-400 truncate">Coldplay</p>
+          <h5 id="mini-title" class="text-xs font-black text-slate-800 truncate">Meet You Again (Reimagined)</h5>
+          <p id="mini-artist" class="text-[10px] font-bold text-slate-400 truncate">Ebony Loren & Jason LaPierre</p>
         </div>
       </div>
 
@@ -439,15 +444,15 @@ html_content = f'''<!DOCTYPE html>
 
       <div class="flex flex-col items-center mt-4 mb-3">
         <div class="w-60 h-60 rounded-3xl overflow-hidden shadow-xl border-4 border-white cursor-pointer" id="detail-cover-card">
-          <img id="detail-cover-img" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-full h-full object-cover">
+          <img id="detail-cover-img" src="logos/Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d1/3f/b5/d13fb5a5-de80-09d5-316c-87ef21ffb93e/artwork.jpg/1000x1000bb.jpg'" alt="Cover" class="w-full h-full object-cover">
         </div>
       </div>
 
       <div class="space-y-0.5 text-left">
-        <h3 id="detail-title" class="text-xl font-black text-slate-800">Fix You</h3>
-        <p id="detail-artist" class="text-sm font-bold text-slate-400">Coldplay</p>
+        <h3 id="detail-title" class="text-xl font-black text-slate-800">Meet You Again (Reimagined)</h3>
+        <p id="detail-artist" class="text-sm font-bold text-slate-400">Ebony Loren & Jason LaPierre</p>
         <p id="detail-meta" class="text-[11px] text-slate-400 font-semibold pt-0.5">
-          Álbum: X&Y &nbsp;|&nbsp; 2005 &nbsp;|&nbsp; 4:55
+          Álbum: Meet You Again...AGAIN! &nbsp;|&nbsp; 2025 &nbsp;|&nbsp; 3:06
         </p>
       </div>
 
@@ -487,7 +492,7 @@ html_content = f'''<!DOCTYPE html>
         <span class="text-xs font-black text-slate-700">Portada de la canción</span>
         <div class="flex items-center justify-between gap-3">
           <div class="w-14 h-14 rounded-xl overflow-hidden shadow-xs shrink-0 border border-blue-50">
-            <img id="detail-subcover-img" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Mini" class="w-full h-full object-cover">
+            <img id="detail-subcover-img" src="logos/Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d1/3f/b5/d13fb5a5-de80-09d5-316c-87ef21ffb93e/artwork.jpg/1000x1000bb.jpg'" alt="Mini" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
             <button id="btn-download-cover-hd" class="w-full py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs transition border border-blue-100">
@@ -529,10 +534,10 @@ html_content = f'''<!DOCTYPE html>
 
       <div class="bg-white/95 backdrop-blur-md rounded-3xl p-5 shadow-xl border border-white space-y-3 z-10">
         <div class="flex items-center gap-3">
-          <img id="exp-cover" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-13 h-13 rounded-2xl object-cover shadow-xs shrink-0 border border-blue-50">
+          <img id="exp-cover" src="logos/Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d1/3f/b5/d13fb5a5-de80-09d5-316c-87ef21ffb93e/artwork.jpg/1000x1000bb.jpg'" alt="Cover" class="w-13 h-13 rounded-2xl object-cover shadow-xs shrink-0 border border-blue-50">
           <div class="overflow-hidden flex-1">
-            <h4 id="exp-title" class="font-black text-sm text-slate-800 truncate">Fix You</h4>
-            <p id="exp-artist" class="text-xs font-bold text-slate-400 truncate">Coldplay</p>
+            <h4 id="exp-title" class="font-black text-sm text-slate-800 truncate">Meet You Again (Reimagined)</h4>
+            <p id="exp-artist" class="text-xs font-bold text-slate-400 truncate">Ebony Loren & Jason LaPierre</p>
           </div>
           <button id="exp-heart" class="text-[#4a88d9]">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
@@ -577,110 +582,9 @@ html_content = f'''<!DOCTYPE html>
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <!-- ======================================================== -->
   <script>
-    // 9 Essential Mockup Songs (Matching original drawing)
-    const MOCKUP_SONGS = [
-      {{
-        id: "fix_you",
-        title: "Fix You",
-        artist: "Coldplay",
-        album: "X&Y",
-        year: "2005",
-        duration: "4:55",
-        cover: "logos/Fix_You.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg",
-        size: "7.1 MB"
-      }},
-      {{
-        id: "yellow",
-        title: "Yellow",
-        artist: "Coldplay",
-        album: "Parachutes",
-        year: "2000",
-        duration: "4:29",
-        cover: "logos/Yellow.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/f5/93/8c/f5938c49-964c-31d1-4b33-78b634f71fb7/190295978075.jpg/1000x1000bb.jpg",
-        size: "6.8 MB"
-      }},
-      {{
-        id: "the_scientist",
-        title: "The Scientist",
-        artist: "Coldplay",
-        album: "A Rush of Blood to the Head",
-        year: "2002",
-        duration: "5:09",
-        cover: "logos/The_Scientist.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b9/b4/2a/b9b42ad1-1e25-5096-da43-497a247e69a3/190295978051.jpg/1000x1000bb.jpg",
-        size: "7.4 MB"
-      }},
-      {{
-        id: "paradise",
-        title: "Paradise",
-        artist: "Coldplay",
-        album: "Mylo Xyloto",
-        year: "2011",
-        duration: "4:37",
-        cover: "logos/Paradise.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/33/aa/06/33aa0608-410a-20d4-c9b0-bb977464309c/190295978037.jpg/1000x1000bb.jpg",
-        size: "6.6 MB"
-      }},
-      {{
-        id: "viva_la_vida",
-        title: "Viva La Vida",
-        artist: "Coldplay",
-        album: "Viva la Vida",
-        year: "2008",
-        duration: "4:01",
-        cover: "logos/Viva_La_Vida.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/52/aa/85/52aa851f-15b7-6322-f91f-df84b15b7b19/190295978044.jpg/1000x1000bb.jpg",
-        size: "6.2 MB"
-      }},
-      {{
-        id: "adventure_of_a_lifetime",
-        title: "Adventure of a Lifetime",
-        artist: "Coldplay",
-        album: "A Head Full of Dreams",
-        year: "2015",
-        duration: "4:23",
-        cover: "logos/Adventure_of_a_Lifetime.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/71/ea/09/71ea09b2-3b1a-b31c-91d8-8ec1be6d5e0d/190295978013.jpg/1000x1000bb.jpg",
-        size: "6.5 MB"
-      }},
-      {{
-        id: "snooze",
-        title: "Snooze",
-        artist: "SZA",
-        album: "SOS",
-        year: "2022",
-        duration: "3:21",
-        cover: "logos/Snooze.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/3c/a2/33/3ca233a5-1216-24cf-42ca-35a0928e0e7a/196589564478.jpg/1000x1000bb.jpg",
-        size: "5.9 MB"
-      }},
-      {{
-        id: "die_for_you",
-        title: "Die For You",
-        artist: "The Weeknd",
-        album: "Starboy",
-        year: "2016",
-        duration: "4:20",
-        cover: "logos/Die_For_You.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c3/84/14/c38414ae-4ad7-b4d2-d893-6a9786419515/16UMGIM62208.rgb.jpg/1000x1000bb.jpg",
-        size: "6.4 MB"
-      }},
-      {{
-        id: "after_dark",
-        title: "After Dark",
-        artist: "Mr.Kitty",
-        album: "Time",
-        year: "2014",
-        duration: "4:17",
-        cover: "logos/After_Dark.jpg",
-        fallback: "https://is1-ssl.mzstatic.com/image/thumb/Music128/v4/97/57/0d/97570d9a-5b12-9c98-cfd4-659f8a37912d/859712711832_cover.jpg/1000x1000bb.jpg",
-        size: "4.8 MB"
-      }}
-    ];
+    // User Curated Playlist (46 tracks)
+    const PLAYLIST_SONGS = {catalog_json_str};
 
-    // Real Preloaded 26 Server Songs with Official Covers
     const PRELOADED_SERVER_SONGS = {songs_json_str};
 
     // State Variables
@@ -690,8 +594,8 @@ html_content = f'''<!DOCTYPE html>
       : CLOUD_URL;
 
     let serverActive = false;
-    let currentTracksList = [...MOCKUP_SONGS];
-    let currentTrack = MOCKUP_SONGS[0];
+    let currentTracksList = [...PLAYLIST_SONGS];
+    let currentTrack = PLAYLIST_SONGS[0];
     let currentTrackIndex = 0;
     let isPlaying = false;
     let isShuffle = false;
@@ -851,7 +755,7 @@ html_content = f'''<!DOCTYPE html>
     document.getElementById('quick-btn-downloads').addEventListener('click', () => switchTab('downloads'));
     document.getElementById('quick-btn-favorites').addEventListener('click', showFavorites);
     document.getElementById('quick-btn-library').addEventListener('click', () => {{
-      renderSearchRows(MOCKUP_SONGS);
+      renderSearchRows(PLAYLIST_SONGS);
       switchTab('search');
     }});
 
@@ -861,7 +765,7 @@ html_content = f'''<!DOCTYPE html>
     }});
     document.getElementById('btn-back-to-home').addEventListener('click', () => switchTab('home'));
     document.getElementById('home-promo-banner').addEventListener('click', () => {{
-      loadAndPlayTrack(MOCKUP_SONGS[0]);
+      loadAndPlayTrack(PLAYLIST_SONGS[0]);
     }});
 
     // Audio Engine
@@ -1188,7 +1092,7 @@ html_content = f'''<!DOCTYPE html>
         }}
       }});
 
-      const displayList = combined.length > 0 ? combined : MOCKUP_SONGS.slice(0, 5);
+      const displayList = combined.length > 0 ? combined : PLAYLIST_SONGS.slice(0, 5);
 
       if (subtab === 'en_proceso') {{
         const card = document.getElementById('active-download-card');
@@ -1422,7 +1326,7 @@ html_content = f'''<!DOCTYPE html>
     async function doSearch(query) {{
       if (!query || query.trim() === '') return;
       if (query.toLowerCase().includes('coldplay')) {{
-        renderSearchRows(MOCKUP_SONGS.slice(0, 6));
+        renderSearchRows(PLAYLIST_SONGS.slice(0, 10));
         return;
       }}
       const results = await searchiTunes(query, 16);
@@ -1450,7 +1354,8 @@ html_content = f'''<!DOCTYPE html>
     function renderHomeCards() {{
       const recContainer = document.getElementById('recommended-container');
       recContainer.innerHTML = '';
-      const recList = [MOCKUP_SONGS[6], MOCKUP_SONGS[7], MOCKUP_SONGS[8]]; // Snooze, Die For You, After Dark
+      // 3 Top Recommended from User Playlist: Meet You Again, Love Me Not, Always Forever
+      const recList = [PLAYLIST_SONGS[0], PLAYLIST_SONGS[1], PLAYLIST_SONGS[2]];
 
       recList.forEach(song => {{
         const card = document.createElement('div');
@@ -1471,7 +1376,8 @@ html_content = f'''<!DOCTYPE html>
 
       const trendContainer = document.getElementById('trending-container');
       trendContainer.innerHTML = '';
-      const trendList = [MOCKUP_SONGS[1], MOCKUP_SONGS[3], MOCKUP_SONGS[4]];
+      // 3 Top Trending from User Playlist: Cariño (The Marías), Brillo Mío (Caloncho), Departamento (Bandalos Chinos)
+      const trendList = [PLAYLIST_SONGS[7], PLAYLIST_SONGS[4], PLAYLIST_SONGS[44]];
 
       trendList.forEach(song => {{
         const card = document.createElement('div');
@@ -1493,18 +1399,18 @@ html_content = f'''<!DOCTYPE html>
 
     document.getElementById('btn-see-more-recommended').addEventListener('click', () => {{
       switchTab('search');
-      renderSearchRows(MOCKUP_SONGS);
+      renderSearchRows(PLAYLIST_SONGS);
     }});
     document.getElementById('btn-see-more-trending').addEventListener('click', () => {{
       switchTab('search');
-      renderSearchRows(MOCKUP_SONGS.slice(0, 6));
+      renderSearchRows(PLAYLIST_SONGS.slice(0, 10));
     }});
 
     // Startup
     renderHomeCards();
     renderDownloadsList(currentDlSubtab);
-    renderSearchRows(MOCKUP_SONGS.slice(0, 6));
-    updatePlayerUI(MOCKUP_SONGS[0]);
+    renderSearchRows(PLAYLIST_SONGS.slice(0, 10));
+    updatePlayerUI(PLAYLIST_SONGS[0]);
     checkServer().then(() => loadServerDownloads());
   </script>
 </body>
