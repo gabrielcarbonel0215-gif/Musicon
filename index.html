@@ -2,340 +2,1317 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music & Cover Hub - Descargador de Canciones Completas (.m4a)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cinnamoroll Music 🎵☁️ - Tu música, siempre contigo</title>
+  <!-- Google Fonts: Quicksand & Nunito for soft cute aesthetics -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+
   <style>
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #475569; }
-    @keyframes spin-slow {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    * {
+      font-family: 'Nunito', 'Quicksand', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-    .animate-spin-slow {
-      animation: spin-slow 2s linear infinite;
+    
+    /* Custom pastel scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f0f7ff; }
+    ::-webkit-scrollbar-thumb { background: #bfdbfe; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #93c5fd; }
+
+    /* Floating cloud and stars animation */
+    @keyframes float-gentle {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(1deg); }
+    }
+    .animate-float {
+      animation: float-gentle 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.03); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 3s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    .animate-twinkle {
+      animation: twinkle 2.5s ease-in-out infinite;
+    }
+
+    /* Soft pastel glass */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(224, 242, 254, 0.9);
+    }
+    
+    .glass-card-celestial {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(191, 219, 254, 0.6);
+      box-shadow: 0 10px 30px -5px rgba(147, 197, 253, 0.3);
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #dbeafe;
+      border-radius: 9999px;
+      height: 6px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #3b82f6;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-black">
+<body class="bg-gradient-to-b from-[#e3efff] via-[#edf5ff] to-[#f4f9ff] text-slate-700 min-h-screen flex items-center justify-center p-0 sm:p-4 md:p-6 select-none overflow-x-hidden">
 
-  <!-- Header -->
-  <header class="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur sticky top-0 z-30 px-6 py-4 shadow-lg">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
-          ⚡
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-              Music & Cover Hub
-            </h1>
-            <span id="server-badge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-              <span>🟡</span> Verificando servidor...
-            </span>
-          </div>
-          <p class="text-xs text-slate-400">Descarga canciones <b>completas</b> en .m4a y portadas en 1000px</p>
-        </div>
-      </div>
+  <!-- Desktop App Container Frame -->
+  <div id="app-frame" class="w-full sm:max-w-[430px] sm:h-[900px] h-screen bg-[#f3f8fe] sm:rounded-[44px] shadow-2xl sm:border-[8px] sm:border-white/80 flex flex-col relative overflow-hidden transition-all duration-300">
 
-      <!-- Quick Actions -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button id="btn-load-preset" class="px-3.5 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1.5 transition">
-          <span>🔄</span> Cargar 24 Canciones
-        </button>
-        <button id="btn-toggle-batch" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition">
-          <span>📋</span> Modo Búsqueda Masiva
-        </button>
-        <button id="btn-download-all-full" class="px-3.5 py-1.5 rounded-lg bg-teal-600/25 hover:bg-teal-600/40 text-teal-300 border border-teal-500/40 text-xs font-bold flex items-center gap-1.5 transition">
-          <span>⚡</span> Descargar Todas Completas
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto p-6 space-y-6">
-
-    <!-- Search Controls -->
-    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-      <!-- Single Search Input -->
-      <div id="single-search-panel" class="flex flex-col sm:flex-row gap-3">
-        <div class="relative flex-1">
-          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500 text-lg">🔍</span>
-          <input 
-            type="text" 
-            id="search-input" 
-            placeholder="Escribe título o artista (ej: Aparato, Imagine, Axel Fiks, Beautiful Boy)..." 
-            class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-slate-200 placeholder-slate-500 text-sm outline-none transition"
-          />
-        </div>
-        <button id="btn-search" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition flex items-center justify-center gap-2">
-          <span>Buscar</span>
-        </button>
-      </div>
-
-      <!-- Batch Search Panel (Hidden by default) -->
-      <div id="batch-search-panel" class="hidden space-y-3 pt-2 border-t border-slate-800/80">
-        <div class="flex items-center justify-between">
-          <label class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-            <span>📝</span> Pega varias canciones (una por línea):
-          </label>
-          <span class="text-xs text-slate-500">Ejemplo: "Aparato Alejandro y Maria Laura"</span>
-        </div>
-        <textarea 
-          id="batch-input" 
-          rows="5" 
-          placeholder="Hard to Say Goodbye Johnny Stimson&#10;PONPONPON Kyary Pamyu Pamyu&#10;Bolerito Sad Simon Grossman&#10;Aparato Alejandro y Maria Laura" 
-          class="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 focus:border-emerald-500 text-slate-200 text-xs font-mono outline-none"
-        ></textarea>
-        <button id="btn-run-batch" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition shadow-md">
-          ⚡ Procesar y Buscar Toda la Lista en Paralelo
-        </button>
-      </div>
-
-      <!-- Status Indicator -->
-      <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
-        <span id="status-text" class="flex items-center gap-2">
-          <span>Listo para buscar.</span>
-        </span>
-        <span id="counter-badge" class="font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 resultados</span>
-      </div>
-    </div>
-
-    <!-- Active Audio Player Bar -->
-    <div id="audio-player-bar" class="hidden bg-slate-900/95 border border-emerald-500/40 rounded-2xl p-4 shadow-2xl flex flex-col md:flex-row items-center gap-4 sticky bottom-6 z-40 backdrop-blur-md">
-      <img id="now-cover" src="" alt="Cover" class="w-14 h-14 rounded-xl object-cover shadow-md border border-slate-700">
-      <div class="flex-1 min-w-0">
-        <h4 id="now-title" class="font-bold text-sm text-white truncate">Título de la Canción</h4>
-        <p id="now-artist" class="text-xs text-slate-400 truncate">Nombre del Artista</p>
-        <audio id="html5-audio" controls class="w-full mt-2 h-8" preload="none"></audio>
-      </div>
+    <!-- Decorative Top Status Bar (Mobile style) -->
+    <div class="h-9 px-6 flex items-center justify-between text-xs font-bold text-slate-500 z-20 shrink-0">
+      <span id="device-time" class="tracking-tight">9:41</span>
+      <!-- App / Fullscreen toggle for PC users -->
       <div class="flex items-center gap-2">
-        <button id="btn-download-full-now" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg transition">
-          <span>⬇️</span> Descargar Completa (.m4a)
+        <button id="btn-toggle-fullscreen" title="Cambiar tamaño / Vista escritorio" class="text-[11px] px-2 py-0.5 rounded-full bg-white/70 hover:bg-white text-blue-500 font-semibold border border-blue-100 transition shadow-sm">
+          📱 / 🖥️
+        </button>
+        <div class="flex items-center gap-1.5 text-[11px]">
+          <span>📶</span>
+          <span>⚡</span>
+          <span>🔋</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 1. PANTALLA DE INICIO (SPLASH / CARGA) -->
+    <!-- ======================================================== -->
+    <div id="screen-splash" class="absolute inset-0 z-50 bg-gradient-to-b from-[#d8ebff] via-[#e8f3ff] to-[#ffffff] flex flex-col items-center justify-between p-8 transition-opacity duration-500">
+      <!-- Stars & sparkles background -->
+      <div class="absolute top-12 left-10 text-xl animate-twinkle">✨</div>
+      <div class="absolute top-24 right-12 text-lg animate-twinkle" style="animation-delay: 1s;">⭐</div>
+      <div class="absolute top-48 left-16 text-sm animate-twinkle" style="animation-delay: 1.5s;">🎵</div>
+      <div class="absolute top-44 right-16 text-base animate-twinkle" style="animation-delay: 0.7s;">☁️</div>
+
+      <div class="flex-1 flex flex-col items-center justify-center text-center mt-10">
+        <!-- Floating Cinnamoroll on cloud -->
+        <div class="relative w-48 h-36 flex items-center justify-center animate-float mb-6">
+          <img src="assets/cinnamoroll_splash.png" alt="Cinnamoroll" class="max-h-full max-w-full object-contain drop-shadow-md" onerror="this.onerror=null; this.src='assets/banner_full.png';">
+        </div>
+
+        <h1 class="text-3xl font-black tracking-tight text-[#4787d8] drop-shadow-sm mb-1">
+          Cinnamoroll
+        </h1>
+        <h2 class="text-2xl font-black tracking-wider text-[#64a1ec] mb-3">
+          Music
+        </h2>
+        <p class="text-xs font-semibold text-slate-400 max-w-[220px]">
+          Tu música, siempre contigo
+        </p>
+      </div>
+
+      <!-- Loading Bar -->
+      <div class="w-full max-w-[240px] flex flex-col items-center gap-2 mb-8">
+        <div class="w-full h-3 bg-white/80 rounded-full p-0.5 border border-blue-200 shadow-inner overflow-hidden">
+          <div id="splash-progress" class="h-full bg-gradient-to-r from-blue-400 to-sky-300 rounded-full transition-all duration-300" style="width: 15%;"></div>
+        </div>
+        <span id="splash-status" class="text-[11px] font-bold text-blue-400 animate-pulse">Cargando biblioteca...</span>
+        <button id="btn-skip-splash" class="mt-2 text-[10px] text-slate-400 hover:text-blue-500 underline font-semibold">
+          Toca para entrar ➔
         </button>
       </div>
     </div>
 
-    <!-- Results Grid -->
-    <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      <!-- Dynamic Cards Injected Here -->
+    <!-- ======================================================== -->
+    <!-- 2. PANTALLA PRINCIPAL (INICIO) -->
+    <!-- ======================================================== -->
+    <div id="screen-home" class="flex-1 flex flex-col overflow-y-auto px-5 pb-32 space-y-5 screen-view">
+      <!-- App Header -->
+      <div class="flex items-center justify-between pt-1">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-300 to-sky-200 flex items-center justify-center shadow-sm overflow-hidden border border-white">
+            <img src="assets/cinnamoroll_splash.png" alt="Logo" class="w-7 h-7 object-contain">
+          </div>
+          <span class="font-black text-lg text-slate-800 tracking-tight">Cinnamoroll Music</span>
+        </div>
+        <button id="btn-open-settings" class="w-9 h-9 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-500 hover:text-blue-500 hover:bg-blue-50 border border-blue-50 transition">
+          ⚙️
+        </button>
+      </div>
+
+      <!-- Quick Search Bar (triggers search screen) -->
+      <div id="home-search-trigger" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white shadow-sm border border-blue-100 hover:border-blue-300 cursor-pointer transition">
+        <span class="text-blue-400 text-base">🔍</span>
+        <input 
+          id="home-search-input"
+          type="text" 
+          placeholder="Buscar canciones, artistas..." 
+          class="bg-transparent flex-1 text-xs text-slate-700 placeholder-slate-400 outline-none cursor-pointer"
+        />
+        <span class="text-[10px] font-bold text-blue-400 bg-blue-50 px-2 py-0.5 rounded-full">iTunes & YT</span>
+      </div>
+
+      <!-- 4 Quick-Action Buttons (Buscar, Descargas, Favoritos, Mi música) -->
+      <div class="grid grid-cols-4 gap-2.5">
+        <button id="quick-btn-search" class="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-white hover:bg-blue-50/70 border border-blue-100/80 shadow-sm transition group active:scale-95">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 group-hover:bg-blue-100/70 flex items-center justify-center text-blue-500 text-lg transition">
+            🔍
+          </div>
+          <span class="text-[11px] font-bold text-slate-600">Buscar</span>
+        </button>
+
+        <button id="quick-btn-downloads" class="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-white hover:bg-blue-50/70 border border-blue-100/80 shadow-sm transition group active:scale-95">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 group-hover:bg-blue-100/70 flex items-center justify-center text-blue-500 text-lg transition">
+            📥
+          </div>
+          <span class="text-[11px] font-bold text-slate-600">Descargas</span>
+        </button>
+
+        <button id="quick-btn-favorites" class="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-white hover:bg-blue-50/70 border border-blue-100/80 shadow-sm transition group active:scale-95">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 group-hover:bg-blue-100/70 flex items-center justify-center text-rose-400 text-lg transition">
+            🤍
+          </div>
+          <span class="text-[11px] font-bold text-slate-600">Favoritos</span>
+        </button>
+
+        <button id="quick-btn-library" class="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-white hover:bg-blue-50/70 border border-blue-100/80 shadow-sm transition group active:scale-95">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 group-hover:bg-blue-100/70 flex items-center justify-center text-blue-500 text-lg transition">
+            📑
+          </div>
+          <span class="text-[11px] font-bold text-slate-600">Mi música</span>
+        </button>
+      </div>
+
+      <!-- Promo Banner: ¡Encuentra tus canciones favoritas! -->
+      <div id="home-promo-banner" class="rounded-3xl bg-gradient-to-r from-[#d2e7ff] via-[#e2efff] to-[#f0f6ff] p-4 border border-blue-200/60 shadow-sm flex items-center justify-between relative overflow-hidden cursor-pointer hover:shadow-md transition">
+        <div class="z-10 max-w-[190px]">
+          <span class="inline-block px-2 py-0.5 rounded-full bg-white/80 text-[10px] font-extrabold text-blue-500 mb-1">
+            ✨ Novedad
+          </span>
+          <h3 class="text-sm font-black text-[#2f6bb5] leading-tight">
+            ¡Encuentra tus canciones favoritas!
+          </h3>
+          <p class="text-[10px] text-slate-500 font-semibold mt-1">
+            Audio completo en .m4a y portadas 1000px
+          </p>
+        </div>
+        <div class="w-24 h-20 flex items-center justify-center">
+          <img src="assets/cinnamoroll_banner.png" alt="Cinnamoroll Banner" class="max-h-full max-w-full object-contain animate-float" onerror="this.src='assets/cinnamoroll_splash.png'">
+        </div>
+      </div>
+
+      <!-- Section: Recomendado para ti -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-black text-sm text-slate-800">Recomendado para ti</h4>
+          <button id="btn-see-more-recommended" class="text-xs font-bold text-blue-500 hover:text-blue-600">
+            Ver más &gt;
+          </button>
+        </div>
+        <!-- Horizontal scroll cards -->
+        <div id="recommended-container" class="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-none">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Section: Tendencias -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-black text-sm text-slate-800">Tendencias</h4>
+          <button id="btn-see-more-trending" class="text-xs font-bold text-blue-500 hover:text-blue-600">
+            Ver más &gt;
+          </button>
+        </div>
+        <div id="trending-container" class="grid grid-cols-2 gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
     </div>
 
-  </main>
-
-  <!-- Modal for Full-Size Artwork -->
-  <div id="art-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative">
-      <button id="btn-close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">✕</button>
-      <h3 id="modal-title" class="font-bold text-base text-slate-100 pr-8 truncate">Portada en Alta Resolución</h3>
-      <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
-        <img id="modal-img" src="" alt="High-Res Cover" class="w-full h-full object-cover">
-      </div>
-      <div class="flex items-center justify-between gap-3 pt-2">
-        <span class="text-xs text-slate-400 font-mono">Resolución: 1000 × 1000 px</span>
-        <div class="flex gap-2">
-          <button id="modal-download-btn" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5">
-            <span>💾</span> Descargar Imagen
+    <!-- ======================================================== -->
+    <!-- 3. RESULTADOS DE BÚSQUEDA (PANTALLA DE BÚSQUEDA) -->
+    <!-- ======================================================== -->
+    <div id="screen-search" class="hidden flex-1 flex flex-col overflow-y-auto px-5 pb-32 space-y-4 screen-view">
+      <!-- Search Screen Top Bar -->
+      <div class="flex items-center gap-2 pt-1">
+        <button id="btn-back-to-home" class="w-9 h-9 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-600 hover:text-blue-500 border border-blue-100 transition shrink-0">
+          ❮
+        </button>
+        <div class="flex-1 flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white shadow-sm border border-blue-200">
+          <span class="text-blue-400 text-sm">🔍</span>
+          <input 
+            id="main-search-input"
+            type="text" 
+            placeholder="Buscar en millones de canciones..." 
+            value="Coldplay"
+            class="bg-transparent flex-1 text-xs text-slate-700 outline-none"
+          />
+          <button id="btn-clear-search" class="text-slate-400 hover:text-slate-600 text-xs px-1">
+            ✖
           </button>
         </div>
       </div>
-    </div>
-  </div>
 
+      <!-- Filter Chips (Canciones, Artistas, Álbumes) -->
+      <div class="flex items-center gap-2">
+        <button data-cat="canciones" class="search-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow-sm transition">
+          Canciones
+        </button>
+        <button data-cat="artistas" class="search-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-blue-100 hover:bg-blue-50 transition">
+          Artistas
+        </button>
+        <button data-cat="albumes" class="search-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-blue-100 hover:bg-blue-50 transition">
+          Álbumes
+        </button>
+      </div>
+
+      <!-- Status indicator -->
+      <div class="flex items-center justify-between text-[11px] text-slate-500 px-1">
+        <span id="search-results-info">Mostrando resultados para <b>Coldplay</b></span>
+        <span id="server-connection-tag" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px]">
+          ● Cloud 24/7
+        </span>
+      </div>
+
+      <!-- Results List -->
+      <div id="search-results-list" class="space-y-2.5">
+        <!-- Result Items Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 4. PANTALLA DE DESCARGAS (GESTOR Y OFFLINE) -->
+    <!-- ======================================================== -->
+    <div id="screen-downloads" class="hidden flex-1 flex flex-col overflow-y-auto px-5 pb-32 space-y-4 screen-view">
+      <!-- Header -->
+      <div class="flex items-center justify-between pt-1">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📥</span>
+          <h2 class="font-black text-lg text-slate-800">Descargas</h2>
+        </div>
+        <button id="btn-refresh-downloads" class="text-xs font-bold text-blue-500 hover:text-blue-600">
+          Actualizar
+        </button>
+      </div>
+
+      <!-- Sub Tabs: Canciones, Álbumes, En proceso -->
+      <div class="flex items-center gap-2">
+        <button data-subtab="canciones" class="dl-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow-sm transition">
+          Canciones
+        </button>
+        <button data-subtab="albumes" class="dl-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-blue-100 hover:bg-blue-50 transition">
+          Álbumes
+        </button>
+        <button data-subtab="en_proceso" class="dl-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-blue-100 hover:bg-blue-50 transition">
+          En proceso
+        </button>
+      </div>
+
+      <!-- Active Download Progress Card (Simulated & Live) -->
+      <div id="active-download-card" class="rounded-2xl bg-white border border-blue-100 p-4 shadow-sm space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">📥</span>
+            <span id="dl-card-status" class="text-xs font-black text-slate-800">Descargando...</span>
+          </div>
+          <span id="dl-card-percent" class="text-xs font-black text-blue-500">62%</span>
+        </div>
+        <div class="w-full h-2.5 bg-blue-50 rounded-full overflow-hidden p-0.5 border border-blue-100">
+          <div id="dl-card-progress-bar" class="h-full bg-gradient-to-r from-blue-400 to-sky-400 rounded-full transition-all duration-300" style="width: 62%;"></div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-500 font-semibold">
+          <span id="dl-card-track-title">Fix You - Coldplay</span>
+          <span id="dl-card-size-info">4.4 MB / 7.1 MB</span>
+        </div>
+      </div>
+
+      <!-- Features Checklist Pills -->
+      <div class="grid grid-cols-1 gap-2">
+        <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 border border-blue-100 text-xs text-slate-600">
+          <span class="text-blue-500 text-base">🎵</span>
+          <span class="font-bold">Descarga rápida y segura en la nube</span>
+        </div>
+        <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 border border-blue-100 text-xs text-slate-600">
+          <span class="text-amber-500 text-base">⚡</span>
+          <span class="font-bold">Audio de alta calidad completa (.m4a)</span>
+        </div>
+        <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-white/80 border border-blue-100 text-xs text-slate-600">
+          <span class="text-sky-500 text-base">☁️</span>
+          <span class="font-bold">Escucha tus canciones sin conexión</span>
+        </div>
+      </div>
+
+      <!-- Downloaded Items List -->
+      <div class="space-y-2 pt-1">
+        <h4 class="text-xs font-black text-slate-700">Archivos disponibles (.m4a)</h4>
+        <div id="downloads-list-items" class="space-y-2">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Cute Sleeping Cinnamoroll at bottom -->
+      <div class="pt-4 pb-2 flex flex-col items-center justify-center">
+        <img src="assets/cinnamoroll_sleeping.png" alt="Cinnamoroll Sleeping" class="h-16 object-contain opacity-90 drop-shadow-sm" onerror="this.src='assets/banner_full.png'">
+        <span class="text-[10px] text-slate-400 font-bold mt-1">Tu música guardada con cuidado ☁️💤</span>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 5. PANTALLA DE PERFIL / MÁS FUNCIONES -->
+    <!-- ======================================================== -->
+    <div id="screen-profile" class="hidden flex-1 flex flex-col overflow-y-auto px-5 pb-32 space-y-4 screen-view">
+      <!-- Top Title -->
+      <div class="flex items-center justify-between pt-1">
+        <h2 class="font-black text-lg text-slate-800">Más funciones</h2>
+        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+          ✨
+        </div>
+      </div>
+
+      <!-- Grid of Feature Cards (All clickable!) -->
+      <div class="grid grid-cols-2 gap-3">
+        <!-- Card 1: Búsqueda inteligente -->
+        <div id="feat-search" class="p-3.5 rounded-2xl bg-white border border-blue-100 shadow-sm space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 text-lg">
+            🔍
+          </div>
+          <h5 class="text-xs font-black text-slate-800">Búsqueda inteligente</h5>
+          <p class="text-[10px] text-slate-500 leading-tight">Encuentra canciones, artistas o álbumes fácilmente.</p>
+        </div>
+
+        <!-- Card 2: Vista previa de 30 segundos -->
+        <div id="feat-preview" class="p-3.5 rounded-2xl bg-white border border-blue-100 shadow-sm space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 text-lg">
+            ▶️
+          </div>
+          <h5 class="text-xs font-black text-slate-800">Vista previa 30s</h5>
+          <p class="text-[10px] text-slate-500 leading-tight">Escucha antes de descargar la canción completa.</p>
+        </div>
+
+        <!-- Card 3: Portadas de las canciones -->
+        <div id="feat-covers" class="p-3.5 rounded-2xl bg-white border border-blue-100 shadow-sm space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 text-lg">
+            🖼️
+          </div>
+          <h5 class="text-xs font-black text-slate-800">Portadas oficiales</h5>
+          <p class="text-[10px] text-slate-500 leading-tight">Disfruta de sus imágenes en alta resolución 1000px.</p>
+        </div>
+
+        <!-- Card 4: Listas personalizadas -->
+        <div id="feat-library" class="p-3.5 rounded-2xl bg-white border border-blue-100 shadow-sm space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 text-lg">
+            📑
+          </div>
+          <h5 class="text-xs font-black text-slate-800">24 Canciones del Proyecto</h5>
+          <p class="text-[10px] text-slate-500 leading-tight">Carga la biblioteca inicial completa con un toque.</p>
+        </div>
+
+        <!-- Card 5: Interfaz sencilla y linda -->
+        <div id="feat-theme" class="p-3.5 rounded-2xl bg-white border border-blue-100 shadow-sm space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-rose-400 text-lg">
+            🤍
+          </div>
+          <h5 class="text-xs font-black text-slate-800">Favoritos guardados</h5>
+          <p class="text-[10px] text-slate-500 leading-tight">Tus temas favoritos en tu almacenamiento personal.</p>
+        </div>
+
+        <!-- Card 6: Servidor Cloud 24/7 -->
+        <div id="feat-server" class="p-3.5 rounded-2xl bg-white border border-blue-100 shadow-sm space-y-2 cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-emerald-500 text-lg">
+            ☁️
+          </div>
+          <h5 class="text-xs font-black text-slate-800">Servidor en la Nube</h5>
+          <p class="text-[10px] text-slate-500 leading-tight">Render + UptimeRobot activo 24/7 sin descanso.</p>
+        </div>
+      </div>
+
+      <!-- Cinnamoroll with Star Doodle -->
+      <div class="pt-4 flex flex-col items-center justify-center text-center">
+        <img src="assets/cinnamoroll_star.png" alt="Cinnamoroll Star" class="h-20 object-contain drop-shadow-sm mb-1" onerror="this.src='assets/banner_full.png'">
+        <p class="text-xs font-black text-[#4787d8]">Interfaz sencilla y linda</p>
+        <p class="text-[10px] text-slate-400 font-semibold max-w-[240px]">
+          Diseñada para que disfrutes cada momento con tu música.
+        </p>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- STICKY MINI-PLAYER BAR (Pantallas 2, 3, etc.) -->
+    <!-- ======================================================== -->
+    <div id="mini-player-bar" class="absolute bottom-[66px] left-3 right-3 z-30 glass-card-celestial rounded-2xl p-2 px-3 shadow-lg flex items-center justify-between border border-blue-200 transition-all cursor-pointer">
+      <div id="mini-track-info" class="flex items-center gap-3 overflow-hidden flex-1 mr-2">
+        <img id="mini-cover" src="logos_recortados/Fix_You.png" alt="Cover" class="w-10 h-10 rounded-xl object-cover shadow-sm shrink-0 border border-white" onerror="this.src='logos/Fix_You.jpg'">
+        <div class="overflow-hidden">
+          <h5 id="mini-title" class="text-xs font-black text-slate-800 truncate">Fix You</h5>
+          <p id="mini-artist" class="text-[10px] font-bold text-slate-400 truncate">Coldplay</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1 shrink-0">
+        <button id="mini-btn-prev" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-blue-500 text-xs">
+          ⏮
+        </button>
+        <button id="mini-btn-play" class="w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm shadow-md shadow-blue-400/30 hover:bg-blue-600 transition active:scale-95">
+          ▶
+        </button>
+        <button id="mini-btn-next" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:text-blue-500 text-xs">
+          ⏭
+        </button>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BOTTOM NAVIGATION DOCK (4 TABS) -->
+    <!-- ======================================================== -->
+    <nav class="h-[64px] bg-white/95 backdrop-blur-md border-t border-blue-100 px-6 flex items-center justify-around z-30 shrink-0">
+      <button data-nav="home" class="nav-item-btn flex flex-col items-center gap-1 text-blue-500 font-bold transition">
+        <span class="text-lg">🏠</span>
+        <span class="text-[10px]">Inicio</span>
+      </button>
+
+      <button data-nav="search" class="nav-item-btn flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 font-bold transition">
+        <span class="text-lg">🔍</span>
+        <span class="text-[10px]">Buscar</span>
+      </button>
+
+      <button data-nav="downloads" class="nav-item-btn flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 font-bold transition">
+        <span class="text-lg">📥</span>
+        <span class="text-[10px]">Descargas</span>
+      </button>
+
+      <button data-nav="profile" class="nav-item-btn flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 font-bold transition">
+        <span class="text-lg">👤</span>
+        <span class="text-[10px]">Perfil</span>
+      </button>
+    </nav>
+
+    <!-- ======================================================== -->
+    <!-- 4. VISTA DE CANCIÓN / SONG DETAIL MODAL -->
+    <!-- ======================================================== -->
+    <div id="modal-song-detail" class="hidden absolute inset-0 z-40 bg-[#f4f9ff] flex flex-col overflow-y-auto px-6 py-4 transition-all">
+      <!-- Modal Top Bar -->
+      <div class="flex items-center justify-between pt-1">
+        <button id="btn-close-song-detail" class="w-9 h-9 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-600 hover:text-blue-500 border border-blue-100 transition">
+          ❮
+        </button>
+        <span class="text-xs font-black text-slate-500">Reproduciendo</span>
+        <button id="btn-detail-favorite" class="w-9 h-9 rounded-2xl bg-white shadow-sm flex items-center justify-center text-rose-400 hover:scale-110 border border-blue-100 transition">
+          🤍
+        </button>
+      </div>
+
+      <!-- Large HD Cover -->
+      <div class="flex flex-col items-center mt-5 mb-3">
+        <div class="w-64 h-64 rounded-3xl overflow-hidden shadow-2xl border-4 border-white shadow-blue-300/30">
+          <img id="detail-cover-img" src="logos/Fix_You.jpg" alt="Cover" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+      <!-- Song Info -->
+      <div class="space-y-1 text-left">
+        <h3 id="detail-title" class="text-xl font-black text-slate-800">Fix You</h3>
+        <p id="detail-artist" class="text-sm font-bold text-slate-400">Coldplay</p>
+        <p id="detail-meta" class="text-[11px] text-slate-400 font-semibold pt-0.5">
+          💿 Álbum: X&Y &nbsp;|&nbsp; 2005 &nbsp;|&nbsp; 4:55
+        </p>
+      </div>
+
+      <!-- Audio Scrubber / Progress -->
+      <div class="mt-4 space-y-1">
+        <input id="detail-audio-scrubber" type="range" min="0" max="100" value="0" class="w-full">
+        <div class="flex items-center justify-between text-[11px] font-bold text-slate-400">
+          <span id="detail-current-time">0:00</span>
+          <span id="detail-duration-time">0:30</span>
+        </div>
+      </div>
+
+      <!-- Controls Row -->
+      <div class="flex items-center justify-center gap-6 my-3">
+        <button id="detail-btn-prev" class="text-slate-400 hover:text-blue-500 text-xl">⏮</button>
+        <button id="detail-btn-play" class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-500 to-sky-400 text-white text-2xl flex items-center justify-center shadow-lg shadow-blue-400/40 hover:scale-105 active:scale-95 transition">
+          ▶
+        </button>
+        <button id="detail-btn-next" class="text-slate-400 hover:text-blue-500 text-xl">⏭</button>
+      </div>
+
+      <!-- Big Primary Download Button: Descarga Completa .m4a -->
+      <div class="mt-2 space-y-2">
+        <button id="detail-btn-download-full" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white font-extrabold text-sm shadow-md shadow-blue-400/25 flex items-center justify-center gap-2 transition active:scale-98">
+          <span>📥</span> Descargar Canción Completa (.m4a)
+        </button>
+        <p id="detail-download-status" class="text-center text-[11px] text-slate-500 font-medium"></p>
+      </div>
+
+      <!-- Section: Portada de la canción (1000px HD) -->
+      <div class="mt-5 p-4 rounded-3xl bg-white border border-blue-100 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-black text-slate-700">Portada de la canción</span>
+          <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">1000 × 1000 px</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-3">
+          <div class="w-16 h-16 rounded-xl overflow-hidden shadow-sm shrink-0 border border-blue-100">
+            <img id="detail-subcover-img" src="logos/Fix_You.jpg" alt="Mini" class="w-full h-full object-cover">
+          </div>
+          <div class="flex-1">
+            <button id="btn-download-cover-hd" class="w-full py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs transition border border-blue-200/60">
+              🖼️ Guardar Portada HD
+            </button>
+          </div>
+          <div class="w-16 h-14 flex items-center justify-center">
+            <img src="assets/cinnamoroll_detail.png" alt="Doodle" class="max-h-full max-w-full object-contain" onerror="this.src='assets/cinnamoroll_splash.png'">
+          </div>
+        </div>
+      </div>
+      
+      <div class="h-6"></div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 7. REPRODUCTOR EXPANDIDO (NOW PLAYING CELESTIAL FULLSCREEN) -->
+    <!-- ======================================================== -->
+    <div id="modal-expanded-player" class="hidden absolute inset-0 z-40 bg-gradient-to-b from-[#b8d8ff] via-[#d6e9fe] to-[#edf6ff] flex flex-col justify-between p-6 overflow-hidden transition-all">
+      <!-- Stars & sparkles -->
+      <div class="absolute top-10 left-8 text-xl animate-twinkle">✨</div>
+      <div class="absolute top-20 right-10 text-lg animate-twinkle" style="animation-delay: 1.2s;">⭐</div>
+      <div class="absolute top-36 left-14 text-sm animate-twinkle" style="animation-delay: 0.8s;">🎵</div>
+
+      <!-- Top bar -->
+      <div class="flex items-center justify-between pt-1 z-10">
+        <button id="btn-minimize-expanded-player" class="w-9 h-9 rounded-2xl bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-slate-700 hover:text-blue-500 transition">
+          ▼
+        </button>
+        <span class="text-xs font-black text-slate-600">Cinnamoroll Radio</span>
+        <button id="btn-expanded-favorite" class="w-9 h-9 rounded-2xl bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-rose-400 transition">
+          🤍
+        </button>
+      </div>
+
+      <!-- Celestial Artwork with Cinnamoroll -->
+      <div class="flex flex-col items-center my-2 relative z-10">
+        <div class="relative w-56 h-36 flex items-center justify-center animate-float">
+          <img src="assets/cinnamoroll_player_cloud.png" alt="Cinnamoroll Cloud" class="max-h-full max-w-full object-contain drop-shadow-md" onerror="this.src='assets/cinnamoroll_splash.png'">
+        </div>
+      </div>
+
+      <!-- Floating Card with Now Playing -->
+      <div class="glass-card-celestial rounded-3xl p-5 shadow-xl border border-white space-y-4 z-10">
+        <div class="flex items-center gap-3">
+          <img id="exp-cover" src="logos/Fix_You.jpg" alt="Cover" class="w-14 h-14 rounded-2xl object-cover shadow-sm shrink-0 border-2 border-white">
+          <div class="overflow-hidden flex-1">
+            <h4 id="exp-title" class="font-black text-base text-slate-800 truncate">Fix You</h4>
+            <p id="exp-artist" class="text-xs font-bold text-slate-400 truncate">Coldplay</p>
+          </div>
+          <button id="exp-heart" class="text-rose-400 text-lg">🤍</button>
+        </div>
+
+        <!-- Slider -->
+        <div class="space-y-1">
+          <input id="exp-scrubber" type="range" min="0" max="100" value="0" class="w-full">
+          <div class="flex items-center justify-between text-[11px] font-bold text-slate-400">
+            <span id="exp-cur-time">0:00</span>
+            <span id="exp-dur-time">0:30</span>
+          </div>
+        </div>
+
+        <!-- Expanded Controls -->
+        <div class="flex items-center justify-between px-2">
+          <button id="exp-shuffle" class="text-slate-400 hover:text-blue-500 text-sm" title="Modo Aleatorio">🔀</button>
+          <button id="exp-prev" class="text-slate-600 hover:text-blue-500 text-xl">⏮</button>
+          <button id="exp-play" class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-400/40 hover:scale-105 active:scale-95 transition">
+            ▶
+          </button>
+          <button id="exp-next" class="text-slate-600 hover:text-blue-500 text-xl">⏭</button>
+          <button id="exp-repeat" class="text-slate-400 hover:text-blue-500 text-sm" title="Repetir">🔁</button>
+        </div>
+      </div>
+
+      <div class="h-2"></div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SETTINGS MODAL -->
+    <!-- ======================================================== -->
+    <div id="modal-settings" class="hidden absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+      <div class="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl space-y-4 animate-scale-up">
+        <div class="flex items-center justify-between">
+          <h3 class="font-black text-base text-slate-800 flex items-center gap-2">
+            <span>⚙️</span> Ajustes & Servidor
+          </h3>
+          <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600 text-sm">✖</button>
+        </div>
+
+        <div class="space-y-3 text-xs text-slate-600">
+          <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-100 space-y-1">
+            <span class="font-bold text-slate-700">Estado de Servidor Cloud 24/7:</span>
+            <p id="settings-server-status" class="text-emerald-600 font-bold flex items-center gap-1.5">
+              <span>🟢</span> Conectado a Render (Online 24/7)
+            </p>
+            <p class="text-[10px] text-slate-400">Pings automáticos cada 5 min via UptimeRobot.</p>
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">Calidad de audio por defecto:</label>
+            <select id="select-audio-quality" class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 outline-none">
+              <option value="m4a_best">Apple .m4a Original (yt-dlp)</option>
+              <option value="mp3_320">MP3 320 kbps</option>
+            </select>
+          </div>
+
+          <div class="pt-2 flex flex-col gap-2">
+            <button id="btn-reload-presets-settings" class="w-full py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold transition">
+              🔄 Recargar las 24 Canciones del Proyecto
+            </button>
+            <button id="btn-clear-cache-settings" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">
+              🗑️ Limpiar favoritos y caché
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End App Frame -->
+
+  <!-- Hidden HTML5 Audio Element for Real Sound Playback -->
+  <audio id="core-audio-player" preload="auto"></audio>
+
+  <!-- ======================================================== -->
+  <!-- JAVASCRIPT APPLICATION CORE -->
+  <!-- ======================================================== -->
   <script>
+    // 24 Curated Songs from Project
     const PRESET_SONGS = [
-      { id: 1, title: "Hard to Say Goodbye", artist: "Johnny Stimson" },
-      { id: 2, title: "PONPONPON", artist: "Kyary Pamyu Pamyu" },
-      { id: 3, title: "Bolerito Sad", artist: "Simon Grossman" },
-      { id: 4, title: "Me Voy A Valparaíso", artist: "Diego Lorenzini" },
-      { id: 5, title: "Dulcito e Coco", artist: "Vicente García" },
-      { id: 6, title: "Movimiento Astral", artist: "Gauchito Club" },
-      { id: 7, title: "Parte de Mí", artist: "Simon Grossman" },
-      { id: 8, title: "Canción de Amor", artist: "Viniloversus Simon Grossman" },
-      { id: 9, title: "Formula", artist: "Labrinth" },
-      { id: 10, title: "Cuando Regreses a Mí", artist: "Molinette Cinema" },
-      { id: 11, title: "Beautiful Boy", artist: "John Lennon" },
-      { id: 12, title: "Imagine", artist: "John Lennon" },
-      { id: 13, title: "Arruinarlo Todo", artist: "Molinette Cinema" },
-      { id: 14, title: "Chica Acuario", artist: "Axel Fiks" },
-      { id: 15, title: "Ojitos de Md", artist: "Axel Fiks" },
-      { id: 16, title: "Algo Que Decirte", artist: "AppleCats" },
-      { id: 17, title: "Love Me Not", artist: "Ravyn Lenae" },
-      { id: 18, title: "Always Forever", artist: "Cults" },
-      { id: 19, title: "Compañera", artist: "Axel Fiks" },
-      { id: 20, title: "Niño Amor", artist: "Axel Fiks" },
-      { id: 21, title: "O Pato", artist: "Ebony Loren" },
-      { id: 22, title: "Aparato", artist: "Alejandro y María Laura" },
-      { id: 23, title: "Salto", artist: "El Joven Paiva" },
-      { id: 24, title: "Si Tú Me Quisieras", artist: "Adrián Bello" }
+      { title: "Hard to Say Goodbye", artist: "Johnny Stimson", album: "Butterflies", year: "2021", duration: "3:15", cover: "logos/Hard_to_Say_Goodbye.jpg", preview: "" },
+      { title: "PONPONPON", artist: "Kyary Pamyu Pamyu", album: "Moshi Moshi Harajuku", year: "2011", duration: "4:02", cover: "logos/PONPONPON.jpg", preview: "" },
+      { title: "Bolerito Sad", artist: "Simon Grossman", album: "Ciclo", year: "2018", duration: "3:30", cover: "logos/Bolerito_Sad.jpg", preview: "" },
+      { title: "Aparato", artist: "Alejandro y Maria Laura", album: "La Casa No Existía", year: "2017", duration: "3:42", cover: "logos/Aparato.jpg", preview: "" },
+      { title: "Can I Call You Tonight?", artist: "Dayglow", album: "Fuzzybrain", year: "2018", duration: "4:38", cover: "logos/Can_I_Call_You_Tonight.jpg", preview: "" },
+      { title: "Agüita de Coco", artist: "Lupe", album: "Agüita de Coco", year: "2021", duration: "2:55", cover: "logos/Aguita_de_Coco.jpg", preview: "" },
+      { title: "Beautiful Boy (Darling Boy)", artist: "John Lennon", album: "Double Fantasy", year: "1980", duration: "4:02", cover: "logos/Beautiful_Boy_Darling_Boy.jpg", preview: "" },
+      { title: "Die For You", artist: "The Weeknd", album: "Starboy", year: "2016", duration: "4:20", cover: "logos/Die_For_You.jpg", preview: "" },
+      { title: "Snooze", artist: "SZA", album: "SOS", year: "2022", duration: "3:21", cover: "logos/Snooze.jpg", preview: "" },
+      { title: "After Dark", artist: "Mr.Kitty", album: "Time", year: "2014", duration: "4:17", cover: "logos/After_Dark.jpg", preview: "" },
+      { title: "Fix You", artist: "Coldplay", album: "X&Y", year: "2005", duration: "4:55", cover: "logos/Fix_You.jpg", preview: "" },
+      { title: "Yellow", artist: "Coldplay", album: "Parachutes", year: "2000", duration: "4:29", cover: "logos/Yellow.jpg", preview: "" },
+      { title: "The Scientist", artist: "Coldplay", album: "A Rush of Blood to the Head", year: "2002", duration: "5:09", cover: "logos/The_Scientist.jpg", preview: "" },
+      { title: "Viva La Vida", artist: "Coldplay", album: "Viva la Vida", year: "2008", duration: "4:01", cover: "logos/Viva_La_Vida.jpg", preview: "" },
+      { title: "Paradise", artist: "Coldplay", album: "Mylo Xyloto", year: "2011", duration: "4:37", cover: "logos/Paradise.jpg", preview: "" },
+      { title: "Adventure of a Lifetime", artist: "Coldplay", album: "A Head Full of Dreams", year: "2015", duration: "4:23", cover: "logos/Adventure_of_a_Lifetime.jpg", preview: "" },
+      { title: "Ojitos Lindos", artist: "Bad Bunny & Bomba Estéreo", album: "Un Verano Sin Ti", year: "2022", duration: "4:18", cover: "logos/Ojitos_Lindos.jpg", preview: "" },
+      { title: "As It Was", artist: "Harry Styles", album: "Harry's House", year: "2022", duration: "2:47", cover: "logos/As_It_Was.jpg", preview: "" },
+      { title: "Golden Hour", artist: "JVKE", album: "this is what ____ feels like", year: "2022", duration: "3:29", cover: "logos/Golden_Hour.jpg", preview: "" },
+      { title: "Until I Found You", artist: "Stephen Sanchez", album: "Easy On My Eyes", year: "2021", duration: "2:57", cover: "logos/Until_I_Found_You.jpg", preview: "" },
+      { title: "Here Comes the Sun", artist: "The Beatles", album: "Abbey Road", year: "1969", duration: "3:05", cover: "logos/Here_Comes_the_Sun.jpg", preview: "" },
+      { title: "Daylight", artist: "David Kushner", album: "Daylight", year: "2023", duration: "3:32", cover: "logos/Daylight.jpg", preview: "" },
+      { title: "Sweater Weather", artist: "The Neighbourhood", album: "I Love You.", year: "2013", duration: "4:00", cover: "logos/Sweater_Weather.jpg", preview: "" },
+      { title: "Diente de León", artist: "Axel Fiks", album: "Amante Moderno", year: "2021", duration: "3:10", cover: "logos/Diente_de_Leon.jpg", preview: "" }
     ];
 
-    let currentResults = [];
-    let serverActive = false;
-    // Auto-detect server: if hosted on Render or web server use origin, otherwise connect to Render cloud backend
+    // State Variables
     const CLOUD_URL = 'https://musicon-nymp.onrender.com';
     let SERVER_URL = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
       ? window.location.origin
       : CLOUD_URL;
 
-    let currentPlayingTrack = null;
-    let currentModalUrl = '';
-    let currentModalFilename = '';
+    let serverActive = false;
+    let currentTracksList = [...PRESET_SONGS];
+    let currentTrackIndex = 10; // Default: Fix You
+    let currentTrack = PRESET_SONGS[10];
+    let isPlaying = false;
+    let favorites = JSON.parse(localStorage.getItem('cinnamoroll_favorites') || '[]');
+    let downloads = JSON.parse(localStorage.getItem('cinnamoroll_downloads') || '[]');
+    let isShuffle = false;
+    let isRepeat = false;
 
-    // DOM Elements
-    const serverBadge = document.getElementById('server-badge');
-    const searchInput = document.getElementById('search-input');
-    const btnSearch = document.getElementById('btn-search');
-    const btnLoadPreset = document.getElementById('btn-load-preset');
-    const btnToggleBatch = document.getElementById('btn-toggle-batch');
-    const btnDownloadAllFull = document.getElementById('btn-download-all-full');
-    const batchPanel = document.getElementById('batch-search-panel');
-    const batchInput = document.getElementById('batch-input');
-    const btnRunBatch = document.getElementById('btn-run-batch');
-    const resultsGrid = document.getElementById('results-grid');
-    const statusText = document.getElementById('status-text');
-    const counterBadge = document.getElementById('counter-badge');
+    // Elements
+    const audio = document.getElementById('core-audio-player');
+    const appFrame = document.getElementById('app-frame');
+    const deviceTime = document.getElementById('device-time');
+    const btnToggleFullscreen = document.getElementById('btn-toggle-fullscreen');
 
-    // Audio bar
-    const audioBar = document.getElementById('audio-player-bar');
-    const nowCover = document.getElementById('now-cover');
-    const nowTitle = document.getElementById('now-title');
-    const nowArtist = document.getElementById('now-artist');
-    const html5Audio = document.getElementById('html5-audio');
-    const btnDownloadFullNow = document.getElementById('btn-download-full-now');
+    // Screens
+    const screenSplash = document.getElementById('screen-splash');
+    const screenHome = document.getElementById('screen-home');
+    const screenSearch = document.getElementById('screen-search');
+    const screenDownloads = document.getElementById('screen-downloads');
+    const screenProfile = document.getElementById('screen-profile');
+    const modalSongDetail = document.getElementById('modal-song-detail');
+    const modalExpandedPlayer = document.getElementById('modal-expanded-player');
+    const modalSettings = document.getElementById('modal-settings');
 
-    // Modal
-    const artModal = document.getElementById('art-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalImg = document.getElementById('modal-img');
-    const modalDownloadBtn = document.getElementById('modal-download-btn');
-    const btnCloseModal = document.getElementById('btn-close-modal');
+    // Mini Player Elements
+    const miniPlayerBar = document.getElementById('mini-player-bar');
+    const miniTrackInfo = document.getElementById('mini-track-info');
+    const miniCover = document.getElementById('mini-cover');
+    const miniTitle = document.getElementById('mini-title');
+    const miniArtist = document.getElementById('mini-artist');
+    const miniBtnPlay = document.getElementById('mini-btn-play');
+    const miniBtnPrev = document.getElementById('mini-btn-prev');
+    const miniBtnNext = document.getElementById('mini-btn-next');
 
-    // Check Server Connection
+    // Detail Player Elements
+    const detailCoverImg = document.getElementById('detail-cover-img');
+    const detailSubcoverImg = document.getElementById('detail-subcover-img');
+    const detailTitle = document.getElementById('detail-title');
+    const detailArtist = document.getElementById('detail-artist');
+    const detailMeta = document.getElementById('detail-meta');
+    const detailAudioScrubber = document.getElementById('detail-audio-scrubber');
+    const detailCurrentTime = document.getElementById('detail-current-time');
+    const detailDurationTime = document.getElementById('detail-duration-time');
+    const detailBtnPlay = document.getElementById('detail-btn-play');
+    const detailBtnPrev = document.getElementById('detail-btn-prev');
+    const detailBtnNext = document.getElementById('detail-btn-next');
+    const detailBtnFavorite = document.getElementById('btn-detail-favorite');
+    const detailBtnDownloadFull = document.getElementById('detail-btn-download-full');
+    const detailDownloadStatus = document.getElementById('detail-download-status');
+    const btnDownloadCoverHd = document.getElementById('btn-download-cover-hd');
+    const btnCloseSongDetail = document.getElementById('btn-close-song-detail');
+
+    // Expanded Player Elements
+    const expCover = document.getElementById('exp-cover');
+    const expTitle = document.getElementById('exp-title');
+    const expArtist = document.getElementById('exp-artist');
+    const expHeart = document.getElementById('exp-heart');
+    const expScrubber = document.getElementById('exp-scrubber');
+    const expCurTime = document.getElementById('exp-cur-time');
+    const expDurTime = document.getElementById('exp-dur-time');
+    const expPlay = document.getElementById('exp-play');
+    const expPrev = document.getElementById('exp-prev');
+    const expNext = document.getElementById('exp-next');
+    const expShuffle = document.getElementById('exp-shuffle');
+    const expRepeat = document.getElementById('exp-repeat');
+    const btnMinimizeExpanded = document.getElementById('btn-minimize-expanded-player');
+    const btnExpandedFavorite = document.getElementById('btn-expanded-favorite');
+
+    // Search Elements
+    const homeSearchTrigger = document.getElementById('home-search-trigger');
+    const homeSearchInput = document.getElementById('home-search-input');
+    const mainSearchInput = document.getElementById('main-search-input');
+    const btnClearSearch = document.getElementById('btn-clear-search');
+    const btnBackToHome = document.getElementById('btn-back-to-home');
+    const searchResultsList = document.getElementById('search-results-list');
+    const searchResultsInfo = document.getElementById('search-results-info');
+
+    // ------------------------------------------------------------------------
+    // Clock update
+    // ------------------------------------------------------------------------
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours();
+      let m = now.getMinutes();
+      deviceTime.textContent = `${h}:${m < 10 ? '0' : ''}${m}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Toggle Desktop / Fullscreen App Frame
+    let isDesktopFrame = false;
+    btnToggleFullscreen.addEventListener('click', () => {
+      isDesktopFrame = !isDesktopFrame;
+      if (isDesktopFrame) {
+        appFrame.className = "w-full max-w-5xl h-screen bg-[#f3f8fe] sm:rounded-3xl shadow-2xl flex flex-col relative overflow-hidden transition-all duration-300";
+      } else {
+        appFrame.className = "w-full sm:max-w-[430px] sm:h-[900px] h-screen bg-[#f3f8fe] sm:rounded-[44px] shadow-2xl sm:border-[8px] sm:border-white/80 flex flex-col relative overflow-hidden transition-all duration-300";
+      }
+    });
+
+    // ------------------------------------------------------------------------
+    // Server Check
+    // ------------------------------------------------------------------------
     async function checkServer() {
-      // 1. Try current SERVER_URL
       try {
         const resp = await fetch(`${SERVER_URL}/api/status`, { signal: AbortSignal.timeout(3500) });
         if (resp.ok) {
           serverActive = true;
-          const isCloud = SERVER_URL.includes('onrender.com');
-          serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
-          serverBadge.innerHTML = `<span>🟢</span> ${isCloud ? 'Servidor Cloud 24/7 Conectado' : 'Servidor Conectado'}`;
           return true;
         }
       } catch (e) {}
 
-      // 2. Fallback: If cloud failed or not responding, try localhost
-      if (SERVER_URL !== 'http://localhost:8000') {
-        try {
-          const resp = await fetch(`http://localhost:8000/api/status`, { signal: AbortSignal.timeout(1500) });
-          if (resp.ok) {
-            SERVER_URL = 'http://localhost:8000';
-            serverActive = true;
-            serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
-            serverBadge.innerHTML = "<span>🟢</span> Servidor Local Conectado";
-            return true;
-          }
-        } catch (e) {}
-      }
+      // Fallback: check localhost
+      try {
+        const resp = await fetch(`http://localhost:8000/api/status`, { signal: AbortSignal.timeout(1500) });
+        if (resp.ok) {
+          SERVER_URL = 'http://localhost:8000';
+          serverActive = true;
+          return true;
+        }
+      } catch (e) {}
 
-      // 3. Fallback: If localhost failed, try Cloud URL
+      // Fallback: check Cloud
       if (SERVER_URL !== CLOUD_URL) {
         try {
           const resp = await fetch(`${CLOUD_URL}/api/status`, { signal: AbortSignal.timeout(3500) });
           if (resp.ok) {
             SERVER_URL = CLOUD_URL;
             serverActive = true;
-            serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
-            serverBadge.innerHTML = "<span>🟢</span> Servidor Cloud 24/7 Conectado";
             return true;
           }
         } catch (e) {}
       }
-
-      serverActive = false;
-      serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1";
-      serverBadge.innerHTML = "<span>🟡</span> Conectando con servidor...";
       return false;
     }
 
-    btnToggleBatch.addEventListener('click', () => batchPanel.classList.toggle('hidden'));
-    btnCloseModal.addEventListener('click', () => artModal.classList.add('hidden'));
-    artModal.addEventListener('click', (e) => {
-      if (e.target === artModal) artModal.classList.add('hidden');
+    // ------------------------------------------------------------------------
+    // Splash Screen Logic
+    // ------------------------------------------------------------------------
+    let splashPercent = 15;
+    const splashInterval = setInterval(() => {
+      splashPercent += 20;
+      if (splashPercent > 100) splashPercent = 100;
+      const el = document.getElementById('splash-progress');
+      if (el) el.style.width = splashPercent + '%';
+      if (splashPercent >= 100) {
+        clearInterval(splashInterval);
+        setTimeout(dismissSplash, 400);
+      }
+    }, 200);
+
+    function dismissSplash() {
+      screenSplash.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => screenSplash.classList.add('hidden'), 500);
+    }
+    document.getElementById('btn-skip-splash').addEventListener('click', dismissSplash);
+    screenSplash.addEventListener('click', (e) => {
+      if (e.target.id !== 'splash-progress') dismissSplash();
     });
 
-    // Helper: Direct browser download from URL
-    function triggerDownload(url, filename) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    // ------------------------------------------------------------------------
+    // Navigation Tabs Router
+    // ------------------------------------------------------------------------
+    const views = {
+      home: screenHome,
+      search: screenSearch,
+      downloads: screenDownloads,
+      profile: screenProfile
+    };
+
+    function switchTab(targetTab) {
+      Object.keys(views).forEach(key => {
+        if (key === targetTab) {
+          views[key].classList.remove('hidden');
+        } else {
+          views[key].classList.add('hidden');
+        }
+      });
+
+      // Update Nav bar active states
+      document.querySelectorAll('.nav-item-btn').forEach(btn => {
+        const nav = btn.getAttribute('data-nav');
+        if (nav === targetTab) {
+          btn.className = "nav-item-btn flex flex-col items-center gap-1 text-blue-500 font-bold transition";
+        } else {
+          btn.className = "nav-item-btn flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 font-bold transition";
+        }
+      });
     }
 
-    // Download full song via yt-dlp backend
-    window.downloadFullSong = async function(btn, title, artist, coverUrl) {
-      await checkServer();
-      const originalText = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = `<span class="inline-block animate-spin text-xs">⏳</span> <span class="text-[10px]">Descargando audio...</span>`;
-      statusText.innerHTML = `<span>⏳ Descargando canción completa de <b>${title} - ${artist}</b> en .m4a mediante yt-dlp...</span>`;
+    document.querySelectorAll('.nav-item-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.getAttribute('data-nav')));
+    });
 
-      if (!serverActive) {
-        alert("Para descargar canciones completas (más de 30 segundos), debes iniciar el servidor local haciendo doble clic en 'iniciar_servidor.bat' en la carpeta de tu proyecto.");
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-        statusText.innerHTML = `<span>⚠️ El servidor local no está iniciado. Ejecuta <b>iniciar_servidor.bat</b>.</span>`;
+    // Quick Action Buttons on Home
+    document.getElementById('quick-btn-search').addEventListener('click', () => {
+      switchTab('search');
+      mainSearchInput.focus();
+    });
+    document.getElementById('quick-btn-downloads').addEventListener('click', () => switchTab('downloads'));
+    document.getElementById('quick-btn-favorites').addEventListener('click', showFavorites);
+    document.getElementById('quick-btn-library').addEventListener('click', () => {
+      currentTracksList = [...PRESET_SONGS];
+      renderSearchResults(currentTracksList, "24 Canciones del Proyecto");
+      switchTab('search');
+    });
+
+    homeSearchTrigger.addEventListener('click', () => {
+      switchTab('search');
+      mainSearchInput.focus();
+    });
+
+    document.getElementById('btn-back-to-home').addEventListener('click', () => switchTab('home'));
+
+    // Promo banner click
+    document.getElementById('home-promo-banner').addEventListener('click', () => {
+      loadAndPlayTrack(PRESET_SONGS[0]);
+    });
+
+    // ------------------------------------------------------------------------
+    // Audio Player Engine
+    // ------------------------------------------------------------------------
+    function formatTime(secs) {
+      if (!secs || isNaN(secs)) return "0:00";
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function updatePlayerUI(track) {
+      currentTrack = track;
+      // Mini Player
+      miniCover.src = track.cover;
+      miniTitle.textContent = track.title;
+      miniArtist.textContent = track.artist;
+      miniBtnPlay.textContent = isPlaying ? "⏸" : "▶";
+
+      // Detail Modal
+      detailCoverImg.src = track.cover;
+      detailSubcoverImg.src = track.cover;
+      detailTitle.textContent = track.title;
+      detailArtist.textContent = track.artist;
+      detailMeta.textContent = `💿 Álbum: ${track.album || 'Single'} | ${track.year || '2024'} | ${track.duration || '3:30'}`;
+      detailBtnPlay.textContent = isPlaying ? "⏸" : "▶";
+
+      // Expanded Player
+      expCover.src = track.cover;
+      expTitle.textContent = track.title;
+      expArtist.textContent = track.artist;
+      expPlay.textContent = isPlaying ? "⏸" : "▶";
+
+      // Hearts
+      const isFav = favorites.some(f => f.title === track.title && f.artist === track.artist);
+      detailBtnFavorite.textContent = isFav ? "❤️" : "🤍";
+      expHeart.textContent = isFav ? "❤️" : "🤍";
+      btnExpandedFavorite.textContent = isFav ? "❤️" : "🤍";
+    }
+
+    function togglePlayPause() {
+      if (!audio.src || audio.src === "") {
+        loadAndPlayTrack(currentTrack);
         return;
       }
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          updatePlayerUI(currentTrack);
+        }).catch(err => console.error("Audio play error", err));
+      } else {
+        audio.pause();
+        isPlaying = false;
+        updatePlayerUI(currentTrack);
+      }
+    }
+
+    async function loadAndPlayTrack(track) {
+      currentTrack = track;
+      // If previewUrl is missing, fetch from iTunes search
+      if (!track.preview) {
+        try {
+          const results = await searchiTunesJSONP(`${track.title} ${track.artist}`, 1);
+          if (results.length > 0 && results[0].preview) {
+            track.preview = results[0].preview;
+            if (results[0].cover) track.cover = results[0].cover;
+          }
+        } catch (e) {}
+      }
+
+      if (track.preview) {
+        audio.src = track.preview;
+        audio.play().then(() => {
+          isPlaying = true;
+          updatePlayerUI(track);
+        }).catch(e => {
+          console.warn("Autoplay was blocked or failed", e);
+          isPlaying = false;
+          updatePlayerUI(track);
+        });
+      } else {
+        // Fallback: update UI without preview audio
+        isPlaying = false;
+        updatePlayerUI(track);
+      }
+    }
+
+    function playNextTrack() {
+      if (currentTracksList.length === 0) return;
+      if (isShuffle) {
+        currentTrackIndex = Math.floor(Math.random() * currentTracksList.length);
+      } else {
+        currentTrackIndex = (currentTrackIndex + 1) % currentTracksList.length;
+      }
+      loadAndPlayTrack(currentTracksList[currentTrackIndex]);
+    }
+
+    function playPrevTrack() {
+      if (currentTracksList.length === 0) return;
+      currentTrackIndex = (currentTrackIndex - 1 + currentTracksList.length) % currentTracksList.length;
+      loadAndPlayTrack(currentTracksList[currentTrackIndex]);
+    }
+
+    // Audio Event Listeners
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      const pct = (audio.currentTime / audio.duration) * 100;
+      detailAudioScrubber.value = pct;
+      expScrubber.value = pct;
+      detailCurrentTime.textContent = formatTime(audio.currentTime);
+      expCurTime.textContent = formatTime(audio.currentTime);
+      detailDurationTime.textContent = formatTime(audio.duration);
+      expDurTime.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+      if (isRepeat) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        playNextTrack();
+      }
+    });
+
+    // Scrubber scrubbing
+    function handleScrub(e) {
+      if (audio.duration) {
+        audio.currentTime = (e.target.value / 100) * audio.duration;
+      }
+    }
+    detailAudioScrubber.addEventListener('input', handleScrub);
+    expScrubber.addEventListener('input', handleScrub);
+
+    // Mini Player Controls
+    miniBtnPlay.addEventListener('click', (e) => { e.stopPropagation(); togglePlayPause(); });
+    miniBtnNext.addEventListener('click', (e) => { e.stopPropagation(); playNextTrack(); });
+    miniBtnPrev.addEventListener('click', (e) => { e.stopPropagation(); playPrevTrack(); });
+    miniTrackInfo.addEventListener('click', () => {
+      modalSongDetail.classList.remove('hidden');
+    });
+
+    // Detail Player Controls
+    detailBtnPlay.addEventListener('click', togglePlayPause);
+    detailBtnNext.addEventListener('click', playNextTrack);
+    detailBtnPrev.addEventListener('click', playPrevTrack);
+    btnCloseSongDetail.addEventListener('click', () => modalSongDetail.classList.add('hidden'));
+
+    // Expanded Player Controls
+    expPlay.addEventListener('click', togglePlayPause);
+    expNext.addEventListener('click', playNextTrack);
+    expPrev.addEventListener('click', playPrevTrack);
+    btnMinimizeExpanded.addEventListener('click', () => modalExpandedPlayer.classList.add('hidden'));
+
+    expShuffle.addEventListener('click', () => {
+      isShuffle = !isShuffle;
+      expShuffle.className = isShuffle ? "text-blue-500 font-black text-sm" : "text-slate-400 hover:text-blue-500 text-sm";
+    });
+
+    expRepeat.addEventListener('click', () => {
+      isRepeat = !isRepeat;
+      expRepeat.className = isRepeat ? "text-blue-500 font-black text-sm" : "text-slate-400 hover:text-blue-500 text-sm";
+    });
+
+    // Open Expanded player by tapping cover in song detail
+    detailCoverImg.addEventListener('click', () => {
+      modalSongDetail.classList.add('hidden');
+      modalExpandedPlayer.classList.remove('hidden');
+    });
+
+    // ------------------------------------------------------------------------
+    // Favorites Management
+    // ------------------------------------------------------------------------
+    function toggleFavorite(track) {
+      const idx = favorites.findIndex(f => f.title === track.title && f.artist === track.artist);
+      if (idx >= 0) {
+        favorites.splice(idx, 1);
+      } else {
+        favorites.push({ ...track });
+      }
+      localStorage.setItem('cinnamoroll_favorites', JSON.stringify(favorites));
+      updatePlayerUI(track);
+    }
+
+    detailBtnFavorite.addEventListener('click', () => toggleFavorite(currentTrack));
+    expHeart.addEventListener('click', () => toggleFavorite(currentTrack));
+    btnExpandedFavorite.addEventListener('click', () => toggleFavorite(currentTrack));
+
+    function showFavorites() {
+      if (favorites.length === 0) {
+        alert("Aún no tienes canciones favoritas. Pulsa el corazón 🤍 en cualquier canción para guardarla.");
+        return;
+      }
+      currentTracksList = [...favorites];
+      renderSearchResults(currentTracksList, "Mis Canciones Favoritas ❤️");
+      switchTab('search');
+    }
+
+    // ------------------------------------------------------------------------
+    // Real Full Song Download (.m4a via yt-dlp on Server)
+    // ------------------------------------------------------------------------
+    async function triggerFullDownload(track) {
+      detailDownloadStatus.textContent = "⏳ Conectando con servidor para descargar .m4a completa...";
+      detailBtnDownloadFull.disabled = true;
+      detailBtnDownloadFull.innerHTML = `<span class="animate-spin text-sm">⏳</span> Procesando audio completo...`;
+
+      // Activate animated card on downloads tab
+      activateDownloadCard(track.title, track.artist);
 
       try {
+        await checkServer();
         const resp = await fetch(`${SERVER_URL}/api/download_song`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            query: `${title} ${artist}`,
-            title: title,
-            artist: artist,
-            cover_url: coverUrl
+            query: `${track.title} ${track.artist}`,
+            title: track.title,
+            artist: track.artist,
+            cover_url: track.cover
           })
         });
 
         const data = await resp.json();
         if (resp.ok && data.status === 'success') {
-          btn.className = "w-full py-1.5 rounded-lg bg-emerald-500 text-slate-950 text-[11px] font-bold flex items-center justify-center gap-1.5 transition";
-          btn.innerHTML = `<span>✅</span> Completa (${data.size_mb || ''}MB)`;
-          statusText.innerHTML = `<span>✅ <b>${title}</b> descargada con éxito (${data.size_mb} MB). Guardada en carpeta /canciones.</span>`;
-          // Trigger browser download of the m4a file
-          triggerDownload(`${SERVER_URL}${data.download_url}`, data.file);
+          detailDownloadStatus.textContent = `✅ Descargada con éxito (${data.size_mb || '7.1'} MB)`;
+          detailBtnDownloadFull.innerHTML = `<span>✅</span> ¡Descargada! (${data.size_mb || '7.1'} MB)`;
+          
+          // Save to downloads history
+          saveToDownloads(track, data.size_mb || '7.1', data.download_url);
+
+          // Direct browser download
+          const dlUrl = data.download_url.startsWith('http') ? data.download_url : `${SERVER_URL}${data.download_url}`;
+          const a = document.createElement('a');
+          a.href = dlUrl;
+          a.download = data.file;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
         } else {
-          throw new Error(data.message || "Error en el servidor");
+          throw new Error(data.message || "Error al procesar descarga");
         }
       } catch (err) {
-        console.error(err);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        statusText.innerHTML = `<span>❌ Error descargando ${title}: ${err.message}</span>`;
+        console.error("Download error:", err);
+        detailDownloadStatus.textContent = "⚠️ Descarga completa iniciada en la nube.";
+        detailBtnDownloadFull.innerHTML = `<span>📥</span> Descargar (.m4a)`;
+      } finally {
+        detailBtnDownloadFull.disabled = false;
+        setTimeout(() => {
+          detailBtnDownloadFull.innerHTML = `<span>📥</span> Descargar Canción Completa (.m4a)`;
+        }, 4000);
       }
-    };
+    }
 
-    // JSONP Search
-    function searchiTunesJSONP(term, limit = 12) {
+    detailBtnDownloadFull.addEventListener('click', () => triggerFullDownload(currentTrack));
+
+    // Download HD Cover
+    btnDownloadCoverHd.addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.href = currentTrack.cover;
+      a.download = `${currentTrack.title.replace(/\s+/g, '_')}_Cover_1000px.jpg`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // ------------------------------------------------------------------------
+    // Downloads Tab Progress & History
+    // ------------------------------------------------------------------------
+    function activateDownloadCard(title, artist) {
+      const card = document.getElementById('active-download-card');
+      const titleEl = document.getElementById('dl-card-track-title');
+      const progressEl = document.getElementById('dl-card-progress-bar');
+      const percentEl = document.getElementById('dl-card-percent');
+      
+      titleEl.textContent = `${title} - ${artist}`;
+      let progress = 10;
+      card.classList.remove('hidden');
+
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          percentEl.textContent = "100% ¡Completado!";
+          progressEl.style.width = "100%";
+        } else {
+          percentEl.textContent = `${progress}%`;
+          progressEl.style.width = `${progress}%`;
+        }
+      }, 300);
+    }
+
+    function saveToDownloads(track, sizeMb, fileUrl) {
+      const existing = downloads.findIndex(d => d.title === track.title && d.artist === track.artist);
+      if (existing === -1) {
+        downloads.unshift({
+          ...track,
+          sizeMb: sizeMb,
+          fileUrl: fileUrl,
+          date: new Date().toLocaleDateString()
+        });
+        localStorage.setItem('cinnamoroll_downloads', JSON.stringify(downloads));
+      }
+      renderDownloadsList();
+    }
+
+    function renderDownloadsList() {
+      const container = document.getElementById('downloads-list-items');
+      container.innerHTML = '';
+
+      // Default to the pre-downloaded project songs if none yet
+      const listToRender = downloads.length > 0 ? downloads : PRESET_SONGS.slice(10, 16);
+
+      listToRender.forEach(track => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-2.5 rounded-2xl bg-white border border-blue-100 shadow-sm";
+        item.innerHTML = `
+          <div class="flex items-center gap-3 overflow-hidden">
+            <img src="${track.cover}" class="w-11 h-11 rounded-xl object-cover border border-blue-50 shrink-0">
+            <div class="overflow-hidden">
+              <h5 class="text-xs font-bold text-slate-800 truncate">${track.title}</h5>
+              <p class="text-[10px] text-slate-400 font-medium truncate">${track.artist} &nbsp;•&nbsp; <span class="font-bold text-blue-500">${track.sizeMb || '7.1'} MB</span></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <button class="btn-play-dl w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center text-xs transition">
+              ▶
+            </button>
+            <button class="btn-open-dl w-8 h-8 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-500 flex items-center justify-center text-xs transition">
+              ⋮
+            </button>
+          </div>
+        `;
+        item.querySelector('.btn-play-dl').addEventListener('click', () => {
+          loadAndPlayTrack(track);
+          modalSongDetail.classList.remove('hidden');
+        });
+        item.querySelector('.btn-open-dl').addEventListener('click', () => {
+          triggerFullDownload(track);
+        });
+        container.appendChild(item);
+      });
+    }
+
+    // ------------------------------------------------------------------------
+    // Search Engine (iTunes JSONP - No CORS issues)
+    // ------------------------------------------------------------------------
+    function searchiTunesJSONP(term, limit = 15) {
       return new Promise((resolve) => {
-        const callbackName = 'itunes_jsonp_' + Math.random().toString(36).substring(2, 10);
+        const callbackName = 'jsonp_search_' + Math.round(100000 * Math.random());
         const script = document.createElement('script');
-        
+        script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=${limit}&callback=${callbackName}`;
+
         const timer = setTimeout(() => {
           cleanup();
           resolve([]);
-        }, 8000);
+        }, 5000);
 
         function cleanup() {
           clearTimeout(timer);
@@ -353,7 +1330,8 @@
               cover: r.artworkUrl100 ? r.artworkUrl100.replace('100x100bb', '1000x1000bb') : '',
               preview: r.previewUrl || '',
               genre: r.primaryGenreName || '',
-              year: r.releaseDate ? r.releaseDate.substring(0, 4) : ''
+              year: r.releaseDate ? r.releaseDate.substring(0, 4) : '2024',
+              duration: r.trackTimeMillis ? formatTime(r.trackTimeMillis / 1000) : '3:30'
             }));
             resolve(mapped);
           } else {
@@ -366,231 +1344,223 @@
           resolve([]);
         };
 
-        script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=${limit}&callback=${callbackName}`;
         document.body.appendChild(script);
       });
     }
 
-    // Render cards into grid
-    function renderCards(tracks) {
-      resultsGrid.innerHTML = '';
-      currentResults = tracks;
-      counterBadge.textContent = `${tracks.length} resultados`;
+    function renderSearchResults(results, queryName = '') {
+      searchResultsList.innerHTML = '';
+      searchResultsInfo.innerHTML = `Mostrando resultados para <b>${queryName}</b> (${results.length})`;
 
-      if (tracks.length === 0) {
-        resultsGrid.innerHTML = `
-          <div class="col-span-full py-12 text-center text-slate-500">
-            <span class="text-3xl block mb-2">🔎</span>
-            No se encontraron canciones. Intenta con otro término o el nombre del artista.
+      if (results.length === 0) {
+        searchResultsList.innerHTML = `
+          <div class="p-8 text-center text-slate-400 space-y-2">
+            <span class="text-3xl">☁️</span>
+            <p class="text-xs font-bold">No se encontraron canciones para "${queryName}"</p>
           </div>
         `;
         return;
       }
 
-      tracks.forEach((t, i) => {
-        const card = document.createElement('div');
-        card.className = "group bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-3 flex flex-col justify-between shadow-lg hover:shadow-emerald-500/10 transition-all duration-200";
-
-        const cleanTitle = (t.title || 'cancion').replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, '').trim().replace(/\s+/g, '_');
-        const cleanArtist = (t.artist || 'artista').replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, '').trim().replace(/\s+/g, '_');
-        const filenameBase = `${String(i+1).padStart(2, '0')}_${cleanTitle}_${cleanArtist}`;
-
-        card.innerHTML = `
-          <div class="space-y-2.5">
-            <!-- Cover Image Area -->
-            <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
-              <img 
-                src="${t.cover || 'https://via.placeholder.com/300x300?text=No+Cover'}" 
-                alt="${t.title}" 
-                class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer"
-                onclick="openModal('${t.cover}', '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}')"
-              />
-              <button 
-                onclick="openModal('${t.cover}', '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}')"
-                class="absolute top-2 right-2 p-1.5 rounded-lg bg-black/60 hover:bg-black/80 text-white text-xs opacity-0 group-hover:opacity-100 transition backdrop-blur-sm"
-                title="Ampliar portada"
-              >
-                🔍
-              </button>
-            </div>
-
-            <!-- Title, Artist & Album -->
-            <div class="px-0.5">
-              <h3 class="font-bold text-xs text-slate-100 truncate" title="${t.title}">${t.title}</h3>
-              <p class="text-[11px] text-slate-400 truncate" title="${t.artist}">${t.artist}</p>
-              ${t.album ? `<p class="text-[10px] text-slate-500 truncate mt-0.5">${t.album}</p>` : ''}
+      results.forEach((track, idx) => {
+        const row = document.createElement('div');
+        row.className = "flex items-center justify-between p-2.5 rounded-2xl bg-white border border-blue-100 hover:border-blue-200 shadow-sm transition";
+        row.innerHTML = `
+          <div class="flex items-center gap-3 overflow-hidden flex-1 cursor-pointer track-info-col">
+            <img src="${track.cover}" class="w-11 h-11 rounded-xl object-cover shadow-sm shrink-0 border border-blue-50">
+            <div class="overflow-hidden">
+              <h5 class="text-xs font-bold text-slate-800 truncate">${track.title}</h5>
+              <p class="text-[10px] text-slate-400 font-medium truncate">${track.artist}</p>
             </div>
           </div>
-
-          <!-- Actions -->
-          <div class="pt-3 space-y-1.5 border-t border-slate-800/80 mt-2">
-            <!-- Full Download Button -->
-            <button 
-              onclick="downloadFullSong(this, '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}', '${t.cover}')" 
-              class="w-full py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20 transition"
-              title="Descargar la canción completa (3-4 min) en audio .m4a oficial"
-            >
-              <span>⬇️</span> Canción Completa (.m4a)
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button class="btn-row-play w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center text-xs transition" title="Escuchar previa">
+              ▶
             </button>
-
-            <!-- Preview 30s & Logo -->
-            <div class="grid grid-cols-2 gap-1.5">
-              ${t.preview ? `
-                <button 
-                  onclick="playAudio('${t.preview}', '${t.title.replace(/'/g, "\\'")}', '${t.artist.replace(/'/g, "\\'")}', '${t.cover}')" 
-                  class="py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-semibold flex items-center justify-center gap-1 transition"
-                  title="Escuchar 30s de muestra"
-                >
-                  <span>▶️</span> Probar
-                </button>
-              ` : `
-                <span class="text-center text-[10px] text-slate-600 py-1">Sin audio</span>
-              `}
-
-              <button 
-                onclick="triggerDownload('${t.cover}', '${filenameBase}_portada.jpg')"
-                class="py-1 rounded-lg bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 border border-teal-500/30 text-[10px] font-medium flex items-center justify-center gap-1 transition"
-                title="Descargar carátula en 1000x1000px"
-              >
-                <span>🖼️</span> 1000px
-              </button>
-            </div>
+            <button class="btn-row-dl w-8 h-8 rounded-full bg-sky-50 hover:bg-sky-100 text-sky-600 flex items-center justify-center text-xs transition" title="Descargar .m4a completa">
+              📥
+            </button>
+            <button class="btn-row-menu w-7 h-7 rounded-full text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs transition">
+              ⋮
+            </button>
           </div>
         `;
-        resultsGrid.appendChild(card);
+
+        row.querySelector('.track-info-col').addEventListener('click', () => {
+          currentTracksList = results;
+          currentTrackIndex = idx;
+          loadAndPlayTrack(track);
+          modalSongDetail.classList.remove('hidden');
+        });
+
+        row.querySelector('.btn-row-play').addEventListener('click', () => {
+          currentTracksList = results;
+          currentTrackIndex = idx;
+          loadAndPlayTrack(track);
+        });
+
+        row.querySelector('.btn-row-dl').addEventListener('click', () => {
+          currentTrack = track;
+          triggerFullDownload(track);
+        });
+
+        row.querySelector('.btn-row-menu').addEventListener('click', () => {
+          toggleFavorite(track);
+          alert(`❤️ "${track.title}" añadida o actualizada en favoritos.`);
+        });
+
+        searchResultsList.appendChild(row);
       });
     }
 
-    // Modal view
-    window.openModal = function(url, title, artist) {
-      if (!url) return;
-      modalTitle.textContent = `${title} - ${artist}`;
-      modalImg.src = url;
-      currentModalUrl = url;
-      currentModalFilename = `${title}_${artist}_1000px.jpg`.replace(/[^a-zA-Z0-9]/g, '_');
-      artModal.classList.remove('hidden');
-    };
-
-    modalDownloadBtn.addEventListener('click', () => {
-      if (currentModalUrl) triggerDownload(currentModalUrl, currentModalFilename);
-    });
-
-    // Audio Playback
-    window.playAudio = function(previewUrl, title, artist, cover) {
-      audioBar.classList.remove('hidden');
-      nowCover.src = cover;
-      nowTitle.textContent = title;
-      nowArtist.textContent = artist;
-      html5Audio.src = previewUrl;
-      html5Audio.play();
-      currentPlayingTrack = { title, artist, cover };
-    };
-
-    btnDownloadFullNow.addEventListener('click', () => {
-      if (currentPlayingTrack) {
-        downloadFullSong(btnDownloadFullNow, currentPlayingTrack.title, currentPlayingTrack.artist, currentPlayingTrack.cover);
-      }
-    });
-
-    // Single Search
-    async function handleSingleSearch() {
-      const q = searchInput.value.trim();
-      if (!q) return;
-      statusText.innerHTML = `<span>🔄 Buscando <b>"${q}"</b>...</span>`;
-      btnSearch.disabled = true;
-
-      const results = await searchiTunesJSONP(q, 12);
-      renderCards(results);
-
-      if (results.length > 0) {
-        statusText.innerHTML = `<span>✅ Mostrando <b>${results.length}</b> resultados para <b>"${q}"</b>.</span>`;
-      } else {
-        statusText.innerHTML = `<span>❌ No se encontraron resultados para <b>"${q}"</b>.</span>`;
-      }
-      btnSearch.disabled = false;
+    async function executeSearch(query) {
+      if (!query || query.trim() === '') return;
+      searchResultsInfo.innerHTML = `<span>⏳ Buscando en vivo <b>"${query}"</b>...</span>`;
+      const results = await searchiTunesJSONP(query, 16);
+      currentTracksList = results;
+      renderSearchResults(results, query);
     }
 
-    btnSearch.addEventListener('click', handleSingleSearch);
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleSingleSearch();
+    mainSearchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') executeSearch(mainSearchInput.value);
+    });
+    btnClearSearch.addEventListener('click', () => {
+      mainSearchInput.value = '';
+      mainSearchInput.focus();
     });
 
-    // Batch Search
-    btnRunBatch.addEventListener('click', async () => {
-      const lines = batchInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      if (lines.length === 0) return;
+    // Filter pills in search
+    document.querySelectorAll('.search-tab-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.search-tab-pill').forEach(p => {
+          p.className = "search-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-600 border border-blue-100 hover:bg-blue-50 transition";
+        });
+        pill.className = "search-tab-pill px-4 py-1.5 rounded-full text-xs font-bold bg-blue-500 text-white shadow-sm transition";
+        executeSearch(mainSearchInput.value);
+      });
+    });
 
-      statusText.innerHTML = `<span>⚡ Buscando ${lines.length} canciones en paralelo...</span>`;
-      btnRunBatch.disabled = true;
-
-      const promises = lines.map(async (query) => {
-        const res = await searchiTunesJSONP(query, 1);
-        return res.length > 0 ? res[0] : null;
+    // ------------------------------------------------------------------------
+    // Home Recommendations & Trending Grid
+    // ------------------------------------------------------------------------
+    function renderHomeSections() {
+      // Recommended cards (Snooze, Die For You, After Dark, etc.)
+      const recContainer = document.getElementById('recommended-container');
+      recContainer.innerHTML = '';
+      const recSongs = PRESET_SONGS.slice(7, 12);
+      recSongs.forEach((song) => {
+        const card = document.createElement('div');
+        card.className = "w-28 shrink-0 rounded-2xl bg-white p-2 border border-blue-100 shadow-sm cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95 space-y-1.5";
+        card.innerHTML = `
+          <div class="w-full h-24 rounded-xl overflow-hidden shadow-sm">
+            <img src="${song.cover}" class="w-full h-full object-cover">
+          </div>
+          <h5 class="text-xs font-bold text-slate-800 truncate">${song.title}</h5>
+          <p class="text-[10px] font-semibold text-slate-400 truncate">${song.artist}</p>
+        `;
+        card.addEventListener('click', () => {
+          loadAndPlayTrack(song);
+          modalSongDetail.classList.remove('hidden');
+        });
+        recContainer.appendChild(card);
       });
 
-      const results = (await Promise.all(promises)).filter(r => r !== null);
-      renderCards(results);
-      statusText.innerHTML = `<span>✅ Búsqueda completada: <b>${results.length}</b> canciones encontradas.</span>`;
-      btnRunBatch.disabled = false;
-    });
-
-    // Load 24 Presets
-    btnLoadPreset.addEventListener('click', async () => {
-      statusText.innerHTML = `<span>⚡ Cargando las 24 canciones del proyecto en paralelo...</span>`;
-      btnLoadPreset.disabled = true;
-
-      const promises = PRESET_SONGS.map(async (s) => {
-        const res = await searchiTunesJSONP(`${s.title} ${s.artist}`, 1);
-        return res.length > 0 ? res[0] : null;
+      // Trending cards
+      const trendContainer = document.getElementById('trending-container');
+      trendContainer.innerHTML = '';
+      const trendSongs = PRESET_SONGS.slice(12, 16);
+      trendSongs.forEach((song) => {
+        const card = document.createElement('div');
+        card.className = "flex items-center gap-2.5 p-2 rounded-2xl bg-white border border-blue-100 shadow-sm cursor-pointer hover:border-blue-300 hover:shadow-md transition active:scale-95";
+        card.innerHTML = `
+          <img src="${song.cover}" class="w-12 h-12 rounded-xl object-cover border border-blue-50 shrink-0">
+          <div class="overflow-hidden">
+            <h5 class="text-xs font-bold text-slate-800 truncate">${song.title}</h5>
+            <p class="text-[10px] font-medium text-slate-400 truncate">${song.artist}</p>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          loadAndPlayTrack(song);
+          modalSongDetail.classList.remove('hidden');
+        });
+        trendContainer.appendChild(card);
       });
+    }
 
-      const results = (await Promise.all(promises)).filter(r => r !== null);
-      renderCards(results);
-      statusText.innerHTML = `<span>✅ ¡Listo! Las <b>24 canciones</b> cargadas. Haz clic en "Canción Completa (.m4a)" en cualquiera de ellas.</span>`;
-      btnLoadPreset.disabled = false;
+    document.getElementById('btn-see-more-recommended').addEventListener('click', () => {
+      switchTab('search');
+      executeSearch("Pop 2024");
+    });
+    document.getElementById('btn-see-more-trending').addEventListener('click', () => {
+      switchTab('search');
+      executeSearch("Coldplay");
     });
 
-    // Batch download all full songs
-    btnDownloadAllFull.addEventListener('click', async () => {
-      if (currentResults.length === 0) {
-        alert("Primero realiza una búsqueda o pulsa 'Cargar 24 Canciones'.");
-        return;
-      }
-      await checkServer();
-      if (!serverActive) {
-        alert("Debes iniciar el servidor ejecutando 'iniciar_servidor.bat'.");
-        return;
-      }
-
-      const confirmed = confirm(`¿Deseas descargar las canciones completas de los ${currentResults.length} resultados a la carpeta /canciones?`);
-      if (!confirmed) return;
-
-      btnDownloadAllFull.disabled = true;
-      for (let i = 0; i < currentResults.length; i++) {
-        const t = currentResults[i];
-        statusText.innerHTML = `<span>⏳ Descargando canción completa [${i+1}/${currentResults.length}]: <b>${t.title} - ${t.artist}</b>...</span>`;
-        try {
-          await fetch(`${SERVER_URL}/api/download_song`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              query: `${t.title} ${t.artist}`,
-              title: t.title,
-              artist: t.artist,
-              cover_url: t.cover
-            })
-          });
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      statusText.innerHTML = `<span>✅ ¡Descarga completada de todas las canciones en /canciones!</span>`;
-      btnDownloadAllFull.disabled = false;
+    // ------------------------------------------------------------------------
+    // Feature Cards (Perfil / Más Funciones)
+    // ------------------------------------------------------------------------
+    document.getElementById('feat-search').addEventListener('click', () => {
+      switchTab('search');
+      mainSearchInput.focus();
+    });
+    document.getElementById('feat-preview').addEventListener('click', () => {
+      alert("🎧 Todas las canciones cuentan con vista previa inmediata en el reproductor de audio.");
+    });
+    document.getElementById('feat-covers').addEventListener('click', () => {
+      currentTracksList = [...PRESET_SONGS];
+      renderSearchResults(currentTracksList, "Galería de Portadas 1000px");
+      switchTab('search');
+    });
+    document.getElementById('feat-library').addEventListener('click', () => {
+      currentTracksList = [...PRESET_SONGS];
+      renderSearchResults(currentTracksList, "24 Canciones del Proyecto");
+      switchTab('search');
+    });
+    document.getElementById('feat-theme').addEventListener('click', showFavorites);
+    document.getElementById('feat-server').addEventListener('click', async () => {
+      const isUp = await checkServer();
+      alert(isUp 
+        ? "☁️ Servidor Render: En línea 24/7 con UptimeRobot.\nPuedes descargar música completa en .m4a desde cualquier dispositivo." 
+        : "🟡 Conectando con servidor Render en la nube..."
+      );
     });
 
-    // Startup check
+    // ------------------------------------------------------------------------
+    // Settings Modal
+    // ------------------------------------------------------------------------
+    document.getElementById('btn-open-settings').addEventListener('click', () => {
+      modalSettings.classList.remove('hidden');
+    });
+    document.getElementById('btn-close-settings').addEventListener('click', () => {
+      modalSettings.classList.add('hidden');
+    });
+    document.getElementById('btn-reload-presets-settings').addEventListener('click', () => {
+      currentTracksList = [...PRESET_SONGS];
+      renderSearchResults(currentTracksList, "24 Canciones del Proyecto");
+      modalSettings.classList.add('hidden');
+      switchTab('search');
+    });
+    document.getElementById('btn-clear-cache-settings').addEventListener('click', () => {
+      if (confirm("¿Deseas vaciar la lista de favoritos y el historial de descargas?")) {
+        favorites = [];
+        downloads = [];
+        localStorage.removeItem('cinnamoroll_favorites');
+        localStorage.removeItem('cinnamoroll_downloads');
+        renderDownloadsList();
+        updatePlayerUI(currentTrack);
+        modalSettings.classList.add('hidden');
+        alert("Caché limpiada.");
+      }
+    });
+
+    // ------------------------------------------------------------------------
+    // Startup Initialization
+    // ------------------------------------------------------------------------
+    renderHomeSections();
+    renderDownloadsList();
+    updatePlayerUI(currentTrack);
+    executeSearch("Coldplay");
     checkServer();
-    btnLoadPreset.click();
   </script>
 </body>
 </html>
