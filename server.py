@@ -47,6 +47,46 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json({"status": "running", "songs_dir": SONGS_DIR, "covers_dir": COVERS_DIR})
             return
 
+        if path.startswith('/api/debug_dl'):
+            parsed_qs = urllib.parse.parse_qs(parsed.query)
+            q = parsed_qs.get('q', ['Coldplay Yellow'])[0]
+            out_test = os.path.join(SONGS_DIR, "test_diag.%(ext)s")
+            
+            p_ff = subprocess.run(["ffmpeg", "-version"], capture_output=True, text=True, errors='ignore')
+            
+            cmd_yt = [
+                "yt-dlp",
+                "--verbose",
+                "--extractor-args", "youtube:player_client=android,tv_embedded",
+                f"ytsearch1:{q} audio",
+                "-x",
+                "--audio-format", "m4a",
+                "-o", out_test
+            ]
+            p_yt = subprocess.run(cmd_yt, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+            
+            cmd_sc = [
+                "yt-dlp",
+                "--verbose",
+                f"scsearch1:{q}",
+                "-x",
+                "--audio-format", "m4a",
+                "-o", out_test
+            ]
+            p_sc = subprocess.run(cmd_sc, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+            
+            self.send_json({
+                "ffmpeg_ok": p_ff.returncode == 0,
+                "ffmpeg_err": p_ff.stderr[:100] if p_ff.stderr else "",
+                "yt_code": p_yt.returncode,
+                "yt_err": p_yt.stderr[-400:],
+                "yt_out": p_yt.stdout[-400:],
+                "sc_code": p_sc.returncode,
+                "sc_err": p_sc.stderr[-400:],
+                "sc_out": p_sc.stdout[-400:]
+            })
+            return
+
         if path == '/api/downloads':
             items = []
             if os.path.exists(SONGS_DIR):
