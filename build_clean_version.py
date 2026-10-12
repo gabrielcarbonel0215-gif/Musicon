@@ -61,7 +61,7 @@ html_content = f'''<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Cinnamoroll Music</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -77,6 +77,66 @@ html_content = f'''<!DOCTYPE html>
     ::-webkit-scrollbar-track {{ background: transparent; }}
     ::-webkit-scrollbar-thumb {{ background: #c8defa; border-radius: 9999px; }}
     ::-webkit-scrollbar-thumb:hover {{ background: #96c2f7; }}
+
+    html, body {{
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      background-color: #f4f8fe;
+      -webkit-font-smoothing: antialiased;
+    }}
+
+    #app-frame {{
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      max-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      background-color: #f4f8fe;
+    }}
+
+    @media (min-width: 640px) {{
+      body {{
+        overflow: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background-color: #eaf2fd;
+      }}
+      #app-frame {{
+        max-width: 420px;
+        height: 880px;
+        max-height: calc(100vh - 2rem);
+        border-radius: 40px;
+        border: 6px solid white;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }}
+    }}
+
+    .screen-view {{
+      flex: 1 1 0%;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+    }}
+
+    .safe-bottom-dock {{
+      min-height: 64px;
+      padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
+      box-sizing: content-box;
+    }}
+
+    .safe-mini-player {{
+      bottom: calc(64px + max(12px, env(safe-area-inset-bottom, 0px)));
+    }}
 
     @keyframes gentle-float {{
       0%, 100% {{ transform: translateY(0px); }}
@@ -116,10 +176,10 @@ html_content = f'''<!DOCTYPE html>
     }}
   </style>
 </head>
-<body class="bg-[#eaf2fd] text-slate-700 min-h-screen flex items-center justify-center p-0 sm:p-4 select-none overflow-x-hidden">
+<body class="text-slate-700 select-none">
 
-  <!-- Main Mobile App Container (Clean, no fake mobile status bars!) -->
-  <div id="app-frame" class="w-full sm:max-w-[420px] h-screen sm:h-[880px] bg-[#f4f8fe] sm:rounded-[40px] shadow-2xl sm:border-[6px] sm:border-white flex flex-col relative overflow-hidden transition-all duration-300">
+  <!-- Main Mobile App Container (100dvh pinned dock architecture) -->
+  <div id="app-frame" class="transition-all duration-300">
 
     <!-- ======================================================== -->
     <!-- 1. PANTALLA DE INICIO (SPLASH DE CARGA CINNAMOROLL) -->
@@ -160,7 +220,7 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <!-- 2. PANTALLA PRINCIPAL (INICIO) -->
     <!-- ======================================================== -->
-    <div id="screen-home" class="flex-1 flex flex-col overflow-y-auto px-5 pt-4 pb-32 space-y-4 screen-view">
+    <div id="screen-home" class="flex-1 min-h-0 flex flex-col overflow-y-auto px-5 pt-4 pb-36 space-y-4 screen-view">
       <!-- App Header: avatar + title (gear removed per user request) -->
       <div class="flex items-center gap-2 pt-1">
         <img src="{c_avatar}" alt="Cinnamoroll" class="h-8 w-auto object-contain drop-shadow-xs">
@@ -267,7 +327,7 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <!-- 3. RESULTADOS DE BÚSQUEDA (COLDPLAY, ETC.) -->
     <!-- ======================================================== -->
-    <div id="screen-search" class="hidden flex-1 flex flex-col overflow-y-auto px-5 pt-4 pb-32 space-y-3.5 screen-view">
+    <div id="screen-search" class="hidden flex-1 min-h-0 flex flex-col overflow-y-auto px-5 pt-4 pb-36 space-y-3.5 screen-view">
       <div class="flex items-center gap-2">
         <button id="btn-back-to-home" class="w-8 h-8 rounded-full bg-white shadow-xs flex items-center justify-center text-slate-500 hover:text-blue-500 border border-blue-100 transition shrink-0">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -314,7 +374,7 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <!-- 4. PANTALLA DE DESCARGAS REAL Y FUNCIONAL -->
     <!-- ======================================================== -->
-    <div id="screen-downloads" class="hidden flex-1 flex flex-col overflow-y-auto px-5 pt-4 pb-32 space-y-3.5 screen-view">
+    <div id="screen-downloads" class="hidden flex-1 min-h-0 flex flex-col overflow-y-auto px-5 pt-4 pb-36 space-y-3.5 screen-view">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -373,7 +433,7 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <!-- STICKY MINI PLAYER BAR (Fix You - Coldplay) -->
     <!-- ======================================================== -->
-    <div id="mini-player-bar" class="absolute bottom-[72px] left-3 right-3 z-30 bg-white/95 backdrop-blur-md rounded-2xl p-2 px-3 shadow-md border border-[#d6e8fe] flex items-center justify-between transition-all cursor-pointer">
+    <div id="mini-player-bar" class="absolute safe-mini-player left-3 right-3 z-30 bg-white/95 backdrop-blur-md rounded-2xl p-2 px-3 shadow-md border border-[#d6e8fe] flex items-center justify-between transition-all cursor-pointer">
       <div id="mini-track-info" class="flex items-center gap-2.5 overflow-hidden flex-1 mr-2">
         <img id="mini-cover" src="logos/Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d1/3f/b5/d13fb5a5-de80-09d5-316c-87ef21ffb93e/artwork.jpg/1000x1000bb.jpg'" alt="Cover" class="w-9 h-9 rounded-xl object-cover shadow-xs shrink-0 border border-blue-50">
         <div class="overflow-hidden">
@@ -395,7 +455,7 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <!-- BOTTOM DOCK NAVIGATION (3 Options: Inicio, Buscar, Descargas) -->
     <!-- ======================================================== -->
-    <nav class="h-[64px] bg-white border-t border-[#e2eefd] px-8 grid grid-cols-3 items-center z-30 shrink-0">
+    <nav class="safe-bottom-dock bg-white border-t border-[#e2eefd] px-8 grid grid-cols-3 items-center z-30 shrink-0">
       <!-- 1. Inicio -->
       <button data-nav="home" class="nav-item-btn flex flex-col items-center justify-center gap-1 text-blue-500 font-bold transition">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
