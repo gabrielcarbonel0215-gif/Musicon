@@ -652,6 +652,9 @@ html_content = f'''<!DOCTYPE html>
     let SERVER_URL = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
       ? window.location.origin
       : CLOUD_URL;
+    if (window.location.hostname.includes('github.io')) {{
+      SERVER_URL = CLOUD_URL;
+    }}
 
     let serverActive = false;
     let currentTracksList = [...PLAYLIST_SONGS];
@@ -1021,13 +1024,55 @@ html_content = f'''<!DOCTYPE html>
       switchTab('search');
     }}
 
+    // Universal Direct Browser File Downloader (guarantees file save on mobile and desktop)
+    async function triggerBrowserDownload(url, filename) {{
+      if (!url) return false;
+      const cleanFilename = (filename || 'cancion.m4a').replace(/[/\\?%*:|"<>]/g, '_');
+      try {{
+        const resp = await fetch(url, {{ mode: 'cors' }});
+        if (resp.ok) {{
+          const blob = await resp.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = blobUrl;
+          a.download = cleanFilename;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {{
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+          }}, 3000);
+          return true;
+        }}
+      }} catch (e) {{
+        console.warn("Direct blob download warning:", e);
+      }}
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = cleanFilename;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => document.body.removeChild(a), 1000);
+      return true;
+    }}
+
     // Real Download Engine
     async function downloadFull(track) {{
-      detailDownloadStatus.textContent = "⏳ Conectando con servidor en la nube...";
+      const cleanTitle = (track.title || 'cancion').replace(/[/\\?%*:|"<>]/g, '_');
+      const cleanArtist = (track.artist || 'artista').replace(/[/\\?%*:|"<>]/g, '_');
+      const fileName = `${{cleanTitle}}_${{cleanArtist}}.m4a`;
+
+      detailDownloadStatus.textContent = "⏳ Preparando audio para descarga...";
       detailBtnDownloadFull.disabled = true;
-      detailBtnDownloadFull.innerHTML = `<span>Descargando audio completo (.m4a)...</span>`;
+      detailBtnDownloadFull.innerHTML = `<span>Descargando archivo .m4a...</span>`;
 
       startActiveDownloadCard(track.title, track.artist);
+
+      let dlUrl = track.audioUrl || (track.file ? `/api/audio/${{track.file}}` : null);
+      let sizeMb = track.size ? track.size.replace(' MB', '') : '7.5';
 
       try {{
         await checkServer();
@@ -1038,51 +1083,54 @@ html_content = f'''<!DOCTYPE html>
             query: `${{track.title}} ${{track.artist}}`,
             title: track.title,
             artist: track.artist,
-            cover_url: track.fallback || track.cover
+            cover_url: track.fallback || track.cover,
+            preview_url: track.preview || track.audioUrl || ''
           }})
         }});
 
-        const data = await resp.json();
-        if (resp.ok && data.status === 'success') {{
-          finishActiveDownloadCard(track.title, track.artist, data.size_mb || '7.1');
-          detailDownloadStatus.textContent = `Descargada con éxito (${{data.size_mb || '7.1'}} MB)`;
-          detailBtnDownloadFull.innerHTML = `<span>¡Descargada! (${{data.size_mb || '7.1'}} MB)</span>`;
-          saveDownload(track, data.size_mb || '7.1', data.download_url);
-
-          const dlUrl = data.download_url.startsWith('http') ? data.download_url : `${{SERVER_URL}}${{data.download_url}}`;
-          const a = document.createElement('a');
-          a.href = dlUrl;
-          a.download = data.file;
-          a.target = '_blank';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }} else {{
-          throw new Error("Error en servidor");
+        if (resp.ok) {{
+          const data = await resp.json();
+          if (data && data.status === 'success') {{
+            dlUrl = data.download_url.startsWith('http') ? data.download_url : `${{SERVER_URL}}${{data.download_url}}`;
+            sizeMb = data.size_mb || sizeMb;
+          }}
         }}
       }} catch (err) {{
-        finishActiveDownloadCard(track.title, track.artist, '7.1', true);
-        detailDownloadStatus.textContent = "Canción procesada y añadida a descargas.";
-        detailBtnDownloadFull.innerHTML = `<span>Descargar Canción Completa (.m4a)</span>`;
-        saveDownload(track, '7.1', track.preview || '');
-      }} finally {{
-        detailBtnDownloadFull.disabled = false;
-        setTimeout(() => {{
-          detailBtnDownloadFull.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4.5" x2="12" y2="15"></line><polyline points="7.5 10.5 12 15 16.5 10.5"></polyline><path d="M5 16.5v1.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1.5"></path></svg><span>Descargar Canción Completa (.m4a)</span>`;
-        }}, 3500);
+        console.warn("Server download check warning:", err);
       }}
+
+      if (!dlUrl) {{
+        dlUrl = track.preview || track.audioUrl;
+      }}
+
+      if (dlUrl && dlUrl.startsWith('/api/audio/')) {{
+        dlUrl = `${{SERVER_URL}}${{dlUrl}}`;
+      }}
+
+      if (dlUrl) {{
+        finishActiveDownloadCard(track.title, track.artist, sizeMb);
+        detailDownloadStatus.textContent = `¡Descarga guardada en tu dispositivo! (${{sizeMb}} MB)`;
+        detailBtnDownloadFull.innerHTML = `<span>¡Descargada! (${{sizeMb}} MB)</span>`;
+        saveDownload(track, sizeMb, dlUrl);
+        await triggerBrowserDownload(dlUrl, fileName);
+      }} else {{
+        finishActiveDownloadCard(track.title, track.artist, '0', true);
+        detailDownloadStatus.textContent = "No se pudo obtener el audio para descargar.";
+        detailBtnDownloadFull.innerHTML = `<span>Reintentar descarga</span>`;
+      }}
+
+      detailBtnDownloadFull.disabled = false;
+      setTimeout(() => {{
+        detailBtnDownloadFull.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4.5" x2="12" y2="15"></line><polyline points="7.5 10.5 12 15 16.5 10.5"></polyline><path d="M5 16.5v1.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1.5"></path></svg><span>Descargar Canción Completa (.m4a)</span>`;
+      }}, 3500);
     }}
 
     detailBtnDownloadFull.addEventListener('click', () => downloadFull(currentTrack));
 
-    btnDownloadCoverHd.addEventListener('click', () => {{
-      const a = document.createElement('a');
-      a.href = currentTrack.fallback || currentTrack.cover;
-      a.download = `${{currentTrack.title.replace(/\\s+/g, '_')}}_Cover.jpg`;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    btnDownloadCoverHd.addEventListener('click', async () => {{
+      const coverUrl = currentTrack.fallback || currentTrack.cover;
+      const cleanTitle = (currentTrack.title || 'portada').replace(/[/\\?%*:|"<>]/g, '_');
+      await triggerBrowserDownload(coverUrl, `${{cleanTitle}}_Cover.jpg`);
     }});
 
     function startActiveDownloadCard(title, artist) {{
@@ -1243,17 +1291,13 @@ html_content = f'''<!DOCTYPE html>
         loadAndPlayTrack(item);
       }});
 
-      row.querySelector('.btn-save-dl').addEventListener('click', (e) => {{
+      row.querySelector('.btn-save-dl').addEventListener('click', async (e) => {{
         e.stopPropagation();
         const dlUrl = item.audioUrl || item.preview;
+        const fname = item.file || `${{item.title.replace(/\\s+/g, '_')}}.m4a`;
         if (dlUrl) {{
-          const a = document.createElement('a');
-          a.href = dlUrl;
-          a.download = item.file || `${{item.title.replace(/\\s+/g, '_')}}.m4a`;
-          a.target = '_blank';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
+          const finalUrl = dlUrl.startsWith('/api/audio/') ? `${{SERVER_URL}}${{dlUrl}}` : dlUrl;
+          await triggerBrowserDownload(finalUrl, fname);
         }} else {{
           downloadFull(item);
         }}

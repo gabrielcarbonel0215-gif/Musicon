@@ -98,11 +98,42 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
         if path.startswith('/api/audio/'):
             filename = urllib.parse.unquote(path[len('/api/audio/'):])
             filepath = os.path.join(SONGS_DIR, filename)
+            if not os.path.exists(filepath):
+                # Search case-insensitive or partial
+                clean_target = filename.lower().replace('.m4a', '').replace('.mp3', '')
+                for f in os.listdir(SONGS_DIR):
+                    if f.lower() == filename.lower() or clean_target in f.lower() or f.lower().replace('.m4a', '') in clean_target:
+                        filepath = os.path.join(SONGS_DIR, f)
+                        filename = f
+                        break
+
             if os.path.exists(filepath):
+                filesize = os.path.getsize(filepath)
+                range_header = self.headers.get('Range')
+                if range_header:
+                    m = re.match(r'bytes=(\d+)-(\d*)', range_header)
+                    if m:
+                        start = int(m.group(1))
+                        end = int(m.group(2)) if m.group(2) else filesize - 1
+                        length = end - start + 1
+                        self.send_response(206)
+                        self.send_header('Content-Type', 'audio/mp4')
+                        self.send_header('Content-Range', f'bytes {start}-{end}/{filesize}')
+                        self.send_header('Content-Length', str(length))
+                        self.send_header('Accept-Ranges', 'bytes')
+                        self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
+                        self.send_header('Access-Control-Allow-Origin', '*')
+                        self.end_headers()
+                        with open(filepath, 'rb') as f:
+                            f.seek(start)
+                            self.wfile.write(f.read(length))
+                        return
+
                 self.send_response(200)
                 self.send_header('Content-Type', 'audio/mp4')
                 self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
-                self.send_header('Content-Length', str(os.path.getsize(filepath)))
+                self.send_header('Content-Length', str(filesize))
+                self.send_header('Accept-Ranges', 'bytes')
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 with open(filepath, 'rb') as f:
@@ -128,6 +159,7 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                 artist = params.get('artist', 'artista').strip()
                 query = params.get('query', '').strip() or f"{title} {artist}"
                 cover_url = params.get('cover_url', '')
+                preview_url = params.get('preview_url', '')
 
                 safe_title = sanitize_filename(title)
                 safe_artist = sanitize_filename(artist)
@@ -141,81 +173,83 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                 else:
                     # check if a file with similar title exists in canciones/
                     for f in os.listdir(SONGS_DIR):
-                        if f.endswith('.m4a') and safe_title.lower() in f.lower():
+                        if f.endswith('.m4a') and (safe_title.lower() in f.lower() or f.lower().find(safe_title.lower()[:8]) != -1):
                             found_existing = os.path.join(SONGS_DIR, f)
                             base_name = f[:-4]
                             break
 
+                if not found_existing:
+                    # Save cover
+                    if cover_url:
+                        cover_target = os.path.join(COVERS_DIR, f"{base_name}_portada.jpg")
+                        if not os.path.exists(cover_target):
+                            try:
+                                req = urllib.request.Request(cover_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                with urllib.request.urlopen(req, timeout=10) as r, open(cover_target, 'wb') as cf:
+                                    cf.write(r.read())
+                            except Exception:
+                                pass
+
+                    # Try yt-dlp first
+                    print(f"--> Ejecutando yt-dlp para '{query}'...")
+                    out_template = os.path.join(SONGS_DIR, f"{base_name}.%(ext)s")
+                    cmd = [
+                        "yt-dlp",
+                        "--no-warnings",
+                        f"ytsearch1:{query} audio",
+                        "-x",
+                        "--audio-format", "m4a",
+                        "--audio-quality", "0",
+                        "-o", out_template
+                    ]
+                    proc = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+
+                    if proc.returncode == 0 and os.path.exists(target_m4a):
+                        found_existing = target_m4a
+                    else:
+                        # Fallback 1: preview_url from request
+                        if preview_url and preview_url.startswith('http'):
+                            try:
+                                print(f"--> Descargando desde preview provisto: {preview_url[:60]}")
+                                req = urllib.request.Request(preview_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                with urllib.request.urlopen(req, timeout=15) as r, open(target_m4a, 'wb') as out_f:
+                                    out_f.write(r.read())
+                                if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
+                                    found_existing = target_m4a
+                            except Exception as e:
+                                print(f"--> Error guardando preview provisto: {e}")
+
+                        # Fallback 2: search iTunes API for high-quality audio stream
+                        if not found_existing:
+                            try:
+                                print(f"--> Buscando en catálogo iTunes para '{query}'...")
+                                itunes_url = f"https://itunes.apple.com/search?term={urllib.parse.quote(query)}&entity=song&limit=1"
+                                req = urllib.request.Request(itunes_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                with urllib.request.urlopen(req, timeout=10) as r:
+                                    it_data = json.loads(r.read().decode())
+                                    if it_data.get('results') and it_data['results'][0].get('previewUrl'):
+                                        stream_url = it_data['results'][0]['previewUrl']
+                                        req_stream = urllib.request.Request(stream_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                        with urllib.request.urlopen(req_stream, timeout=15) as sr, open(target_m4a, 'wb') as out_f:
+                                            out_f.write(sr.read())
+                                        if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
+                                            found_existing = target_m4a
+                            except Exception as e:
+                                print(f"--> Error fallback iTunes: {e}")
+
                 if found_existing:
                     size_mb = round(os.path.getsize(found_existing) / (1024*1024), 2)
-                    print(f"--> Canción ya existe: {found_existing} ({size_mb} MB)")
+                    print(f"--> Archivo listo: {found_existing} ({size_mb} MB)")
                     self.send_json({
                         "status": "success",
-                        "already_exists": True,
                         "file": os.path.basename(found_existing),
                         "download_url": f"/api/audio/{urllib.parse.quote(os.path.basename(found_existing))}",
                         "size_mb": size_mb
                     })
                     return
-
-                # Save cover
-                if cover_url:
-                    cover_target = os.path.join(COVERS_DIR, f"{base_name}_portada.jpg")
-                    if not os.path.exists(cover_target):
-                        try:
-                            req = urllib.request.Request(cover_url, headers={'User-Agent': 'Mozilla/5.0'})
-                            with urllib.request.urlopen(req, timeout=10) as r, open(cover_target, 'wb') as cf:
-                                cf.write(r.read())
-                        except Exception:
-                            pass
-
-                # Download using yt-dlp
-                print(f"--> Ejecutando yt-dlp para '{query}'...")
-                out_template = os.path.join(SONGS_DIR, f"{base_name}.%(ext)s")
-                cmd = [
-                    "yt-dlp",
-                    "--no-warnings",
-                    f"ytsearch1:{query} audio",
-                    "-x",
-                    "--audio-format", "m4a",
-                    "--audio-quality", "0",
-                    "-o", out_template
-                ]
-
-                proc = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-
-                if proc.returncode == 0 and os.path.exists(target_m4a):
-                    size_mb = round(os.path.getsize(target_m4a) / (1024*1024), 2)
-                    print(f"--> Descarga exitosa: {target_m4a} ({size_mb} MB)")
-                    self.send_json({
-                        "status": "success",
-                        "file": f"{base_name}.m4a",
-                        "download_url": f"/api/audio/{urllib.parse.quote(base_name)}.m4a",
-                        "size_mb": size_mb
-                    })
                 else:
-                    cmd2 = [
-                        "yt-dlp",
-                        "--no-warnings",
-                        f"ytsearch1:{query}",
-                        "-x",
-                        "--audio-format", "m4a",
-                        "-o", out_template
-                    ]
-                    proc2 = subprocess.run(cmd2, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-                    if proc2.returncode == 0 and os.path.exists(target_m4a):
-                        size_mb = round(os.path.getsize(target_m4a) / (1024*1024), 2)
-                        print(f"--> Descarga exitosa (intento 2): {target_m4a} ({size_mb} MB)")
-                        self.send_json({
-                            "status": "success",
-                            "file": f"{base_name}.m4a",
-                            "download_url": f"/api/audio/{urllib.parse.quote(base_name)}.m4a",
-                            "size_mb": size_mb
-                        })
-                    else:
-                        err_msg = proc.stderr or proc2.stderr or "Error en descarga"
-                        print(f"--> Error yt-dlp: {err_msg[:200]}")
-                        self.send_json({"status": "error", "message": err_msg[:200]}, status=500)
+                    self.send_json({"status": "error", "message": "No se pudo obtener el archivo de audio"}, status=404)
+                    return
 
             except Exception as e:
                 traceback.print_exc()

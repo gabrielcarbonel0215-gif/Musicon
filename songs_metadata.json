@@ -21,18 +21,18 @@
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/af/38/66/af386681-2020-937b-72fe-871712aaf396/197338329665.jpg/600x600bb.jpg"
   },
   "04_Me_Voy_A_Valparaiso_Diego_Lorenzini.m4a": {
-    "title": "Me Voy A Valparaiso",
+    "title": "Me Voy a Valparaíso (feat. Erlend Øye)",
     "artist": "Diego Lorenzini",
-    "cover_file": "04_Me_Voy_A_Valparaiso_Diego_Lorenzini.jpg",
-    "cover_url": "logos/04_Me_Voy_A_Valparaiso_Diego_Lorenzini.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7e/ec/91/7eec9111-bc96-27a2-e1aa-9f93b73b2385/8447053282854.jpg/600x600bb.jpg"
+    "album": "De Algo Hay Que Morir",
+    "cover_url": "logos/Me_Voy_a_Valparaíso_Diego_Lorenzini_Erlend_Øye.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7e/ec/91/7eec9111-bc96-27a2-e1aa-9f93b73b2385/8447053282854.jpg/1000x1000bb.jpg"
   },
   "05_Dulcito_e_Coco_Vicente_Garcia.m4a": {
     "title": "Dulcito e Coco",
-    "artist": "Vicente Garcia",
-    "cover_file": "05_Dulcito_e_Coco_Vicente_Garcia.jpg",
-    "cover_url": "logos/05_Dulcito_e_Coco_Vicente_Garcia.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8b/76/07/8b76073b-0934-d592-2b09-888b74c8cef9/886445912630.jpg/600x600bb.jpg"
+    "artist": "Vicente García",
+    "album": "A la Mar",
+    "cover_url": "logos/Dulcito_e_Coco_Vicente_García.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/8b/76/07/8b76073b-0934-d592-2b09-888b74c8cef9/886445912630.jpg/1000x1000bb.jpg"
   },
   "06_Movimiento_Astral_Gauchito_Club.m4a": {
     "title": "Movimiento Astral",
@@ -49,11 +49,11 @@
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/19/20/36/1920369f-e4e1-435e-b65a-7f7e6acfa9a4/197338329573.jpg/600x600bb.jpg"
   },
   "08_Cancion_de_Amor_Viniloversus_Simon_Grossman.m4a": {
-    "title": "Cancion de Amor",
-    "artist": "Viniloversus",
-    "cover_file": "08_Cancion_de_Amor_Viniloversus_Simon_Grossman.jpg",
-    "cover_url": "logos/08_Cancion_de_Amor_Viniloversus_Simon_Grossman.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/28/90/e5/2890e59c-0f2f-22e4-620d-f18252b0aaf7/3616406836500.jpg/600x600bb.jpg"
+    "title": "Love",
+    "artist": "La Garfield",
+    "album": "Love Paraíso",
+    "cover_url": "logos/Love_La_Garfield.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/5a/e6/f8/5ae6f83f-bcb7-b96e-e933-2518a3eb95fe/645789109195.png/1000x1000bb.jpg"
   },
   "09_Formula_Labrinth.m4a": {
     "title": "Formula",
@@ -65,16 +65,16 @@
   "10_Cuando_Regreses_a_Mi_Molinette_Cinema.m4a": {
     "title": "Cuando Regreses a Mi",
     "artist": "Molinette Cinema",
-    "cover_file": "10_Cuando_Regreses_a_Mi_Molinette_Cinema.jpg",
-    "cover_url": "logos/10_Cuando_Regreses_a_Mi_Molinette_Cinema.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/7b/13/4a/7b134a96-7497-fc07-3a7d-8f2166abdf98/artwork.jpg/600x600bb.jpg"
+    "album": "El Abismo",
+    "cover_url": "logos/Cuando_Regreses_a_Mí_Molinette_Cinema.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/7b/13/4a/7b134a96-7497-fc07-3a7d-8f2166abdf98/artwork.jpg/1000x1000bb.jpg"
   },
   "11_Beautiful_Boy_John_Lennon.m4a": {
-    "title": "Beautiful Boy",
+    "title": "Beautiful Boy (Darling Boy)",
     "artist": "John Lennon",
-    "cover_file": "11_Beautiful_Boy_John_Lennon.jpg",
-    "cover_url": "logos/11_Beautiful_Boy_John_Lennon.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a6/03/24/a6032408-974f-70cf-7eee-f85baf280bb2/13UABIM53685.rgb.jpg/600x600bb.jpg"
+    "album": "Double Fantasy (Stripped Down)",
+    "cover_url": "logos/Beautiful_Boy_John_Lennon.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a6/03/24/a6032408-974f-70cf-7eee-f85baf280bb2/13UABIM53685.rgb.jpg/1000x1000bb.jpg"
   },
   "12_Imagine_John_Lennon.m4a": {
     "title": "Imagine",
@@ -107,23 +107,23 @@
   "16_Algo_Que_Decirte_AppleCats.m4a": {
     "title": "Algo Que Decirte",
     "artist": "AppleCats",
-    "cover_file": "16_Algo_Que_Decirte_AppleCats.jpg",
-    "cover_url": "logos/16_Algo_Que_Decirte_AppleCats.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/30/37/6f/30376fb7-031d-b100-73b0-7f62aacc16ab/artwork.jpg/600x600bb.jpg"
+    "album": "Algo Que Decirte - Single",
+    "cover_url": "logos/Algo_Que_Decirte_AppleCats.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/30/37/6f/30376fb7-031d-b100-73b0-7f62aacc16ab/artwork.jpg/1000x1000bb.jpg"
   },
   "17_Love_Me_Not_Ravyn_Lenae.m4a": {
     "title": "Love Me Not",
     "artist": "Ravyn Lenae",
-    "cover_file": "17_Love_Me_Not_Ravyn_Lenae.jpg",
-    "cover_url": "logos/17_Love_Me_Not_Ravyn_Lenae.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/07/8c/6c/078c6c94-d38d-0451-d57b-23e957b569f8/075679660893.jpg/600x600bb.jpg"
+    "album": "Bird's Eye",
+    "cover_url": "logos/Love_Me_Not_Ravyn_Lenae_ft_Rex_Orange_County.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/07/8c/6c/078c6c94-d38d-0451-d57b-23e957b569f8/075679660893.jpg/1000x1000bb.jpg"
   },
   "18_Always_Forever_Cults.m4a": {
     "title": "Always Forever",
     "artist": "Cults",
-    "cover_file": "18_Always_Forever_Cults.jpg",
-    "cover_url": "logos/18_Always_Forever_Cults.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/fd/25/a7/fd25a743-e9fe-7a7c-d96f-fd6b0adbac62/886444170673.jpg/600x600bb.jpg"
+    "album": "Static",
+    "cover_url": "logos/Always_Forever_Cults.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/fd/25/a7/fd25a743-e9fe-7a7c-d96f-fd6b0adbac62/886444170673.jpg/1000x1000bb.jpg"
   },
   "19_Companera_Axel_Fiks.m4a": {
     "title": "Companera",
@@ -156,9 +156,9 @@
   "23_Salto_El_Joven_Paiva.m4a": {
     "title": "Salto",
     "artist": "El Joven Paiva",
-    "cover_file": "23_Salto_El_Joven_Paiva.jpg",
-    "cover_url": "logos/23_Salto_El_Joven_Paiva.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/75/c8/d6/75c8d60b-2c04-b4ce-60a4-935e71d9e2df/artwork.jpg/600x600bb.jpg"
+    "album": "Salto - Single",
+    "cover_url": "logos/Salto_El_Joven_Paiva.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/75/c8/d6/75c8d60b-2c04-b4ce-60a4-935e71d9e2df/artwork.jpg/1000x1000bb.jpg"
   },
   "24_Si_Tu_Me_Quisieras_Adrian_Bello.m4a": {
     "title": "Si Tu Me Quisieras",
@@ -180,5 +180,257 @@
     "cover_file": "Self_Aware_Temper_City.jpg",
     "cover_url": "logos/Self_Aware_Temper_City.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ba/63/6e/ba636e4b-5c9a-e89c-87d3-1a9ab7773644/1084252.jpg/600x600bb.jpg"
+  },
+  "Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.m4a": {
+    "title": "Meet You Again (Reimagined)",
+    "artist": "Ebony Loren & Jason LaPierre",
+    "album": "Meet You Again...AGAIN! - EP",
+    "cover_url": "logos/Meet_You_Again_Reimagined_Ebony_Loren_Jason_LaPierre.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d1/3f/b5/d13fb5a5-de80-09d5-316c-87ef21ffb93e/artwork.jpg/1000x1000bb.jpg"
+  },
+  "Limón_y_Sal_Simon_Grossmann.m4a": {
+    "title": "Limón y Sal",
+    "artist": "Simon Grossmann",
+    "album": "Ciclo",
+    "cover_url": "logos/Limón_y_Sal_Simón_Grossman.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/1a/87/d0/1a87d092-d9db-9886-6a4d-788c7ae18ac3/197338343111.jpg/1000x1000bb.jpg"
+  },
+  "Brillo_Mío_Caloncho.m4a": {
+    "title": "Brillo Mío",
+    "artist": "Caloncho",
+    "album": "Bálsamo",
+    "cover_url": "logos/Brillo_Mío_Caloncho.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/e5/3d/ec/e53dec6b-1ced-47a9-2d0b-e176870b8c66/00602557605860.rgb.jpg/1000x1000bb.jpg"
+  },
+  "Amor_De_Verano_Vacación_Adan_Jodorowsky.m4a": {
+    "title": "Amor De Verano",
+    "artist": "Vacación & Adan Jodorowsky",
+    "album": "Tiempo Compartido",
+    "cover_url": "logos/Amor_De_Verano_Vacación_Adanowsky.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music113/v4/41/f0/e3/41f0e31f-143e-9db9-b9f0-bb45cc0ce0ee/19UMGIM72619.rgb.jpg/1000x1000bb.jpg"
+  },
+  "Verte_Así_Temple_Sour.m4a": {
+    "title": "Verte Así",
+    "artist": "Temple Sour",
+    "album": "Temple Sour (Extended Version)",
+    "cover_url": "logos/Verte_Así_Temple_Sour.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bb/11/70/bb11704c-b7d5-12d8-2f7a-c4440e268569/634654364258.jpg/1000x1000bb.jpg"
+  },
+  "Cariño_The_Marías.m4a": {
+    "title": "Cariño",
+    "artist": "The Marías",
+    "album": "Superclean, Vol. II - EP",
+    "cover_url": "logos/Cariño_The_Marías.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/71/5f/fc/715ffc50-c006-500b-ad3e-830a6a6bbc70/artwork.jpg/1000x1000bb.jpg"
+  },
+  "Mi_Corazón_feat_Natalia_Lafourcade_Paté_de_Fuá.m4a": {
+    "title": "Mi Corazón (feat. Pacifica)",
+    "artist": "Tango Astral",
+    "album": "Tango Astral",
+    "cover_url": "logos/Mi_Corazón_Tango_Astral_Pacifica.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b2/1d/3a/b21d3ae2-3551-894f-58ee-4aca1ec26d05/198588406465.jpg/1000x1000bb.jpg"
+  },
+  "On_My_Own_feat_NANDA_El_Joven_Paiva.m4a": {
+    "title": "On My Own (feat. NANDA)",
+    "artist": "El Joven Paiva",
+    "album": "El Sol - Single",
+    "cover_url": "logos/On_My_Own_El_Joven_Paiva_NANDA.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/0d/78/e7/0d78e726-e9f6-e1a0-a6c5-70daa79ff00c/artwork.jpg/1000x1000bb.jpg"
+  },
+  "Vivir_Así_Es_Morir_de_Amor_feat_Pedro_Fernández_Los_Caligaris.m4a": {
+    "title": "Vivir Así Es Morir de Amor (feat. Pedro Fernández)",
+    "artist": "Los Caligaris",
+    "album": "Vivir Así Es Morir de Amor (feat. Pedro Fernández) - Single",
+    "cover_url": "logos/Llena_de_Amor_Los_Fernandez.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ae/f3/b7/aef3b716-e5b3-7c7e-36b8-32c11b6237c0/195497135967.jpg/1000x1000bb.jpg"
+  },
+  "La_Raja_de_Tu_Culo_Chabelos.m4a": {
+    "title": "La Raja de Tu Culo",
+    "artist": "Chabelos",
+    "album": "Nunca Seremos Músicos",
+    "cover_url": "logos/La_Raja_de_Tu_Culo_Chabelos.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/cf/2c/53/cf2c537e-bb98-9796-1c4d-2c4ecbb9a68f/859737482777_cover.jpg/600x600bb.jpg"
+  },
+  "She_Is_Clazziquai.m4a": {
+    "title": "She Is",
+    "artist": "Clazziquai",
+    "album": "My Lovely Sam Soon (Original Television Soundtrack)",
+    "cover_url": "logos/She_Is_Clazziquai.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/22/6a/a3/226aa3c0-0a2f-3ea5-aea9-5e3afb8f6434/jacket-8009042.jpg/1000x1000bb.jpg"
+  },
+  "Materia_Gris_El_Riqué.m4a": {
+    "title": "Materia Gris",
+    "artist": "El Riqué",
+    "album": "Materia Gris - Single",
+    "cover_url": "logos/Materia_Gris_El_Riqué.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/4c/73/a9/4c73a945-33fc-1950-74d2-cd3e51e6b86d/197338712757.jpg/1000x1000bb.jpg"
+  },
+  "Románticos_Anónimos_feat_Adanowsky_Los_Outsaiders.m4a": {
+    "title": "Románticos Anónimos (feat. Adanowsky)",
+    "artist": "Los Outsaiders",
+    "album": "El Desorden De Los ídolos",
+    "cover_url": "logos/Románticos_Anónimos_Los_Outsaiders_Adanowsky.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a7/4f/91/a74f9189-8236-5d33-c031-ab89d653fdda/199257146880_cover.jpg/1000x1000bb.jpg"
+  },
+  "La_Luna_Jósean_Log.m4a": {
+    "title": "La Luna",
+    "artist": "Jósean Log",
+    "album": "Háblate de Mí - EP",
+    "cover_url": "logos/La_Luna_Jósean_Log.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/dc/2d/e8/dc2de84e-2c50-3c49-969a-a539ec8e485d/artwork.jpg/1000x1000bb.jpg"
+  },
+  "Pruébame_a_Ti_Jósean_Log.m4a": {
+    "title": "Pruébame a Ti",
+    "artist": "Jósean Log",
+    "album": "El Tiempo Locura Todo - EP",
+    "cover_url": "logos/Pruébame_a_Ti_Jósean_Log.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/57/d2/a6/57d2a6ea-6bcc-c919-9d57-12870443fd6c/artwork.jpg/1000x1000bb.jpg"
+  },
+  "Contigo_Los_Panchos.m4a": {
+    "title": "Contigo",
+    "artist": "Los Panchos",
+    "album": "Contigo",
+    "cover_url": "logos/Contigo_Los_Panchos.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music7/v4/7c/c4/00/7cc4001b-c0ce-0c27-ff46-fc86e18d0ab1/889845203322.jpg/1000x1000bb.jpg"
+  },
+  "Un_Para_Siempre_Dani_Labbé.m4a": {
+    "title": "Un Para Siempre",
+    "artist": "Dani Labbé",
+    "album": "De-Lirios - EP",
+    "cover_url": "logos/Un_Para_Siempre_Dani_Labbé.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/86/6d/df/866ddf02-7b29-1731-9bd0-1be64561e0c9/859785694726_cover.jpg/1000x1000bb.jpg"
+  },
+  "Besos_Limón_y_Miel_Santi_Muk.m4a": {
+    "title": "Besos, Limón y Miel",
+    "artist": "Santi Muk",
+    "album": "Besos, Limón y Miel - Single",
+    "cover_url": "logos/Besos_Limón_y_Miel_Santi_Muk.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1f/7a/8c/1f7a8c84-a79d-6b56-1bae-7f8b8b7b0fa8/194660849687.jpg/1000x1000bb.jpg"
+  },
+  "Y_SI_SOMOS_NOVIOS_PARDOPARDO.m4a": {
+    "title": "Y SI SOMOS NOVIOS???",
+    "artist": "PARDOPARDO",
+    "album": "Y SI SOMOS NOVIOS??? - Single",
+    "cover_url": "logos/Y_SI_SOMOS_NOVIOS_PARDOPARDO.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/72/7e/4f/727e4fcf-bc66-93ff-5c10-26ec4ac4c1e0/198081949643_Cover.jpg/1000x1000bb.jpg"
+  },
+  "Bésame_Cnt_11_Darviin.m4a": {
+    "title": "Bésame, Cnt. 1:1",
+    "artist": "Darviin",
+    "album": "Cantares",
+    "cover_url": "logos/Bésame_Cnt_11_Darviin.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9a/2a/6b/9a2a6b98-62cc-f127-8bc6-d43670b7803e/7300341220994.jpg/1000x1000bb.jpg"
+  },
+  "Goin_Out_of_My_Head_Little_Anthony_The_Imperials.m4a": {
+    "title": "Goin' Out of My Head",
+    "artist": "Little Anthony & The Imperials",
+    "album": "The Best of Little Anthony & The Imperials",
+    "cover_url": "logos/Goin_Out_Of_My_Head_Little_Anthony_The_Imperials.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c6/84/b4/c684b421-7533-f110-f422-1da4dbaf0f45/00724383820856.jpg/1000x1000bb.jpg"
+  },
+  "Si_Tú_Me_Quisieras_Adrián_Bello_Nia_Vanie.m4a": {
+    "title": "Si Tú Me Quisieras",
+    "artist": "Adrián Bello & Nia Vanie",
+    "album": "Si Tú Me Quisieras - Single",
+    "cover_url": "logos/Si_Tú_Me_Quisieras_Adrián_Bello_Nia_Vanie.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/30/1a/c7/301ac7ce-b655-1466-f500-d1f49dbb7e0c/196626010247.jpg/1000x1000bb.jpg"
+  },
+  "Nunca_Decís_Tkm_Clara_Cava.m4a": {
+    "title": "Nunca Decís Tkm",
+    "artist": "Clara Cava",
+    "album": "Nunca y un Poco - Single",
+    "cover_url": "logos/Nunca_Decís_Tkm_Clara_Cava.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/90/41/74/9041749b-84df-ccd3-2253-9b9391a62383/0.jpg/1000x1000bb.jpg"
+  },
+  "Añoranza_Del_Amor_Alex_Eugenio.m4a": {
+    "title": "Añoranza Del Amor",
+    "artist": "Alex Eugenio",
+    "album": "Veraneras - EP",
+    "cover_url": "logos/Añoranza_Del_Amor_Alex_Eugenio.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/59/7a/e0/597ae0ea-5541-597a-76f9-5846c8df4276/8445162923323.jpg/1000x1000bb.jpg"
+  },
+  "Cuento_Versión_de_Ximena_Ximena_Sariñana.m4a": {
+    "title": "Cuento (Versión de Ximena)",
+    "artist": "Ximena Sariñana",
+    "album": "Amarte Duele (Versiones de Ximena) - Single",
+    "cover_url": "logos/Qué_Tiene_Ximena_Sariñana.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/14/05/1f/14051f9f-8094-f31d-bd15-00bd53836047/199066847657.jpg/1000x1000bb.jpg"
+  },
+  "Carpe_Diem_Viniloversus_Tessa_Ia.m4a": {
+    "title": "Carpe Diem",
+    "artist": "Viniloversus & Tessa Ia",
+    "album": "VVV",
+    "cover_url": "logos/Carpe_Diem_Viniloversus_Tessa_Ia.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e6/21/41/e62141a7-8cc0-1cf0-a08a-108b6702b3ca/3616407428667.jpg/1000x1000bb.jpg"
+  },
+  "Lo_Que_Causas_en_Mí_Nova_Club.m4a": {
+    "title": "Lo Que Causas en Mí",
+    "artist": "Nova Club",
+    "album": "Lo Que Causas en Mí - Single",
+    "cover_url": "logos/Lo_Que_Causas_en_Mí_Nova_Club.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c1/5d/bc/c15dbc2a-2006-d088-da87-ef439e348be6/0.jpg/1000x1000bb.jpg"
+  },
+  "Bolero_Estelar_La_Isla_Centeno.m4a": {
+    "title": "Bolero Estelar",
+    "artist": "La Isla Centeno",
+    "album": "Bolero Estelar - Single",
+    "cover_url": "logos/Bolero_Estelar_La_Isla_Centeno.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/84/21/fd/8421fd79-4458-299b-2dc9-b9ea58bb3baf/703441189180_cover.jpg/1000x1000bb.jpg"
+  },
+  "Just_The_Way_You_Are_Milky.m4a": {
+    "title": "Just The Way You Are",
+    "artist": "Milky",
+    "album": "Just The Way You Are - Single",
+    "cover_url": "logos/Just_The_Way_You_Are_Milky.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/35/cb/92/35cb9209-d225-0246-d2fa-f9e4fb6d9270/8031466000107.jpg/1000x1000bb.jpg"
+  },
+  "Be_Like_a_Woman_Chris_Rainbow.m4a": {
+    "title": "Be Like a Woman",
+    "artist": "Chris Rainbow",
+    "album": "White Trails (Expanded)",
+    "cover_url": "logos/Be_Like_a_Woman_The_Very_Best.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/13/54/2c/13542c3b-1d1b-714c-2537-fea6a7c4f632/190295612467.jpg/1000x1000bb.jpg"
+  },
+  "I_Think_They_Call_This_Love_Elliot_James_Reay.m4a": {
+    "title": "I Think They Call This Love",
+    "artist": "Elliot James Reay",
+    "album": "I Think They Call This Love - Single",
+    "cover_url": "logos/I_Think_They_Call_This_Love_Elliot_James_Reay.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/30/a8/f1/30a8f1b6-e75d-55b4-ee88-667a062e0103/24UM1IM12416.rgb.jpg/1000x1000bb.jpg"
+  },
+  "Made_In_Japan_Buck_Owens_His_Buckaroos.m4a": {
+    "title": "Made In Japan",
+    "artist": "Buck Owens & His Buckaroos",
+    "album": "In The Palm Of Your Hand",
+    "cover_url": "logos/Made_In_Japan_Buck_Owens.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a4/00/2b/a4002b01-6c8d-2d34-fae8-0b9b7861361e/810075110593.jpg/1000x1000bb.jpg"
+  },
+  "Esto_Es_Amor_Mon_Laferte_Conociendo_Rusia.m4a": {
+    "title": "Esto Es Amor",
+    "artist": "Mon Laferte & Conociendo Rusia",
+    "album": "Esto Es Amor - Single",
+    "cover_url": "logos/Esto_Es_Amor_Mon_Laferte_Conociendo_Rusia.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/7b/2e/9e/7b2e9e4a-9609-0131-dc5d-9e8850811fff/196873375519.jpg/1000x1000bb.jpg"
+  },
+  "Roommates_Malcolm_Todd.m4a": {
+    "title": "Roommates",
+    "artist": "Malcolm Todd",
+    "album": "Roommates - Single",
+    "cover_url": "logos/Roommates_Malcolm_Todd.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/33/b8/5a/33b85ad4-cfd1-bcb8-444b-15329d4965ef/196871375542.jpg/1000x1000bb.jpg"
+  },
+  "Departamento_Bandalos_Chinos_Adanowsky.m4a": {
+    "title": "Departamento",
+    "artist": "Bandalos Chinos & Adanowsky",
+    "album": "Departamento - Single",
+    "cover_url": "logos/Departamento_Bandalos_Chinos_Adanowsky.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1f/ba/06/1fba06ed-6294-453d-dc4c-f2a4c664d080/00602438925537_Cover.jpg/1000x1000bb.jpg"
+  },
+  "Excusa_Perfecta_Santi_Muk.m4a": {
+    "title": "Excusa Perfecta",
+    "artist": "Santi Muk",
+    "album": "Excusa Perfecta - Single",
+    "cover_url": "logos/Excusa_Perfecta_Santi_Muk.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9c/ba/7e/9cba7ea1-ce40-b5af-6fcf-47354d4889b4/198003065093.jpg/1000x1000bb.jpg"
   }
 }
