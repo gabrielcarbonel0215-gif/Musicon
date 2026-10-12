@@ -190,56 +190,94 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                             except Exception:
                                 pass
 
-                    # Try yt-dlp first
-                    print(f"--> Ejecutando yt-dlp para '{query}'...")
+                    # Tier 1: YouTube Android/TV embedded clients (bypasses YouTube datacenter web bot challenge)
+                    print(f"--> [Tier 1] Intentando descarga con YouTube Android/TV para '{query}'...")
                     out_template = os.path.join(SONGS_DIR, f"{base_name}.%(ext)s")
-                    cmd = [
+                    cmd1 = [
                         "yt-dlp",
                         "--no-warnings",
+                        "--extractor-args", "youtube:player_client=android,tv_embedded",
                         f"ytsearch1:{query} audio",
                         "-x",
                         "--audio-format", "m4a",
                         "--audio-quality", "0",
                         "-o", out_template
                     ]
-                    proc = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+                    proc1 = subprocess.run(cmd1, capture_output=True, text=True, encoding='utf-8', errors='ignore')
 
-                    if proc.returncode == 0 and os.path.exists(target_m4a):
+                    if proc1.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 200000:
                         found_existing = target_m4a
+                        print(f"--> [Tier 1] Éxito YouTube Android/TV: {target_m4a}")
                     else:
-                        # Fallback 1: preview_url from request
-                        if preview_url and preview_url.startswith('http'):
-                            try:
-                                print(f"--> Descargando desde preview provisto: {preview_url[:60]}")
-                                req = urllib.request.Request(preview_url, headers={'User-Agent': 'Mozilla/5.0'})
-                                with urllib.request.urlopen(req, timeout=15) as r, open(target_m4a, 'wb') as out_f:
-                                    out_f.write(r.read())
-                                if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
-                                    found_existing = target_m4a
-                            except Exception as e:
-                                print(f"--> Error guardando preview provisto: {e}")
+                        # Tier 2: SoundCloud search (unblocked on all cloud datacenters / Render)
+                        print(f"--> [Tier 2] Probando SoundCloud para '{query}'...")
+                        cmd2 = [
+                            "yt-dlp",
+                            "--no-warnings",
+                            f"scsearch1:{query}",
+                            "-x",
+                            "--audio-format", "m4a",
+                            "--audio-quality", "0",
+                            "-o", out_template
+                        ]
+                        proc2 = subprocess.run(cmd2, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+                        if proc2.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 200000:
+                            found_existing = target_m4a
+                            print(f"--> [Tier 2] Éxito SoundCloud: {target_m4a}")
+                        else:
+                            # Tier 3: preview_url from request
+                            if preview_url and preview_url.startswith('http'):
+                                try:
+                                    print(f"--> [Tier 3] Descargando desde stream provisto: {preview_url[:60]}")
+                                    req = urllib.request.Request(preview_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                    with urllib.request.urlopen(req, timeout=15) as r, open(target_m4a, 'wb') as out_f:
+                                        out_f.write(r.read())
+                                    if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
+                                        found_existing = target_m4a
+                                except Exception as e:
+                                    print(f"--> Error stream provisto: {e}")
 
-                        # Fallback 2: search iTunes API for high-quality audio stream
-                        if not found_existing:
-                            try:
-                                print(f"--> Buscando en catálogo iTunes para '{query}'...")
-                                itunes_url = f"https://itunes.apple.com/search?term={urllib.parse.quote(query)}&entity=song&limit=1"
-                                req = urllib.request.Request(itunes_url, headers={'User-Agent': 'Mozilla/5.0'})
-                                with urllib.request.urlopen(req, timeout=10) as r:
-                                    it_data = json.loads(r.read().decode())
-                                    if it_data.get('results') and it_data['results'][0].get('previewUrl'):
-                                        stream_url = it_data['results'][0]['previewUrl']
-                                        req_stream = urllib.request.Request(stream_url, headers={'User-Agent': 'Mozilla/5.0'})
-                                        with urllib.request.urlopen(req_stream, timeout=15) as sr, open(target_m4a, 'wb') as out_f:
-                                            out_f.write(sr.read())
-                                        if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
-                                            found_existing = target_m4a
-                            except Exception as e:
-                                print(f"--> Error fallback iTunes: {e}")
+                            # Tier 4: search iTunes catalog for audio stream
+                            if not found_existing:
+                                try:
+                                    print(f"--> [Tier 4] Buscando en catálogo iTunes para '{query}'...")
+                                    itunes_url = f"https://itunes.apple.com/search?term={urllib.parse.quote(query)}&entity=song&limit=1"
+                                    req = urllib.request.Request(itunes_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                    with urllib.request.urlopen(req, timeout=10) as r:
+                                        it_data = json.loads(r.read().decode())
+                                        if it_data.get('results') and it_data['results'][0].get('previewUrl'):
+                                            stream_url = it_data['results'][0]['previewUrl']
+                                            req_stream = urllib.request.Request(stream_url, headers={'User-Agent': 'Mozilla/5.0'})
+                                            with urllib.request.urlopen(req_stream, timeout=15) as sr, open(target_m4a, 'wb') as out_f:
+                                                out_f.write(sr.read())
+                                            if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
+                                                found_existing = target_m4a
+                                except Exception as e:
+                                    print(f"--> Error fallback iTunes: {e}")
 
                 if found_existing:
                     size_mb = round(os.path.getsize(found_existing) / (1024*1024), 2)
                     print(f"--> Archivo listo: {found_existing} ({size_mb} MB)")
+                    
+                    # Persist metadata for new downloads so they show up in /api/downloads
+                    meta_path = os.path.join(BASE_DIR, 'songs_metadata.json')
+                    try:
+                        m_data = {}
+                        if os.path.exists(meta_path):
+                            with open(meta_path, 'r', encoding='utf-8') as mf:
+                                m_data = json.load(mf)
+                        m_data[os.path.basename(found_existing)] = {
+                            "title": title,
+                            "artist": artist,
+                            "album": "Descargado",
+                            "cover_url": f"logos/{base_name}_portada.jpg" if cover_url else "logos/Fix_You.jpg",
+                            "fallback_url": cover_url or "logos/Fix_You.jpg"
+                        }
+                        with open(meta_path, 'w', encoding='utf-8') as mf:
+                            json.dump(m_data, mf, ensure_ascii=False, indent=2)
+                    except Exception:
+                        pass
+
                     self.send_json({
                         "status": "success",
                         "file": os.path.basename(found_existing),

@@ -432,5 +432,12 @@
     "album": "Excusa Perfecta - Single",
     "cover_url": "logos/Excusa_Perfecta_Santi_Muk.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9c/ba/7e/9cba7ea1-ce40-b5af-6fcf-47354d4889b4/198003065093.jpg/1000x1000bb.jpg"
+  },
+  "Flowers_Miley_Cyrus.m4a": {
+    "title": "Flowers",
+    "artist": "Miley Cyrus",
+    "album": "Descargado",
+    "cover_url": "logos/Fix_You.jpg",
+    "fallback_url": "logos/Fix_You.jpg"
   }
 }
