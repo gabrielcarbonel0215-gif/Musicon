@@ -230,13 +230,15 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                             except Exception:
                                 pass
 
-                    # Tier 1: YouTube Android/TV embedded clients (bypasses YouTube datacenter web bot challenge)
-                    print(f"--> [Tier 1] Intentando descarga con YouTube Android/TV para '{query}'...")
+                    # Tier 1: YouTube with Cookies (Downloads 100% full song)
+                    print(f"--> [Tier 1] Intentando descarga con YouTube + Cookies para '{query}'...")
                     out_template = os.path.join(SONGS_DIR, f"{base_name}.%(ext)s")
-                    cmd1 = [
-                        "yt-dlp",
-                        "--no-warnings",
-                        "--extractor-args", "youtube:player_client=android,tv_embedded",
+                    cookies_path = os.path.join(BASE_DIR, "cookies.txt")
+                    
+                    cmd1 = ["yt-dlp", "--no-warnings"]
+                    if os.path.exists(cookies_path):
+                        cmd1 += ["--cookies", cookies_path]
+                    cmd1 += [
                         f"ytsearch1:{query} audio",
                         "-x",
                         "--audio-format", "m4a",
@@ -245,55 +247,47 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                     ]
                     proc1 = subprocess.run(cmd1, capture_output=True, text=True, encoding='utf-8', errors='ignore')
 
-                    if proc1.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 200000:
+                    if proc1.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 1500000:
                         found_existing = target_m4a
-                        print(f"--> [Tier 1] Éxito YouTube Android/TV: {target_m4a}")
+                        print(f"--> [Tier 1] Éxito YouTube con cookies: {target_m4a}")
                     else:
-                        # Tier 2: SoundCloud search (unblocked on all cloud datacenters / Render)
-                        print(f"--> [Tier 2] Probando SoundCloud para '{query}'...")
+                        # Tier 2: YouTube with Android/TV client + cookies
+                        print(f"--> [Tier 2] Probando YouTube Android/TV para '{query}'...")
                         cmd2 = [
                             "yt-dlp",
                             "--no-warnings",
-                            f"scsearch1:{query}",
+                            "--extractor-args", "youtube:player_client=android,tv_embedded"
+                        ]
+                        if os.path.exists(cookies_path):
+                            cmd2 += ["--cookies", cookies_path]
+                        cmd2 += [
+                            f"ytsearch1:{query} audio",
                             "-x",
                             "--audio-format", "m4a",
                             "--audio-quality", "0",
                             "-o", out_template
                         ]
                         proc2 = subprocess.run(cmd2, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-                        if proc2.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 200000:
+                        if proc2.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 1500000:
                             found_existing = target_m4a
-                            print(f"--> [Tier 2] Éxito SoundCloud: {target_m4a}")
+                            print(f"--> [Tier 2] Éxito YouTube Android/TV: {target_m4a}")
                         else:
-                            # Tier 3: preview_url from request
-                            if preview_url and preview_url.startswith('http'):
-                                try:
-                                    print(f"--> [Tier 3] Descargando desde stream provisto: {preview_url[:60]}")
-                                    req = urllib.request.Request(preview_url, headers={'User-Agent': 'Mozilla/5.0'})
-                                    with urllib.request.urlopen(req, timeout=15) as r, open(target_m4a, 'wb') as out_f:
-                                        out_f.write(r.read())
-                                    if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
-                                        found_existing = target_m4a
-                                except Exception as e:
-                                    print(f"--> Error stream provisto: {e}")
-
-                            # Tier 4: search iTunes catalog for audio stream
-                            if not found_existing:
-                                try:
-                                    print(f"--> [Tier 4] Buscando en catálogo iTunes para '{query}'...")
-                                    itunes_url = f"https://itunes.apple.com/search?term={urllib.parse.quote(query)}&entity=song&limit=1"
-                                    req = urllib.request.Request(itunes_url, headers={'User-Agent': 'Mozilla/5.0'})
-                                    with urllib.request.urlopen(req, timeout=10) as r:
-                                        it_data = json.loads(r.read().decode())
-                                        if it_data.get('results') and it_data['results'][0].get('previewUrl'):
-                                            stream_url = it_data['results'][0]['previewUrl']
-                                            req_stream = urllib.request.Request(stream_url, headers={'User-Agent': 'Mozilla/5.0'})
-                                            with urllib.request.urlopen(req_stream, timeout=15) as sr, open(target_m4a, 'wb') as out_f:
-                                                out_f.write(sr.read())
-                                            if os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 0:
-                                                found_existing = target_m4a
-                                except Exception as e:
-                                    print(f"--> Error fallback iTunes: {e}")
+                            # Tier 3: Search general query with cookies
+                            print(f"--> [Tier 3] Probando búsqueda directa con cookies para '{query}'...")
+                            cmd3 = ["yt-dlp", "--no-warnings"]
+                            if os.path.exists(cookies_path):
+                                cmd3 += ["--cookies", cookies_path]
+                            cmd3 += [
+                                f"ytsearch1:{query}",
+                                "-x",
+                                "--audio-format", "m4a",
+                                "--audio-quality", "0",
+                                "-o", out_template
+                            ]
+                            proc3 = subprocess.run(cmd3, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+                            if proc3.returncode == 0 and os.path.exists(target_m4a) and os.path.getsize(target_m4a) > 1500000:
+                                found_existing = target_m4a
+                                print(f"--> [Tier 3] Éxito YouTube general: {target_m4a}")
 
                 if found_existing:
                     size_mb = round(os.path.getsize(found_existing) / (1024*1024), 2)

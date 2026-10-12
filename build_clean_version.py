@@ -1100,24 +1100,22 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       if (!dlUrl) {{
-        dlUrl = track.preview || track.audioUrl;
+        finishActiveDownloadCard(track.title, track.artist, '0', true);
+        detailDownloadStatus.textContent = "No se pudo obtener el audio completo. Reintenta.";
+        detailBtnDownloadFull.innerHTML = `<span>Reintentar descarga completa</span>`;
+        detailBtnDownloadFull.disabled = false;
+        return;
       }}
 
-      if (dlUrl && dlUrl.startsWith('/api/audio/')) {{
+      if (dlUrl.startsWith('/api/audio/')) {{
         dlUrl = `${{SERVER_URL}}${{dlUrl}}`;
       }}
 
-      if (dlUrl) {{
-        finishActiveDownloadCard(track.title, track.artist, sizeMb);
-        detailDownloadStatus.textContent = `¡Descarga guardada en tu dispositivo! (${{sizeMb}} MB)`;
-        detailBtnDownloadFull.innerHTML = `<span>¡Descargada! (${{sizeMb}} MB)</span>`;
-        saveDownload(track, sizeMb, dlUrl);
-        await triggerBrowserDownload(dlUrl, fileName);
-      }} else {{
-        finishActiveDownloadCard(track.title, track.artist, '0', true);
-        detailDownloadStatus.textContent = "No se pudo obtener el audio para descargar.";
-        detailBtnDownloadFull.innerHTML = `<span>Reintentar descarga</span>`;
-      }}
+      finishActiveDownloadCard(track.title, track.artist, sizeMb);
+      detailDownloadStatus.textContent = `¡Canción completa descargada! (${{sizeMb}} MB)`;
+      detailBtnDownloadFull.innerHTML = `<span>¡Descargada! (${{sizeMb}} MB)</span>`;
+      saveDownload(track, sizeMb, dlUrl);
+      await triggerBrowserDownload(dlUrl, fileName);
 
       detailBtnDownloadFull.disabled = false;
       setTimeout(() => {{
