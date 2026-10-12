@@ -13,6 +13,7 @@ def get_b64(fname):
     return ""
 
 c_splash = get_b64("cinnamoroll_splash.png")
+c_avatar = get_b64("cinnamoroll_avatar.png")
 c_banner = get_b64("cinnamoroll_banner.png")
 c_detail = get_b64("cinnamoroll_detail.png")
 c_sleeping = get_b64("cinnamoroll_sleeping.png")
@@ -155,20 +156,10 @@ html_content = f'''<!DOCTYPE html>
     <!-- 2. PANTALLA PRINCIPAL (INICIO) -->
     <!-- ======================================================== -->
     <div id="screen-home" class="flex-1 flex flex-col overflow-y-auto px-5 pt-4 pb-32 space-y-4 screen-view">
-      <!-- App Header: avatar + title + gear -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-full bg-blue-100/60 flex items-center justify-center overflow-hidden border border-white shadow-xs">
-            <img src="{c_splash}" alt="Cinnamoroll" class="w-7 h-7 object-contain">
-          </div>
-          <span class="font-black text-lg text-[#263238] tracking-tight">Cinnamoroll Music</span>
-        </div>
-        <button id="btn-open-settings" class="w-9 h-9 rounded-full bg-white shadow-xs flex items-center justify-center text-slate-400 hover:text-blue-500 border border-blue-100 transition active:scale-95" title="Ajustes">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-        </button>
+      <!-- App Header: avatar + title (gear removed per user request) -->
+      <div class="flex items-center gap-2 pt-1">
+        <img src="{c_avatar}" alt="Cinnamoroll" class="h-8 w-auto object-contain drop-shadow-xs">
+        <span class="font-black text-lg text-[#263238] tracking-tight">Cinnamoroll Music</span>
       </div>
 
       <!-- Search Bar -->
@@ -372,11 +363,6 @@ html_content = f'''<!DOCTYPE html>
         <!-- Populated dynamically by JS with official album artwork for all tracks -->
       </div>
 
-      <!-- Sleeping Cinnamoroll doodle at bottom -->
-      <div class="pt-4 pb-2 flex flex-col items-center justify-center">
-        <img src="{c_sleeping}" alt="Cinnamoroll Sleeping" class="h-16 object-contain opacity-95 drop-shadow-xs">
-        <span class="text-[10px] text-slate-400 font-bold mt-1.5">Tu música guardada con cuidado ☁️💤</span>
-      </div>
     </div>
 
     <!-- ======================================================== -->
@@ -583,38 +569,6 @@ html_content = f'''<!DOCTYPE html>
       <div class="h-2"></div>
     </div>
 
-    <!-- ======================================================== -->
-    <!-- SETTINGS MODAL -->
-    <!-- ======================================================== -->
-    <div id="modal-settings" class="hidden absolute inset-0 z-50 bg-black/30 backdrop-blur-xs flex items-end sm:items-center justify-center p-4">
-      <div class="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl space-y-4">
-        <div class="flex items-center justify-between">
-          <h3 class="font-black text-sm text-slate-800 flex items-center gap-1.5">
-            <span>Ajustes & Servidor Cloud</span>
-          </h3>
-          <button id="btn-close-settings" class="text-slate-400 hover:text-slate-600 text-sm">✕</button>
-        </div>
-
-        <div class="space-y-2.5 text-xs text-slate-600">
-          <div class="p-3 rounded-2xl bg-blue-50/60 border border-blue-100 space-y-1">
-            <span class="font-bold text-slate-700">Servidor en la Nube:</span>
-            <p id="settings-server-status" class="text-emerald-600 font-bold flex items-center gap-1.5">
-              <span>● Conectado a Render 24/7 (UptimeRobot)</span>
-            </p>
-          </div>
-
-          <div class="pt-2 flex flex-col gap-2">
-            <button id="btn-reload-presets-settings" class="w-full py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold transition">
-              Recargar Canciones del Proyecto
-            </button>
-            <button id="btn-clear-cache-settings" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold transition">
-              Limpiar favoritos y descargas locales
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <audio id="core-audio-player" preload="auto"></audio>
@@ -755,7 +709,6 @@ html_content = f'''<!DOCTYPE html>
     const screenDownloads = document.getElementById('screen-downloads');
     const modalSongDetail = document.getElementById('modal-song-detail');
     const modalExpandedPlayer = document.getElementById('modal-expanded-player');
-    const modalSettings = document.getElementById('modal-settings');
 
     // Mini Player
     const miniCover = document.getElementById('mini-cover');
@@ -1545,27 +1498,6 @@ html_content = f'''<!DOCTYPE html>
     document.getElementById('btn-see-more-trending').addEventListener('click', () => {{
       switchTab('search');
       renderSearchRows(MOCKUP_SONGS.slice(0, 6));
-    }});
-
-    // Settings
-    document.getElementById('btn-open-settings').addEventListener('click', () => modalSettings.classList.remove('hidden'));
-    document.getElementById('btn-close-settings').addEventListener('click', () => modalSettings.classList.add('hidden'));
-    document.getElementById('btn-reload-presets-settings').addEventListener('click', () => {{
-      renderSearchRows(MOCKUP_SONGS);
-      loadServerDownloads();
-      modalSettings.classList.add('hidden');
-      switchTab('search');
-    }});
-    document.getElementById('btn-clear-cache-settings').addEventListener('click', () => {{
-      if (confirm("¿Vaciar favoritos e historial local?")) {{
-        favorites = [];
-        localDownloads = [];
-        localStorage.clear();
-        serverDownloads = [...PRELOADED_SERVER_SONGS];
-        renderDownloadsList(currentDlSubtab);
-        modalSettings.classList.add('hidden');
-        alert("Caché y datos locales limpiados.");
-      }}
     }});
 
     // Startup
