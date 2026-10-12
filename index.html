@@ -176,9 +176,11 @@
 
     let currentResults = [];
     let serverActive = false;
-    const SERVER_URL = window.location.origin.includes('localhost:8000') || window.location.origin.includes('127.0.0.1:8000') 
-      ? '' 
-      : 'http://localhost:8000';
+    // Auto-detect server: if hosted on Render or web server use origin, otherwise connect to Render cloud backend
+    const CLOUD_URL = 'https://musicon-nymp.onrender.com';
+    let SERVER_URL = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
+      ? window.location.origin
+      : CLOUD_URL;
 
     let currentPlayingTrack = null;
     let currentModalUrl = '';
@@ -215,18 +217,49 @@
 
     // Check Server Connection
     async function checkServer() {
+      // 1. Try current SERVER_URL
       try {
-        const resp = await fetch(`${SERVER_URL}/api/status`, { signal: AbortSignal.timeout(2000) });
+        const resp = await fetch(`${SERVER_URL}/api/status`, { signal: AbortSignal.timeout(3500) });
         if (resp.ok) {
           serverActive = true;
+          const isCloud = SERVER_URL.includes('onrender.com');
           serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
-          serverBadge.innerHTML = "<span>🟢</span> Servidor local conectado";
+          serverBadge.innerHTML = `<span>🟢</span> ${isCloud ? 'Servidor Cloud 24/7 Conectado' : 'Servidor Conectado'}`;
           return true;
         }
       } catch (e) {}
+
+      // 2. Fallback: If cloud failed or not responding, try localhost
+      if (SERVER_URL !== 'http://localhost:8000') {
+        try {
+          const resp = await fetch(`http://localhost:8000/api/status`, { signal: AbortSignal.timeout(1500) });
+          if (resp.ok) {
+            SERVER_URL = 'http://localhost:8000';
+            serverActive = true;
+            serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
+            serverBadge.innerHTML = "<span>🟢</span> Servidor Local Conectado";
+            return true;
+          }
+        } catch (e) {}
+      }
+
+      // 3. Fallback: If localhost failed, try Cloud URL
+      if (SERVER_URL !== CLOUD_URL) {
+        try {
+          const resp = await fetch(`${CLOUD_URL}/api/status`, { signal: AbortSignal.timeout(3500) });
+          if (resp.ok) {
+            SERVER_URL = CLOUD_URL;
+            serverActive = true;
+            serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1";
+            serverBadge.innerHTML = "<span>🟢</span> Servidor Cloud 24/7 Conectado";
+            return true;
+          }
+        } catch (e) {}
+      }
+
       serverActive = false;
       serverBadge.className = "px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1";
-      serverBadge.innerHTML = "<span>🟡</span> Servidor desconectado (Ejecuta 'iniciar_servidor.bat')";
+      serverBadge.innerHTML = "<span>🟡</span> Conectando con servidor...";
       return false;
     }
 
