@@ -1,5 +1,6 @@
 import os
 import base64
+import json
 
 base_dir = r"C:\Users\Abeli\.gemini\antigravity\scratch\proyecto_musica"
 assets_dir = os.path.join(base_dir, "assets")
@@ -17,6 +18,38 @@ c_detail = get_b64("cinnamoroll_detail.png")
 c_sleeping = get_b64("cinnamoroll_sleeping.png")
 c_star = get_b64("cinnamoroll_star.png")
 c_player = get_b64("cinnamoroll_player_cloud.png")
+
+# Load real songs metadata
+with open(os.path.join(base_dir, "songs_metadata.json"), "r", encoding="utf-8") as f:
+    meta_dict = json.load(f)
+
+server_songs_list = []
+canciones_dir = os.path.join(base_dir, "canciones")
+
+for fname in sorted(os.listdir(canciones_dir)):
+    if fname.endswith(".m4a") or fname.endswith(".mp3"):
+        fp = os.path.join(canciones_dir, fname)
+        size_mb = f"{round(os.path.getsize(fp) / (1024 * 1024), 2)} MB"
+        m = meta_dict.get(fname, {})
+        title = m.get("title", fname[:-4].replace("_", " "))
+        artist = m.get("artist", "Artista")
+        cover = m.get("cover_url", f"logos/{fname[:-4]}.jpg")
+        fallback = m.get("fallback_url", cover)
+
+        server_songs_list.append({
+            "id": fname[:-4],
+            "file": fname,
+            "title": title,
+            "artist": artist,
+            "album": "Descargas",
+            "size": size_mb,
+            "cover": cover,
+            "fallback": fallback,
+            "download_url": f"/api/audio/{fname}",
+            "format": "m4a"
+        })
+
+songs_json_str = json.dumps(server_songs_list, indent=2, ensure_ascii=False)
 
 html_content = f'''<!DOCTYPE html>
 <html lang="es">
@@ -152,7 +185,7 @@ html_content = f'''<!DOCTYPE html>
         />
       </div>
 
-      <!-- 4 Quick SQUIRCLE Buttons (Exact vector icons and soft rounded-2xl card shape from the mockup!) -->
+      <!-- 4 Quick SQUIRCLE Buttons -->
       <div class="grid grid-cols-4 gap-2 pt-1 px-1">
         <!-- 1. Buscar -->
         <button id="quick-btn-search" class="flex flex-col items-center justify-center gap-1.5 group active:scale-95">
@@ -203,23 +236,13 @@ html_content = f'''<!DOCTYPE html>
         </button>
       </div>
 
-      <!-- Promo Banner -->
-      <div id="home-promo-banner" class="rounded-3xl bg-gradient-to-r from-[#cbe4ff] via-[#dcedff] to-[#edf6ff] p-3.5 border border-blue-200/50 shadow-xs flex items-center justify-between cursor-pointer hover:shadow-md transition">
-        <div class="w-20 h-16 flex items-center justify-center">
-          <img src="{c_banner}" alt="Cinnamoroll Banner" class="max-h-full max-w-full object-contain animate-float">
-        </div>
-        <div class="text-right flex-1 pl-3">
-          <h3 class="text-sm font-black text-[#2e6bb5] leading-tight">
-            ¡Encuentra tus canciones favoritas!
-          </h3>
-          <p class="text-[10px] text-blue-400 font-bold mt-1">
-            Audio completo en .m4a y portadas HD ✨
-          </p>
-        </div>
+      <!-- Promo Banner: EXACT single complete artwork matching user's mockup! -->
+      <div id="home-promo-banner" class="shrink-0 rounded-3xl overflow-hidden shadow-xs border border-blue-200/50 cursor-pointer hover:shadow-md transition active:scale-[0.99]">
+        <img src="{c_banner}" alt="¡Encuentra tus canciones favoritas!" class="w-full h-auto object-cover block">
       </div>
 
       <!-- Section: Recomendado para ti (Snooze, Die For You, After Dark) -->
-      <div class="space-y-2.5 pt-1">
+      <div class="space-y-2.5 pt-1 shrink-0">
         <div class="flex items-center justify-between">
           <h4 class="font-black text-sm text-[#263238]">Recomendado para ti</h4>
           <button id="btn-see-more-recommended" class="text-xs font-bold text-blue-500 hover:text-blue-600">
@@ -232,7 +255,7 @@ html_content = f'''<!DOCTYPE html>
       </div>
 
       <!-- Section: Tendencias -->
-      <div class="space-y-2.5 pt-1">
+      <div class="space-y-2.5 pt-1 shrink-0">
         <div class="flex items-center justify-between">
           <h4 class="font-black text-sm text-[#263238]">Tendencias</h4>
           <button id="btn-see-more-trending" class="text-xs font-bold text-blue-500 hover:text-blue-600">
@@ -344,9 +367,9 @@ html_content = f'''<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Real Downloaded Songs List -->
+      <!-- Real Downloaded Songs List with Official Album Artwork! -->
       <div id="downloads-list-items" class="space-y-2 pt-1">
-        <!-- Populated dynamically by JS with real songs from server & downloads -->
+        <!-- Populated dynamically by JS with official album artwork for all tracks -->
       </div>
 
       <!-- Sleeping Cinnamoroll doodle at bottom -->
@@ -361,7 +384,7 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <div id="mini-player-bar" class="absolute bottom-[72px] left-3 right-3 z-30 bg-white/95 backdrop-blur-md rounded-2xl p-2 px-3 shadow-md border border-[#d6e8fe] flex items-center justify-between transition-all cursor-pointer">
       <div id="mini-track-info" class="flex items-center gap-2.5 overflow-hidden flex-1 mr-2">
-        <img id="mini-cover" src="logos/Fix_You.jpg" onerror="this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-9 h-9 rounded-xl object-cover shadow-xs shrink-0 border border-blue-50">
+        <img id="mini-cover" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-9 h-9 rounded-xl object-cover shadow-xs shrink-0 border border-blue-50">
         <div class="overflow-hidden">
           <h5 id="mini-title" class="text-xs font-black text-slate-800 truncate">Fix You</h5>
           <p id="mini-artist" class="text-[10px] font-bold text-slate-400 truncate">Coldplay</p>
@@ -379,7 +402,7 @@ html_content = f'''<!DOCTYPE html>
     </div>
 
     <!-- ======================================================== -->
-    <!-- BOTTOM DOCK NAVIGATION (EXACTLY 3 OPTIONS: Inicio, Buscar, Descargas) -->
+    <!-- BOTTOM DOCK NAVIGATION (3 Options: Inicio, Buscar, Descargas) -->
     <!-- ======================================================== -->
     <nav class="h-[64px] bg-white border-t border-[#e2eefd] px-8 grid grid-cols-3 items-center z-30 shrink-0">
       <!-- 1. Inicio -->
@@ -430,7 +453,7 @@ html_content = f'''<!DOCTYPE html>
 
       <div class="flex flex-col items-center mt-4 mb-3">
         <div class="w-60 h-60 rounded-3xl overflow-hidden shadow-xl border-4 border-white cursor-pointer" id="detail-cover-card">
-          <img id="detail-cover-img" src="logos/Fix_You.jpg" onerror="this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-full h-full object-cover">
+          <img id="detail-cover-img" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-full h-full object-cover">
         </div>
       </div>
 
@@ -473,16 +496,16 @@ html_content = f'''<!DOCTYPE html>
         <p id="detail-download-status" class="text-center text-[10px] text-slate-400 font-bold"></p>
       </div>
 
-      <!-- Portada de la canción (1000px HD) -->
+      <!-- Portada de la canción (HD) -->
       <div class="mt-4 p-3.5 rounded-2xl bg-white border border-[#d6e8fe] shadow-xs space-y-2">
         <span class="text-xs font-black text-slate-700">Portada de la canción</span>
         <div class="flex items-center justify-between gap-3">
           <div class="w-14 h-14 rounded-xl overflow-hidden shadow-xs shrink-0 border border-blue-50">
-            <img id="detail-subcover-img" src="logos/Fix_You.jpg" onerror="this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Mini" class="w-full h-full object-cover">
+            <img id="detail-subcover-img" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Mini" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
             <button id="btn-download-cover-hd" class="w-full py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs transition border border-blue-100">
-              Guardar 1000px HD
+              Guardar Portada HD
             </button>
           </div>
           <div class="w-14 h-12 flex items-center justify-center">
@@ -520,7 +543,7 @@ html_content = f'''<!DOCTYPE html>
 
       <div class="bg-white/95 backdrop-blur-md rounded-3xl p-5 shadow-xl border border-white space-y-3 z-10">
         <div class="flex items-center gap-3">
-          <img id="exp-cover" src="logos/Fix_You.jpg" onerror="this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-13 h-13 rounded-2xl object-cover shadow-xs shrink-0 border border-blue-50">
+          <img id="exp-cover" src="logos/Fix_You.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/64/7b/9e/647b9ec9-d102-15f1-332e-503dbcf36ee9/0094633177651.jpg/1000x1000bb.jpg'" alt="Cover" class="w-13 h-13 rounded-2xl object-cover shadow-xs shrink-0 border border-blue-50">
           <div class="overflow-hidden flex-1">
             <h4 id="exp-title" class="font-black text-sm text-slate-800 truncate">Fix You</h4>
             <p id="exp-artist" class="text-xs font-bold text-slate-400 truncate">Coldplay</p>
@@ -600,7 +623,7 @@ html_content = f'''<!DOCTYPE html>
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <!-- ======================================================== -->
   <script>
-    // 9 Essential Mockup Songs (Exact items matching the drawing)
+    // 9 Essential Mockup Songs (Matching original drawing)
     const MOCKUP_SONGS = [
       {{
         id: "fix_you",
@@ -703,6 +726,9 @@ html_content = f'''<!DOCTYPE html>
       }}
     ];
 
+    // Real Preloaded 26 Server Songs with Official Covers
+    const PRELOADED_SERVER_SONGS = {songs_json_str};
+
     // State Variables
     const CLOUD_URL = 'https://musicon-nymp.onrender.com';
     let SERVER_URL = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
@@ -718,7 +744,7 @@ html_content = f'''<!DOCTYPE html>
     let isRepeat = false;
     let favorites = JSON.parse(localStorage.getItem('cinnamoroll_favorites') || '[]');
     let localDownloads = JSON.parse(localStorage.getItem('cinnamoroll_downloads') || '[]');
-    let serverDownloads = [];
+    let serverDownloads = [...PRELOADED_SERVER_SONGS];
     let currentDlSubtab = 'canciones';
     let activeDownloadInterval = null;
 
@@ -771,7 +797,7 @@ html_content = f'''<!DOCTYPE html>
     const btnMinimizeExpanded = document.getElementById('btn-minimize-expanded-player');
     const btnExpandedFavorite = document.getElementById('btn-expanded-favorite');
 
-    // Server check & Fetch real downloads from server
+    // Server check & Fetch real downloads
     async function checkServer() {{
       try {{
         const resp = await fetch(`${{SERVER_URL}}/api/status`, {{ signal: AbortSignal.timeout(3500) }});
@@ -791,14 +817,15 @@ html_content = f'''<!DOCTYPE html>
         const resp = await fetch(`${{SERVER_URL}}/api/downloads`, {{ signal: AbortSignal.timeout(4000) }});
         if (resp.ok) {{
           const data = await resp.json();
-          if (data && data.songs) {{
+          if (data && data.songs && data.songs.length > 0) {{
             serverDownloads = data.songs.map(s => ({{
               id: s.id,
               title: s.title,
               artist: s.artist,
               album: 'Descargas',
               size: s.size,
-              cover: 'logos/Fix_You.jpg',
+              cover: s.cover || 'logos/Fix_You.jpg',
+              fallback: s.fallback || s.cover || 'logos/Fix_You.jpg',
               audioUrl: s.download_url.startsWith('http') ? s.download_url : `${{SERVER_URL}}${{s.download_url}}`,
               file: s.file
             }}));
@@ -1134,7 +1161,7 @@ html_content = f'''<!DOCTYPE html>
     btnDownloadCoverHd.addEventListener('click', () => {{
       const a = document.createElement('a');
       a.href = currentTrack.fallback || currentTrack.cover;
-      a.download = `${{currentTrack.title.replace(/\\s+/g, '_')}}_Cover_1000px.jpg`;
+      a.download = `${{currentTrack.title.replace(/\\s+/g, '_')}}_Cover.jpg`;
       a.target = '_blank';
       document.body.appendChild(a);
       a.click();
@@ -1208,7 +1235,6 @@ html_content = f'''<!DOCTYPE html>
         }}
       }});
 
-      // If list is empty, include preloaded Coldplay songs from mockup
       const displayList = combined.length > 0 ? combined : MOCKUP_SONGS.slice(0, 5);
 
       if (subtab === 'en_proceso') {{
@@ -1226,7 +1252,6 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       if (subtab === 'albumes') {{
-        // Group by artist/album
         const groups = {{}};
         displayList.forEach(item => {{
           const key = item.artist || 'Varios';
@@ -1266,7 +1291,7 @@ html_content = f'''<!DOCTYPE html>
       row.className = "flex items-center justify-between p-2.5 rounded-2xl bg-white border border-[#e2eefd] hover:border-blue-200 shadow-xs transition";
       row.innerHTML = `
         <div class="flex items-center gap-2.5 overflow-hidden flex-1 cursor-pointer track-info-col">
-          <img src="${{item.cover}}\" onerror="this.src='${{item.fallback || item.cover}}'\" class="w-10 h-10 rounded-xl object-cover shrink-0 border border-blue-50 shadow-xs">
+          <img src="${{item.cover}}\" onerror=\"this.onerror=null;this.src='${{item.fallback || item.cover}}'\" class="w-10 h-10 rounded-xl object-cover shrink-0 border border-blue-50 shadow-xs">
           <div class="overflow-hidden">
             <h5 class="text-xs font-bold text-slate-800 truncate">${{item.title}}</h5>
             <p class="text-[10px] text-slate-400 font-medium truncate">
@@ -1280,7 +1305,7 @@ html_content = f'''<!DOCTYPE html>
           </button>
           <button class="btn-save-dl w-7 h-7 rounded-full bg-[#edf5fe] hover:bg-blue-100 text-blue-600 flex items-center justify-center text-xs transition active:scale-95" title="Guardar archivo">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="4" x2="12" y2="15"></line>
+              <line x1="12" y1="4.5" x2="12" y2="15"></line>
               <polyline points="8 11 12 15 16 11"></polyline>
               <path d="M5 16v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"></path>
             </svg>
@@ -1390,7 +1415,7 @@ html_content = f'''<!DOCTYPE html>
         row.className = "flex items-center justify-between p-2 rounded-2xl bg-white border border-[#e2eefd] hover:border-blue-200 shadow-xs transition";
         row.innerHTML = `
           <div class="flex items-center gap-2.5 overflow-hidden flex-1 cursor-pointer track-click-area">
-            <img src="${{song.cover}}\" onerror="this.src='${{song.fallback || song.cover}}'\" class="w-11 h-11 rounded-xl object-cover shrink-0 border border-blue-50 shadow-xs">
+            <img src="${{song.cover}}\" onerror=\"this.onerror=null;this.src='${{song.fallback || song.cover}}'\" class="w-11 h-11 rounded-xl object-cover shrink-0 border border-blue-50 shadow-xs">
             <div class="overflow-hidden">
               <h5 class="text-xs font-bold text-slate-800 truncate">${{song.title}}</h5>
               <p class="text-[10px] text-slate-400 font-medium truncate">${{song.artist}}</p>
@@ -1479,7 +1504,7 @@ html_content = f'''<!DOCTYPE html>
         card.className = "flex flex-col gap-1 rounded-2xl bg-white p-2 border border-[#e2eefd] shadow-xs cursor-pointer hover:border-blue-300 transition active:scale-95";
         card.innerHTML = `
           <div class="w-full aspect-square rounded-xl overflow-hidden shadow-xs border border-blue-50">
-            <img src="${{song.cover}}\" onerror="this.src='${{song.fallback || song.cover}}'\" class="w-full h-full object-cover">
+            <img src="${{song.cover}}\" onerror=\"this.onerror=null;this.src='${{song.fallback || song.cover}}'\" class="w-full h-full object-cover">
           </div>
           <h5 class="text-[11px] font-bold text-slate-800 truncate mt-0.5">${{song.title}}</h5>
           <p class="text-[9px] font-semibold text-slate-400 truncate">${{song.artist}}</p>
@@ -1500,7 +1525,7 @@ html_content = f'''<!DOCTYPE html>
         card.className = "flex flex-col gap-1 rounded-2xl bg-white p-2 border border-[#e2eefd] shadow-xs cursor-pointer hover:border-blue-300 transition active:scale-95";
         card.innerHTML = `
           <div class="w-full aspect-square rounded-xl overflow-hidden shadow-xs border border-blue-50">
-            <img src="${{song.cover}}\" onerror="this.src='${{song.fallback || song.cover}}'\" class="w-full h-full object-cover">
+            <img src="${{song.cover}}\" onerror=\"this.onerror=null;this.src='${{song.fallback || song.cover}}'\" class="w-full h-full object-cover">
           </div>
           <h5 class="text-[11px] font-bold text-slate-800 truncate mt-0.5">${{song.title}}</h5>
           <p class="text-[9px] font-semibold text-slate-400 truncate">${{song.artist}}</p>
@@ -1536,6 +1561,7 @@ html_content = f'''<!DOCTYPE html>
         favorites = [];
         localDownloads = [];
         localStorage.clear();
+        serverDownloads = [...PRELOADED_SERVER_SONGS];
         renderDownloadsList(currentDlSubtab);
         modalSettings.classList.add('hidden');
         alert("Caché y datos locales limpiados.");
@@ -1556,4 +1582,12 @@ html_content = f'''<!DOCTYPE html>
 out_path = os.path.join(base_dir, "index.html")
 with open(out_path, "w", encoding="utf-8") as f:
     f.write(html_content)
-print(f"Successfully generated clean index.html: {os.path.getsize(out_path)} bytes")
+
+# Also update generate_clean_html.py and build_clean_version.py
+for script_name in ["generate_clean_html.py", "build_clean_version.py"]:
+    sp = os.path.join(base_dir, script_name)
+    with open(sp, "w", encoding="utf-8") as sf:
+        with open(__file__, "r", encoding="utf-8") as cur_f:
+            sf.write(cur_f.read())
+
+print(f"Generated clean index.html: {os.path.getsize(out_path)} bytes")

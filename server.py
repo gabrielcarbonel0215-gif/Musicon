@@ -66,12 +66,28 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                             title = clean_name.replace('_', ' ')
                             artist = 'Cinnamoroll Music'
                         
+                        meta = {}
+                        meta_path = os.path.join(BASE_DIR, 'songs_metadata.json')
+                        if os.path.exists(meta_path):
+                            try:
+                                with open(meta_path, 'r', encoding='utf-8') as mf:
+                                    meta = json.load(mf).get(f, {})
+                            except Exception:
+                                pass
+
+                        cover_filename = f"{raw_name}.jpg"
+                        has_local_cover = os.path.exists(os.path.join(COVERS_DIR, cover_filename))
+                        cover_url = f"logos/{cover_filename}" if has_local_cover else meta.get('cover_url', 'logos/Fix_You.jpg')
+                        fallback_url = meta.get('fallback_url', cover_url)
+
                         items.append({
                             "id": raw_name,
                             "file": f,
-                            "title": title,
-                            "artist": artist,
+                            "title": meta.get('title', title),
+                            "artist": meta.get('artist', artist),
                             "size": f"{size_mb} MB",
+                            "cover": cover_url,
+                            "fallback": fallback_url,
                             "download_url": f"/api/audio/{urllib.parse.quote(f)}",
                             "format": "m4a"
                         })
