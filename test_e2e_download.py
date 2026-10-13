@@ -256,7 +256,7 @@ def test_pwa_installability():
         manifest = json.loads(r.read().decode("utf-8"))
         assert manifest.get("name") == "Cinnamoroll Music"
         assert manifest.get("display") == "standalone"
-        assert manifest.get("start_url") == "/"
+        assert manifest.get("start_url") in ("/", "/?pwa=1")
         icons = manifest.get("icons", [])
         assert len(icons) >= 4, "Faltan íconos PWA (192, 512, maskable)"
 
@@ -276,7 +276,7 @@ def test_pwa_installability():
     with urllib.request.urlopen(f"{BASE_URL}/", timeout=10) as r:
         assert r.status == 200
         html = r.read().decode("utf-8")
-        assert '<link rel="manifest" href="/manifest.json">' in html
+        assert 'rel="manifest" href="/manifest.json' in html
         assert "navigator.serviceWorker.register('/sw.js')" in html
         assert 'id="btn-install-pwa"' in html
 

@@ -1,16 +1,14 @@
-const CACHE_NAME = 'cinnamoroll-music-v1';
-const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png'
+const CACHE_NAME = 'cinnamoroll-music-v2';
+const PRECACHE_ASSETS = [
+  '/manifest.json?v=2',
+  '/assets/icon-192.png?v=2',
+  '/assets/icon-512.png?v=2'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).catch(() => {})
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS)).catch(() => {})
   );
 });
 
@@ -34,7 +32,6 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
 
-  // Never intercept API calls, audio streams, or external cross-origin requests
   if (
     url.origin !== self.location.origin ||
     url.pathname.startsWith('/api/') ||
@@ -44,7 +41,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first with cache fallback for HTML, manifest, and static assets
   event.respondWith(
     fetch(req)
       .then((networkResp) => {
@@ -54,6 +50,6 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResp;
       })
-      .catch(() => caches.match(req).then((cached) => cached || caches.match('/index.html')))
+      .catch(() => caches.match(req).then((cached) => cached || caches.match('/')))
   );
 });
