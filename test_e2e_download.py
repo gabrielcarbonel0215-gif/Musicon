@@ -245,6 +245,44 @@ def test_wishlist_automation():
         json.dump(w_items, wf, ensure_ascii=False, indent=2)
 
 
+def test_pwa_installability():
+    print("\n=======================================================")
+    print("[TEST] Verificando instalabilidad PWA para Chrome en Android...")
+    print("=======================================================")
+    with urllib.request.urlopen(f"{BASE_URL}/manifest.json", timeout=10) as r:
+        assert r.status == 200
+        ct = r.headers.get("Content-Type", "")
+        assert "manifest+json" in ct or "application/json" in ct, f"Content-Type inesperado: {ct}"
+        manifest = json.loads(r.read().decode("utf-8"))
+        assert manifest.get("name") == "Cinnamoroll Music"
+        assert manifest.get("display") == "standalone"
+        assert manifest.get("start_url") == "/"
+        icons = manifest.get("icons", [])
+        assert len(icons) >= 4, "Faltan íconos PWA (192, 512, maskable)"
+
+    for ic in icons:
+        with urllib.request.urlopen(f"{BASE_URL}{ic['src']}", timeout=10) as r:
+            assert r.status == 200
+            data = r.read()
+            assert len(data) > 5000, f"Ícono demasiado pequeño: {ic['src']}"
+
+    with urllib.request.urlopen(f"{BASE_URL}/sw.js", timeout=10) as r:
+        assert r.status == 200
+        sw_ct = r.headers.get("Content-Type", "")
+        assert "javascript" in sw_ct, f"SW Content-Type inesperado: {sw_ct}"
+        sw_code = r.read().decode("utf-8")
+        assert "addEventListener('fetch'" in sw_code or 'addEventListener("fetch"' in sw_code
+
+    with urllib.request.urlopen(f"{BASE_URL}/", timeout=10) as r:
+        assert r.status == 200
+        html = r.read().decode("utf-8")
+        assert '<link rel="manifest" href="/manifest.json">' in html
+        assert "navigator.serviceWorker.register('/sw.js')" in html
+        assert 'id="btn-install-pwa"' in html
+
+    print("[TEST] PWA Manifest, Service Worker, íconos 192/512 y botón de instalación verificados al 100%.")
+
+
 def run_all_tests():
     env = os.environ.copy()
     env["PORT"] = str(TEST_PORT)
@@ -273,6 +311,7 @@ def run_all_tests():
         assert wait_for_server(), "El servidor no respondió a tiempo."
         print("[TEST] Servidor activo. Ejecutando batería de pruebas...")
 
+        test_pwa_installability()
         test_catalog_integrity()
 
         for tc in test_cases:

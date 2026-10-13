@@ -758,6 +758,34 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
+        if path == '/manifest.json':
+            manifest_path = os.path.join(BASE_DIR, 'manifest.json')
+            if os.path.exists(manifest_path):
+                with open(manifest_path, 'rb') as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/manifest+json; charset=utf-8')
+                self.send_header('Cache-Control', 'no-cache')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
+
+        if path == '/sw.js':
+            sw_path = os.path.join(BASE_DIR, 'sw.js')
+            if os.path.exists(sw_path):
+                with open(sw_path, 'rb') as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/javascript; charset=utf-8')
+                self.send_header('Service-Worker-Allowed', '/')
+                self.send_header('Cache-Control', 'no-cache')
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
+
         if path == '/api/status':
             self.send_json({
                 "status": "running",

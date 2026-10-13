@@ -65,7 +65,15 @@ html_content = f'''<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f8fe">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Cinnamoroll Music">
   <title>Cinnamoroll Music</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
@@ -224,10 +232,15 @@ html_content = f'''<!DOCTYPE html>
     <!-- 2. PANTALLA PRINCIPAL (INICIO) -->
     <!-- ======================================================== -->
     <div id="screen-home" class="flex-1 min-h-0 flex flex-col overflow-y-auto px-5 pt-4 pb-36 space-y-4 screen-view">
-      <!-- App Header: avatar + title (gear removed per user request) -->
-      <div class="flex items-center gap-2 pt-1">
-        <img src="{c_avatar}" alt="Cinnamoroll" class="h-8 w-auto object-contain drop-shadow-xs">
-        <span class="font-black text-lg text-[#263238] tracking-tight">Cinnamoroll Music</span>
+      <!-- App Header: avatar + title + optional PWA install button -->
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <div class="flex items-center gap-2">
+          <img src="{c_avatar}" alt="Cinnamoroll" class="h-8 w-auto object-contain drop-shadow-xs">
+          <span class="font-black text-lg text-[#263238] tracking-tight">Cinnamoroll Music</span>
+        </div>
+        <button id="btn-install-pwa" class="hidden px-3 py-1 rounded-full bg-gradient-to-r from-[#4787d8] to-[#64a1ec] text-white text-[11px] font-extrabold shadow-xs hover:opacity-95 active:scale-95 transition flex items-center gap-1 shrink-0">
+          <span>📲</span> Instalar App
+        </button>
       </div>
 
       <!-- Search Bar -->
@@ -1593,6 +1606,43 @@ html_content = f'''<!DOCTYPE html>
     renderSearchRows(PLAYLIST_SONGS.slice(0, 10));
     updatePlayerUI(PLAYLIST_SONGS[0]);
     checkServer().then(() => loadServerDownloads());
+
+    // PWA Service Worker & Android Install Prompt
+    if ('serviceWorker' in navigator) {{
+      window.addEventListener('load', () => {{
+        navigator.serviceWorker.register('/sw.js').catch(() => {{}});
+      }});
+    }}
+
+    let deferredInstallPrompt = null;
+    const btnInstallPwa = document.getElementById('btn-install-pwa');
+
+    window.addEventListener('beforeinstallprompt', (e) => {{
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      if (btnInstallPwa) {{
+        btnInstallPwa.classList.remove('hidden');
+      }}
+    }});
+
+    if (btnInstallPwa) {{
+      btnInstallPwa.addEventListener('click', async () => {{
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {{
+          btnInstallPwa.classList.add('hidden');
+        }}
+        deferredInstallPrompt = null;
+      }});
+    }}
+
+    window.addEventListener('appinstalled', () => {{
+      deferredInstallPrompt = null;
+      if (btnInstallPwa) {{
+        btnInstallPwa.classList.add('hidden');
+      }}
+    }});
   </script>
 </body>
 </html>
