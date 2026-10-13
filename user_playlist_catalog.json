@@ -569,9 +569,9 @@
     "cover": "logos/Mi_Corazón_Tango_Astral_Pacifica.jpg",
     "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b2/1d/3a/b21d3ae2-3551-894f-58ee-4aca1ec26d05/198588406465.jpg/1000x1000bb.jpg",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b2/6b/0f/b26b0f1d-7be6-10bc-a458-a16de1ff5808/mzaf_11785169350153954507.plus.aac.p.m4a",
-    "audioUrl": "/api/audio/Mi_Corazón_feat_Natalia_Lafourcade_Paté_de_Fuá.m4a",
-    "size": "7.5 MB",
-    "file": "Mi_Corazón_feat_Natalia_Lafourcade_Paté_de_Fuá.m4a"
+    "audioUrl": "/api/audio/Mi_Corazón_feat_Pacifica_Tango_Astral.m4a",
+    "size": "8.9 MB",
+    "file": "Mi_Corazón_feat_Pacifica_Tango_Astral.m4a"
   },
   {
     "id": "esto_es_amor_mon_laferte_conociendo_rusia",
@@ -597,9 +597,9 @@
     "cover": "logos/Love_La_Garfield.jpg",
     "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/5a/e6/f8/5ae6f83f-bcb7-b96e-e933-2518a3eb95fe/645789109195.png/1000x1000bb.jpg",
     "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/cf/4a/c6/cf4ac680-8de2-8453-684d-ff2b78f155f0/mzaf_10640596759339685816.plus.aac.p.m4a",
-    "audioUrl": "/api/audio/08_Cancion_de_Amor_Viniloversus_Simon_Grossman.m4a",
-    "size": "7.5 MB",
-    "file": "08_Cancion_de_Amor_Viniloversus_Simon_Grossman.m4a"
+    "audioUrl": "/api/audio/Love_La_Garfield.m4a",
+    "size": "6.6 MB",
+    "file": "Love_La_Garfield.m4a"
   },
   {
     "id": "roommates_malcolm_todd",

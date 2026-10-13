@@ -1,0 +1,23 @@
+name: Keep Render Server Awake (24/7 Automation)
+
+on:
+  schedule:
+    # Ejecuta cada 14 minutos para evitar el cold-start de 15 min en Render Free Tier
+    - cron: '*/14 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping Cinnamoroll Music Cloud Server
+        run: |
+          echo "Despertando / manteniendo activo musicon-nymp.onrender.com..."
+          HTTP_STATUS=$(curl -s -o response.json -w "%{http_code}" --max-time 45 --retry 2 "https://musicon-nymp.onrender.com/api/status")
+          echo "Respuesta HTTP: $HTTP_STATUS"
+          cat response.json || true
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "El servidor devolvió código $HTTP_STATUS"
+            exit 1
+          fi

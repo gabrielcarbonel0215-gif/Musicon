@@ -35,6 +35,8 @@ canciones_dir = os.path.join(base_dir, "canciones")
 for fname in sorted(os.listdir(canciones_dir)):
     if fname.endswith(".m4a") or fname.endswith(".mp3"):
         fp = os.path.join(canciones_dir, fname)
+        if os.path.getsize(fp) <= 1500000:
+            continue
         size_mb = f"{round(os.path.getsize(fp) / (1024 * 1024), 2)} MB"
         m = meta_dict.get(fname, {})
         title = m.get("title", fname[:-4].replace("_", " "))
@@ -51,6 +53,7 @@ for fname in sorted(os.listdir(canciones_dir)):
             "size": size_mb,
             "cover": cover,
             "fallback": fallback,
+            "audioUrl": f"/api/audio/{fname}",
             "download_url": f"/api/audio/{fname}",
             "format": "m4a"
         })
@@ -297,10 +300,15 @@ html_content = f'''<!DOCTYPE html>
         <img src="{c_banner}" alt="¡Encuentra tus canciones favoritas!" class="w-full h-auto object-cover block">
       </div>
 
-      <!-- Section: Recomendado para ti (Snooze, Die For You, After Dark) -->
+      <!-- Section: Recomendado para ti -->
       <div class="space-y-2.5 pt-1 shrink-0">
         <div class="flex items-center justify-between">
-          <h4 class="font-black text-sm text-[#263238]">Recomendado para ti</h4>
+          <div class="flex items-center gap-1.5">
+            <h4 class="font-black text-sm text-[#263238]">Recomendado para ti</h4>
+            <button id="btn-rotate-home" class="w-5 h-5 rounded-full bg-[#edf5fe] hover:bg-blue-100 text-blue-500 flex items-center justify-center text-[11px] font-black transition active:scale-90" title="Rotar recomendaciones">
+              ↻
+            </button>
+          </div>
           <button id="btn-see-more-recommended" class="text-xs font-bold text-blue-500 hover:text-blue-600">
             Ver más &gt;
           </button>
@@ -732,6 +740,8 @@ html_content = f'''<!DOCTYPE html>
       return false;
     }}
 
+    let homeRotationStep = Math.floor(Date.now() / (1000 * 60 * 15)) % Math.max(1, PLAYLIST_SONGS.length);
+
     async function loadServerDownloads() {{
       try {{
         const resp = await fetch(`${{SERVER_URL}}/api/downloads`, {{ signal: AbortSignal.timeout(4000) }});
@@ -753,7 +763,20 @@ html_content = f'''<!DOCTYPE html>
         }}
       }} catch (e) {{}}
       renderDownloadsList(currentDlSubtab);
+      renderHomeCards(false);
     }}
+
+    window.queueWishlist = async function(songs, wait = false) {{
+      await checkServer();
+      const resp = await fetch(`${{SERVER_URL}}/api/wishlist`, {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{ wait: Boolean(wait), songs: Array.isArray(songs) ? songs : [songs] }})
+      }});
+      const data = await resp.json();
+      setTimeout(() => loadServerDownloads(), wait ? 200 : 4000);
+      return data;
+    }};
 
     // Splash
     let splashPercent = 20;
@@ -803,6 +826,8 @@ html_content = f'''<!DOCTYPE html>
 
       if (targetTab === 'downloads') {{
         loadServerDownloads();
+      }} else if (targetTab === 'home') {{
+        renderHomeCards(true);
       }}
     }}
 
@@ -902,7 +927,10 @@ html_content = f'''<!DOCTYPE html>
       currentTrack = track;
       updatePlayerUI(track);
 
-      const targetAudio = track.audioUrl || track.preview;
+      let targetAudio = track.audioUrl || track.download_url || track.preview;
+      if (targetAudio && targetAudio.startsWith('/api/audio/') && SERVER_URL) {{
+        targetAudio = `${{SERVER_URL}}${{targetAudio}}`;
+      }}
       if (targetAudio) {{
         audio.src = targetAudio;
         audio.play().then(() => {{
@@ -1445,7 +1473,7 @@ html_content = f'''<!DOCTYPE html>
         return;
       }}
       const results = await searchiTunes(query, 16);
-      renderSearchRows(results.length > 0 ? results : MOCKUP_SONGS.slice(0, 6));
+      renderSearchRows(results.length > 0 ? results : PLAYLIST_SONGS.slice(0, 6));
     }}
 
     document.getElementById('main-search-input').addEventListener('keydown', (e) => {{
@@ -1466,11 +1494,37 @@ html_content = f'''<!DOCTYPE html>
       }});
     }});
 
-    function renderHomeCards() {{
+    function getDiscoveryPool() {{
+      const pool = [...PLAYLIST_SONGS];
+      serverDownloads.forEach(sd => {{
+        const exists = pool.some(p =>
+          (p.file && sd.file && p.file.toLowerCase() === sd.file.toLowerCase()) ||
+          (p.title.toLowerCase() === sd.title.toLowerCase() && p.artist.toLowerCase() === sd.artist.toLowerCase())
+        );
+        if (!exists) {{
+          pool.push(sd);
+        }}
+      }});
+      return pool;
+    }}
+
+    function renderHomeCards(advanceRotation = false) {{
+      const pool = getDiscoveryPool();
+      if (pool.length === 0) return;
+      if (advanceRotation) {{
+        homeRotationStep = (homeRotationStep + 3) % pool.length;
+      }}
+
       const recContainer = document.getElementById('recommended-container');
       recContainer.innerHTML = '';
-      // 3 Top Recommended from User Playlist: Meet You Again, Love Me Not, Always Forever
-      const recList = [PLAYLIST_SONGS[0], PLAYLIST_SONGS[1], PLAYLIST_SONGS[2]];
+      const recList = [];
+      const usedIndices = new Set();
+
+      for (let i = 0; i < 3 && i < pool.length; i++) {{
+        const idx = (homeRotationStep + i) % pool.length;
+        usedIndices.add(idx);
+        recList.push(pool[idx]);
+      }}
 
       recList.forEach(song => {{
         const card = document.createElement('div');
@@ -1491,8 +1545,15 @@ html_content = f'''<!DOCTYPE html>
 
       const trendContainer = document.getElementById('trending-container');
       trendContainer.innerHTML = '';
-      // 3 Top Trending from User Playlist: Cariño (The Marías), Brillo Mío (Caloncho), Departamento (Bandalos Chinos)
-      const trendList = [PLAYLIST_SONGS[7], PLAYLIST_SONGS[4], PLAYLIST_SONGS[44]];
+      const trendList = [];
+      let offset = (homeRotationStep + 7) % pool.length;
+      for (let attempts = 0; attempts < pool.length && trendList.length < 3; attempts++) {{
+        const idx = (offset + attempts * 5) % pool.length;
+        if (!usedIndices.has(idx)) {{
+          usedIndices.add(idx);
+          trendList.push(pool[idx]);
+        }}
+      }}
 
       trendList.forEach(song => {{
         const card = document.createElement('div');
@@ -1512,17 +1573,22 @@ html_content = f'''<!DOCTYPE html>
       }});
     }}
 
+    const btnRotateHome = document.getElementById('btn-rotate-home');
+    if (btnRotateHome) {{
+      btnRotateHome.addEventListener('click', () => renderHomeCards(true));
+    }}
+
     document.getElementById('btn-see-more-recommended').addEventListener('click', () => {{
       switchTab('search');
-      renderSearchRows(PLAYLIST_SONGS);
+      renderSearchRows(getDiscoveryPool());
     }});
     document.getElementById('btn-see-more-trending').addEventListener('click', () => {{
       switchTab('search');
-      renderSearchRows(PLAYLIST_SONGS.slice(0, 10));
+      renderSearchRows(getDiscoveryPool().slice(0, 15));
     }});
 
     // Startup
-    renderHomeCards();
+    renderHomeCards(false);
     renderDownloadsList(currentDlSubtab);
     renderSearchRows(PLAYLIST_SONGS.slice(0, 10));
     updatePlayerUI(PLAYLIST_SONGS[0]);

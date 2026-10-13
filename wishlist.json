@@ -1,0 +1,32 @@
+[
+  {
+    "id": "excusa_perfecta_santi_muk",
+    "title": "Excusa Perfecta",
+    "artist": "Santi Muk",
+    "query": "Excusa Perfecta Santi Muk",
+    "cover_url": "",
+    "status": "completed",
+    "added_at": "2026-10-13T05:44:51Z",
+    "file": "Excusa_Perfecta_Santi_Muk.m4a",
+    "download_url": "/api/audio/Excusa_Perfecta_Santi_Muk.m4a",
+    "size_mb": 7.46,
+    "duration_s": 196.5,
+    "cover": "logos/Excusa_Perfecta_Santi_Muk.jpg",
+    "completed_at": "2026-10-13T05:44:51Z"
+  },
+  {
+    "id": "i_think_they_call_this_love_elliot_james_reay",
+    "title": "I Think They Call This Love",
+    "artist": "Elliot James Reay",
+    "query": "I Think They Call This Love Elliot James Reay",
+    "cover_url": "",
+    "status": "completed",
+    "added_at": "2026-10-13T05:44:51Z",
+    "file": "I_Think_They_Call_This_Love_Elliot_James_Reay.m4a",
+    "download_url": "/api/audio/I_Think_They_Call_This_Love_Elliot_James_Reay.m4a",
+    "size_mb": 7.5,
+    "duration_s": 193.6,
+    "cover": "logos/I_Think_They_Call_This_Love_Elliot_James_Reay.jpg",
+    "completed_at": "2026-10-13T05:44:51Z"
+  }
+]

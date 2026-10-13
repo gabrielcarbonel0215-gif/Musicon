@@ -49,10 +49,10 @@
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/19/20/36/1920369f-e4e1-435e-b65a-7f7e6acfa9a4/197338329573.jpg/600x600bb.jpg"
   },
   "08_Cancion_de_Amor_Viniloversus_Simon_Grossman.m4a": {
-    "title": "Love",
-    "artist": "La Garfield",
-    "album": "Love Paraíso",
-    "cover_url": "logos/Love_La_Garfield.jpg",
+    "title": "Cancion de Amor",
+    "artist": "Viniloversus & Simon Grossmann",
+    "cover_file": "08_Cancion_de_Amor_Viniloversus_Simon_Grossman.jpg",
+    "cover_url": "logos/08_Cancion_de_Amor_Viniloversus_Simon_Grossman.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/5a/e6/f8/5ae6f83f-bcb7-b96e-e933-2518a3eb95fe/645789109195.png/1000x1000bb.jpg"
   },
   "09_Formula_Labrinth.m4a": {
@@ -224,11 +224,25 @@
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/71/5f/fc/715ffc50-c006-500b-ad3e-830a6a6bbc70/artwork.jpg/1000x1000bb.jpg"
   },
   "Mi_Corazón_feat_Natalia_Lafourcade_Paté_de_Fuá.m4a": {
+    "title": "Mi Corazón (feat. Natalia Lafourcade)",
+    "artist": "Paté de Fuá",
+    "album": "Película Muda, Pt. 1",
+    "cover_url": "logos/Mi_Corazón_Paté_de_Fuá_Natalia_Lafourcade.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/ce/a2/a4/cea2a40a-6d87-f886-1b5c-7a850831075b/cover.jpg/1000x1000bb.jpg"
+  },
+  "Mi_Corazón_feat_Pacifica_Tango_Astral.m4a": {
     "title": "Mi Corazón (feat. Pacifica)",
     "artist": "Tango Astral",
     "album": "Tango Astral",
     "cover_url": "logos/Mi_Corazón_Tango_Astral_Pacifica.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b2/1d/3a/b21d3ae2-3551-894f-58ee-4aca1ec26d05/198588406465.jpg/1000x1000bb.jpg"
+  },
+  "Love_La_Garfield.m4a": {
+    "title": "Love",
+    "artist": "La Garfield",
+    "album": "Love Paraíso",
+    "cover_url": "logos/Love_La_Garfield.jpg",
+    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/5a/e6/f8/5ae6f83f-bcb7-b96e-e933-2518a3eb95fe/645789109195.png/1000x1000bb.jpg"
   },
   "On_My_Own_feat_NANDA_El_Joven_Paiva.m4a": {
     "title": "On My Own (feat. NANDA)",
@@ -395,6 +409,8 @@
     "title": "I Think They Call This Love",
     "artist": "Elliot James Reay",
     "album": "I Think They Call This Love - Single",
+    "duration": "3:13",
+    "cover_file": "I_Think_They_Call_This_Love_Elliot_James_Reay.jpg",
     "cover_url": "logos/I_Think_They_Call_This_Love_Elliot_James_Reay.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/30/a8/f1/30a8f1b6-e75d-55b4-ee88-667a062e0103/24UM1IM12416.rgb.jpg/1000x1000bb.jpg"
   },
@@ -430,6 +446,8 @@
     "title": "Excusa Perfecta",
     "artist": "Santi Muk",
     "album": "Excusa Perfecta - Single",
+    "duration": "3:16",
+    "cover_file": "Excusa_Perfecta_Santi_Muk.jpg",
     "cover_url": "logos/Excusa_Perfecta_Santi_Muk.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/9c/ba/7e/9cba7ea1-ce40-b5af-6fcf-47354d4889b4/198003065093.jpg/1000x1000bb.jpg"
   },
@@ -437,15 +455,9 @@
     "title": "Flowers",
     "artist": "Miley Cyrus",
     "album": "Descargado",
-    "cover_url": "logos/Fix_You.jpg",
-    "fallback_url": "logos/Fix_You.jpg"
-  },
-  "Demons_Imagine_Dragons.m4a": {
-    "title": "Demons",
-    "artist": "Imagine Dragons",
-    "album": "Descargado",
-    "cover_url": "logos/Demons_Imagine_Dragons_portada.jpg",
-    "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bc/99/3a/bc993a4c-53f0-4660-f1db-69f88d447477/12UMGIM52317.rgb.jpg/600x600bb.jpg"
+    "cover_file": "Flowers_Miley_Cyrus_portada.jpg",
+    "cover_url": "logos/Flowers_Miley_Cyrus_portada.jpg",
+    "fallback_url": "https://c.saavncdn.com/361/Endless-Summer-Vacation-English-2023-20230830062637-500x500.jpg"
   },
   "Levitating_Dua_Lipa.m4a": {
     "title": "Levitating",

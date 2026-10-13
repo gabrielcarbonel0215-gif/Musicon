@@ -104,6 +104,147 @@ def test_song_download(test_payload):
 
         print(f"[TEST] Canción '{test_payload['title']}' validada al 100%.")
 
+
+def test_catalog_integrity():
+    print("\n=======================================================")
+    print("[TEST] Verificando integridad del catálogo (46 pistas) y carpeta canciones/...")
+    print("=======================================================")
+    catalog_path = os.path.join(PROJECT_ROOT, "user_playlist_catalog.json")
+    with open(catalog_path, "r", encoding="utf-8") as cf:
+        catalog = json.load(cf)
+
+    seen_files = set()
+    for idx, entry in enumerate(catalog):
+        fname = entry.get("file")
+        assert fname, f"Entrada {idx} sin archivo: {entry}"
+        assert fname not in seen_files, f"Archivo duplicado en catálogo: {fname}"
+        seen_files.add(fname)
+
+        fpath = os.path.join(SONGS_DIR, fname)
+        assert os.path.exists(fpath), f"Archivo faltante en disco: {fpath}"
+        sz = os.path.getsize(fpath)
+        dur = check_audio_duration_ffprobe(fpath)
+        assert sz > 1500000, f"Tamaño inválido ({sz} bytes) en {fname}"
+        assert dur > 120.0, f"Duración inválida ({dur}s) en {fname}"
+
+    all_audio_files = [f for f in sorted(os.listdir(SONGS_DIR)) if f.endswith(".m4a") or f.endswith(".mp3")]
+    for fname in all_audio_files:
+        fpath = os.path.join(SONGS_DIR, fname)
+        sz = os.path.getsize(fpath)
+        dur = check_audio_duration_ffprobe(fpath)
+        assert sz > 1500000, f"Tamaño inválido en canciones/{fname}: {sz} bytes"
+        assert dur > 120.0, f"Duración inválida en canciones/{fname}: {dur}s"
+
+    print(f"[TEST] 100% de las {len(catalog)} pistas del catálogo y {len(all_audio_files)} archivos en canciones/ tienen tamaño > 1.5 MB y duración > 120s.")
+
+
+def test_wishlist_automation():
+    print("\n=======================================================")
+    print("[TEST] Probando automatización de Wishlist (/api/wishlist sync + async)...")
+    print("=======================================================")
+    wishlist_path = os.path.join(PROJECT_ROOT, "wishlist.json")
+    if os.path.exists(wishlist_path):
+        try:
+            os.remove(wishlist_path)
+        except Exception:
+            pass
+
+    # 1. Synchronous wait=True test + cover verification
+    payload = {
+        "wait": True,
+        "songs": [
+            {"title": "Excusa Perfecta", "artist": "Santi Muk"},
+            {"title": "I Think They Call This Love", "artist": "Elliot James Reay"}
+        ]
+    }
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/wishlist",
+        data=data,
+        headers={"Content-Type": "application/json"}
+    )
+    with urllib.request.urlopen(req, timeout=45) as resp:
+        assert resp.status == 200
+        res_json = json.loads(resp.read().decode("utf-8"))
+        assert res_json.get("status") == "success"
+        assert res_json.get("queued") == 2
+        for item in res_json.get("items", []):
+            assert item.get("status") == "completed", f"Wishlist item no completado: {item}"
+            assert item.get("size_mb", 0) > 1.5
+            assert item.get("duration_s", 0) > 120.0
+            assert item.get("cover") and item.get("cover") != "logos/Fix_You.jpg", f"Carátula incorrecta en wishlist: {item}"
+
+    # 2. Asynchronous background worker test (without wait=True) on an uncached song
+    uncached_file = os.path.join(SONGS_DIR, "Yellow_Coldplay.m4a")
+    if os.path.exists(uncached_file):
+        os.remove(uncached_file)
+
+    async_payload = {
+        "songs": [
+            {"title": "Yellow", "artist": "Coldplay"}
+        ]
+    }
+    async_req = urllib.request.Request(
+        f"{BASE_URL}/api/wishlist",
+        data=json.dumps(async_payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"}
+    )
+    with urllib.request.urlopen(async_req, timeout=10) as a_resp:
+        assert a_resp.status == 200
+        a_json = json.loads(a_resp.read().decode("utf-8"))
+        assert a_json.get("status") == "success"
+        assert a_json.get("queued") == 1
+        initial_state = a_json["items"][0].get("status")
+        print(f"[TEST] Estado inicial async en POST /api/wishlist: {initial_state}")
+        assert initial_state in ("pending", "downloading", "completed")
+
+    # Poll GET /api/wishlist until background worker finishes downloading Yellow - Coldplay
+    observed_states = {initial_state}
+    completed_item = None
+    deadline = time.time() + 45
+    while time.time() < deadline:
+        with urllib.request.urlopen(f"{BASE_URL}/api/wishlist", timeout=10) as get_resp:
+            assert get_resp.status == 200
+            get_json = json.loads(get_resp.read().decode("utf-8"))
+            yellow_item = next((x for x in get_json.get("items", []) if x.get("id") == "yellow_coldplay"), None)
+            assert yellow_item is not None, "yellow_coldplay no encontrado en GET /api/wishlist"
+            st = yellow_item.get("status")
+            observed_states.add(st)
+            if st == "completed":
+                completed_item = yellow_item
+                break
+            elif st == "error":
+                raise AssertionError(f"Background worker falló en yellow_coldplay: {yellow_item}")
+        time.sleep(0.4)
+
+    assert completed_item is not None, f"Timeout esperando a que yellow_coldplay complete. Estados: {observed_states}"
+    assert completed_item.get("size_mb", 0) > 1.5
+    assert completed_item.get("duration_s", 0) > 120.0
+    print(f"[TEST] Transición de estados async observada: {observed_states} -> {completed_item['file']} ({completed_item['size_mb']} MB, {completed_item['duration_s']}s)")
+    if os.path.exists(uncached_file):
+        try:
+            os.remove(uncached_file)
+        except Exception:
+            pass
+    with open(METADATA_FILE, "r", encoding="utf-8") as mf:
+        m_data = json.load(mf)
+    if "Yellow_Coldplay.m4a" in m_data:
+        del m_data["Yellow_Coldplay.m4a"]
+        with open(METADATA_FILE, "w", encoding="utf-8") as mf:
+            json.dump(m_data, mf, ensure_ascii=False, indent=2)
+    yellow_cover = os.path.join(COVERS_DIR, "Yellow_Coldplay_portada.jpg")
+    if os.path.exists(yellow_cover):
+        try:
+            os.remove(yellow_cover)
+        except Exception:
+            pass
+    # Keep wishlist.json clean with the 2 verified catalog tracks
+    with open(wishlist_path, "r", encoding="utf-8") as wf:
+        w_items = [x for x in json.load(wf) if x.get("id") != "yellow_coldplay"]
+    with open(wishlist_path, "w", encoding="utf-8") as wf:
+        json.dump(w_items, wf, ensure_ascii=False, indent=2)
+
+
 def run_all_tests():
     env = os.environ.copy()
     env["PORT"] = str(TEST_PORT)
@@ -132,8 +273,12 @@ def run_all_tests():
         assert wait_for_server(), "El servidor no respondió a tiempo."
         print("[TEST] Servidor activo. Ejecutando batería de pruebas...")
 
+        test_catalog_integrity()
+
         for tc in test_cases:
             test_song_download(tc)
+
+        test_wishlist_automation()
 
         print("\n=======================================================")
         print("  ¡TODAS LAS PRUEBAS E2E PASARON CON ÉXITO ROTUNDO!   ")
@@ -148,3 +293,4 @@ def run_all_tests():
 
 if __name__ == '__main__':
     run_all_tests()
+
