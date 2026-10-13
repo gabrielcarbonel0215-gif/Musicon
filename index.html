@@ -1581,6 +1581,18 @@
     "format": "m4a"
   },
   {
+    "id": "Blinding_Lights_The_Weeknd",
+    "file": "Blinding_Lights_The_Weeknd.m4a",
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "album": "Descargas",
+    "size": "7.82 MB",
+    "cover": "logos/Blinding_Lights_The_Weeknd_portada.jpg",
+    "fallback": "logos/Blinding_Lights_The_Weeknd_portada.jpg",
+    "download_url": "/api/audio/Blinding_Lights_The_Weeknd.m4a",
+    "format": "m4a"
+  },
+  {
     "id": "Bolero_Estelar_La_Isla_Centeno",
     "file": "Bolero_Estelar_La_Isla_Centeno.m4a",
     "title": "Bolero Estelar",
@@ -1662,6 +1674,18 @@
     "cover": "logos/Qué_Tiene_Ximena_Sariñana.jpg",
     "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/14/05/1f/14051f9f-8094-f31d-bd15-00bd53836047/199066847657.jpg/1000x1000bb.jpg",
     "download_url": "/api/audio/Cuento_Versión_de_Ximena_Ximena_Sariñana.m4a",
+    "format": "m4a"
+  },
+  {
+    "id": "Demons_Imagine_Dragons",
+    "file": "Demons_Imagine_Dragons.m4a",
+    "title": "Demons",
+    "artist": "Imagine Dragons",
+    "album": "Descargas",
+    "size": "7.72 MB",
+    "cover": "logos/Demons_Imagine_Dragons_portada.jpg",
+    "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bc/99/3a/bc993a4c-53f0-4660-f1db-69f88d447477/12UMGIM52317.rgb.jpg/600x600bb.jpg",
+    "download_url": "/api/audio/Demons_Imagine_Dragons.m4a",
     "format": "m4a"
   },
   {
@@ -1758,6 +1782,18 @@
     "cover": "logos/La_Raja_de_Tu_Culo_Chabelos.jpg",
     "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/cf/2c/53/cf2c537e-bb98-9796-1c4d-2c4ecbb9a68f/859737482777_cover.jpg/600x600bb.jpg",
     "download_url": "/api/audio/La_Raja_de_Tu_Culo_Chabelos.m4a",
+    "format": "m4a"
+  },
+  {
+    "id": "Levitating_Dua_Lipa",
+    "file": "Levitating_Dua_Lipa.m4a",
+    "title": "Levitating",
+    "artist": "Dua Lipa",
+    "album": "Descargas",
+    "size": "7.82 MB",
+    "cover": "logos/Levitating_Dua_Lipa_portada.jpg",
+    "fallback": "https://c.saavncdn.com/665/Future-Nostalgia-English-2020-20260306223201-500x500.jpg",
+    "download_url": "/api/audio/Levitating_Dua_Lipa.m4a",
     "format": "m4a"
   },
   {
@@ -1950,6 +1986,18 @@
     "cover": "logos/Verte_Así_Temple_Sour.jpg",
     "fallback": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/bb/11/70/bb11704c-b7d5-12d8-2f7a-c4440e268569/634654364258.jpg/1000x1000bb.jpg",
     "download_url": "/api/audio/Verte_Así_Temple_Sour.m4a",
+    "format": "m4a"
+  },
+  {
+    "id": "Viva_La_Vida_Coldplay",
+    "file": "Viva_La_Vida_Coldplay.m4a",
+    "title": "Viva La Vida",
+    "artist": "Coldplay",
+    "album": "Descargas",
+    "size": "9.28 MB",
+    "cover": "logos/Viva_La_Vida_Coldplay_portada.jpg",
+    "fallback": "logos/Viva_La_Vida_Coldplay_portada.jpg",
+    "download_url": "/api/audio/Viva_La_Vida_Coldplay.m4a",
     "format": "m4a"
   },
   {
@@ -2471,23 +2519,36 @@
       const statusEl = document.getElementById('dl-card-status');
 
       card.classList.remove('hidden');
-      statusEl.textContent = "Descargando audio completo...";
+      statusEl.textContent = "Conectando con motor de audio en la nube...";
       titleEl.textContent = `${title} - ${artist}`;
-      sizeEl.textContent = "Descargando .m4a...";
+      sizeEl.textContent = "Resolviendo pista...";
       barEl.style.width = "15%";
       pctEl.textContent = "15%";
 
       if (activeDownloadInterval) clearInterval(activeDownloadInterval);
       let p = 15;
       activeDownloadInterval = setInterval(() => {
-        p += Math.floor(Math.random() * 12) + 5;
+        p += Math.floor(Math.random() * 8) + 4;
         if (p >= 92) {
           p = 92;
           clearInterval(activeDownloadInterval);
         }
         barEl.style.width = `${p}%`;
         pctEl.textContent = `${p}%`;
-      }, 300);
+        if (p < 40) {
+          statusEl.textContent = "Resolviendo audio completo de alta fidelidad...";
+          detailDownloadStatus.textContent = "⏳ Conectando con servidor en la nube...";
+          sizeEl.textContent = "Buscando flujo 320 kbps...";
+        } else if (p < 75) {
+          statusEl.textContent = "Descargando pista completa (320 kbps)...";
+          detailDownloadStatus.textContent = "⚡ Descargando flujo de audio completo (320 kbps)...";
+          sizeEl.textContent = "Descargando audio...";
+        } else {
+          statusEl.textContent = "Verificando calidad y duración (>120s)...";
+          detailDownloadStatus.textContent = "🔍 Verificando integridad y duración completa...";
+          sizeEl.textContent = "Verificando canción...";
+        }
+      }, 350);
     }
 
     function finishActiveDownloadCard(title, artist, sizeMb, isFallback = false) {
@@ -2500,7 +2561,7 @@
 
       barEl.style.width = "100%";
       pctEl.textContent = "100%";
-      statusEl.textContent = isFallback ? "Descarga guardada" : "¡Descarga completada!";
+      statusEl.textContent = isFallback ? "Descarga guardada" : "¡Canción completa lista!";
       sizeEl.textContent = `${sizeMb} MB`;
 
       setTimeout(() => {

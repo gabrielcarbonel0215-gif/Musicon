@@ -446,5 +446,32 @@
     "album": "Descargado",
     "cover_url": "logos/Demons_Imagine_Dragons_portada.jpg",
     "fallback_url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/bc/99/3a/bc993a4c-53f0-4660-f1db-69f88d447477/12UMGIM52317.rgb.jpg/600x600bb.jpg"
+  },
+  "Levitating_Dua_Lipa.m4a": {
+    "title": "Levitating",
+    "artist": "Dua Lipa",
+    "album": "Descargado",
+    "duration": "3:23",
+    "cover_file": "Levitating_Dua_Lipa_portada.jpg",
+    "cover_url": "logos/Levitating_Dua_Lipa_portada.jpg",
+    "fallback_url": "https://c.saavncdn.com/665/Future-Nostalgia-English-2020-20260306223201-500x500.jpg"
+  },
+  "Viva_La_Vida_Coldplay.m4a": {
+    "title": "Viva La Vida",
+    "artist": "Coldplay",
+    "album": "Descargado",
+    "duration": "4:01",
+    "cover_file": "Viva_La_Vida_Coldplay_portada.jpg",
+    "cover_url": "logos/Viva_La_Vida_Coldplay_portada.jpg",
+    "fallback_url": "logos/Viva_La_Vida_Coldplay_portada.jpg"
+  },
+  "Blinding_Lights_The_Weeknd.m4a": {
+    "title": "Blinding Lights",
+    "artist": "The Weeknd",
+    "album": "Descargado",
+    "duration": "3:20",
+    "cover_file": "Blinding_Lights_The_Weeknd_portada.jpg",
+    "cover_url": "logos/Blinding_Lights_The_Weeknd_portada.jpg",
+    "fallback_url": "logos/Blinding_Lights_The_Weeknd_portada.jpg"
   }
 }

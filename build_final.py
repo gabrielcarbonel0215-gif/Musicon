@@ -1140,23 +1140,36 @@ html_content = f'''<!DOCTYPE html>
       const statusEl = document.getElementById('dl-card-status');
 
       card.classList.remove('hidden');
-      statusEl.textContent = "Descargando audio completo...";
+      statusEl.textContent = "Conectando con motor de audio en la nube...";
       titleEl.textContent = `${{title}} - ${{artist}}`;
-      sizeEl.textContent = "Descargando .m4a...";
+      sizeEl.textContent = "Resolviendo pista...";
       barEl.style.width = "15%";
       pctEl.textContent = "15%";
 
       if (activeDownloadInterval) clearInterval(activeDownloadInterval);
       let p = 15;
       activeDownloadInterval = setInterval(() => {{
-        p += Math.floor(Math.random() * 12) + 5;
+        p += Math.floor(Math.random() * 8) + 4;
         if (p >= 92) {{
           p = 92;
           clearInterval(activeDownloadInterval);
         }}
         barEl.style.width = `${{p}}%`;
         pctEl.textContent = `${{p}}%`;
-      }}, 300);
+        if (p < 40) {{
+          statusEl.textContent = "Resolviendo audio completo de alta fidelidad...";
+          detailDownloadStatus.textContent = "⏳ Conectando con servidor en la nube...";
+          sizeEl.textContent = "Buscando flujo 320 kbps...";
+        }} else if (p < 75) {{
+          statusEl.textContent = "Descargando pista completa (320 kbps)...";
+          detailDownloadStatus.textContent = "⚡ Descargando flujo de audio completo (320 kbps)...";
+          sizeEl.textContent = "Descargando audio...";
+        }} else {{
+          statusEl.textContent = "Verificando calidad y duración (>120s)...";
+          detailDownloadStatus.textContent = "🔍 Verificando integridad y duración completa...";
+          sizeEl.textContent = "Verificando canción...";
+        }}
+      }}, 350);
     }}
 
     function finishActiveDownloadCard(title, artist, sizeMb, isFallback = false) {{
@@ -1169,7 +1182,7 @@ html_content = f'''<!DOCTYPE html>
 
       barEl.style.width = "100%";
       pctEl.textContent = "100%";
-      statusEl.textContent = isFallback ? "Descarga guardada" : "¡Descarga completada!";
+      statusEl.textContent = isFallback ? "Descarga guardada" : "¡Canción completa lista!";
       sizeEl.textContent = `${{sizeMb}} MB`;
 
       setTimeout(() => {{

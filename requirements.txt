@@ -1,1 +1,2 @@
 yt-dlp>=2026.01.01
+cryptography>=42.0.0
