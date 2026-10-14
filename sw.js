@@ -1,8 +1,8 @@
-const CACHE_NAME = 'cinnamoroll-music-v3';
+const CACHE_NAME = 'cinnamoroll-music-v4';
 const PRECACHE_ASSETS = [
-  '/manifest.json?v=3',
-  '/assets/icon-192.png?v=3',
-  '/assets/icon-512.png?v=3'
+  '/manifest.json?v=4',
+  '/assets/icon-192.png?v=4',
+  '/assets/icon-512.png?v=4'
 ];
 
 self.addEventListener('install', (event) => {
