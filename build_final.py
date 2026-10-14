@@ -24,6 +24,24 @@ c_detail_bg = get_b64("detail_bg_clean.jpg")
 c_peeking_top = get_b64("cinnamoroll_peeking_top.png")
 c_sleeping_bottom = get_b64("cinnamoroll_sleeping_bottom.png")
 
+# Interactive Cinnamoroll Sprite Assets
+cinna_f1 = get_b64(os.path.join("cinnamoroll", "frame_1.png"))
+cinna_f2 = get_b64(os.path.join("cinnamoroll", "frame_2.png"))
+cinna_f3 = get_b64(os.path.join("cinnamoroll", "frame_3.png"))
+cinna_f4 = get_b64(os.path.join("cinnamoroll", "frame_4.png"))
+cinna_f5 = get_b64(os.path.join("cinnamoroll", "frame_5.png"))
+cinna_f6 = get_b64(os.path.join("cinnamoroll", "frame_6.png"))
+cinna_f7 = get_b64(os.path.join("cinnamoroll", "frame_7.png"))
+cinna_f8 = get_b64(os.path.join("cinnamoroll", "frame_8.png"))
+cinna_paused = get_b64(os.path.join("cinnamoroll", "cinna_paused.png"))
+cinna_next = get_b64(os.path.join("cinnamoroll", "cinna_next.png"))
+cinna_prev = get_b64(os.path.join("cinnamoroll", "cinna_prev.png"))
+cinna_tap = get_b64(os.path.join("cinnamoroll", "cinna_tap.png"))
+cinna_cuddle = get_b64(os.path.join("cinnamoroll", "cinna_long_press.png"))
+cinna_love = get_b64(os.path.join("cinnamoroll", "cinna_double_tap.png"))
+cinna_loading = get_b64(os.path.join("cinnamoroll", "cinna_loading.png"))
+cinna_idle = get_b64(os.path.join("cinnamoroll", "cinna_idle.png"))
+
 # Load real songs metadata
 with open(os.path.join(base_dir, "songs_metadata.json"), "r", encoding="utf-8") as f:
     meta_dict = json.load(f)
@@ -46,6 +64,8 @@ for fname in sorted(os.listdir(canciones_dir)):
         title = m.get("title", fname[:-4].replace("_", " "))
         artist = m.get("artist", "Artista")
         cover = m.get("cover_url", f"logos/{fname[:-4]}.jpg")
+        if not os.path.exists(os.path.join(base_dir, cover)):
+            cover = "logos/Fix_You.jpg"
         fallback = m.get("fallback_url", cover)
 
         server_songs_list.append({
@@ -203,6 +223,96 @@ html_content = f'''<!DOCTYPE html>
       border: 2px solid #487fd6;
       box-shadow: 0 2px 6px rgba(72, 127, 214, 0.38);
     }}
+  
+    /* ======================================================== */
+    /* INTERACTIVE CINNAMOROLL ANIMATIONS & PARTICLES           */
+    /* ======================================================== */
+    @keyframes cinnaBreathe {{
+      0%, 100% {{ transform: scale(1) translateY(0); }}
+      50% {{ transform: scale(1.025, 1.015) translateY(-2px); }}
+    }}
+    .cinna-breathe {{
+      animation: cinnaBreathe 2s ease-in-out infinite;
+    }}
+    @keyframes cinnaFloatNote {{
+      0% {{ opacity: 0; transform: translate(0, 0) scale(0.6) rotate(-10deg); }}
+      25% {{ opacity: 0.95; }}
+      80% {{ opacity: 0.75; }}
+      100% {{ opacity: 0; transform: translate(var(--note-dx, 20px), -65px) scale(1.15) rotate(15deg); }}
+    }}
+    .cinna-floating-note {{
+      position: absolute;
+      pointer-events: none;
+      font-size: 20px;
+      z-index: 30;
+      animation: cinnaFloatNote 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }}
+    @keyframes cinnaFloatHeart {{
+      0% {{ opacity: 0; transform: translate(-50%, 0) scale(0.35); }}
+      25% {{ opacity: 1; transform: translate(-50%, -25px) scale(1.3); }}
+      70% {{ opacity: 0.95; transform: translate(-50%, -55px) scale(1.1); }}
+      100% {{ opacity: 0; transform: translate(-50%, -85px) scale(0.9); }}
+    }}
+    .cinna-floating-heart {{
+      position: absolute;
+      pointer-events: none;
+      font-size: 34px;
+      z-index: 35;
+      animation: cinnaFloatHeart 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }}
+    @keyframes cinnaPopStar {{
+      0% {{ opacity: 0; transform: scale(0.2) rotate(0deg); }}
+      40% {{ opacity: 1; transform: scale(1.25) rotate(45deg); }}
+      80% {{ opacity: 0.85; transform: scale(1.0) rotate(90deg); }}
+      100% {{ opacity: 0; transform: scale(0.4) rotate(135deg); }}
+    }}
+    .cinna-pop-star {{
+      position: absolute;
+      pointer-events: none;
+      font-size: 22px;
+      z-index: 30;
+      animation: cinnaPopStar 0.85s ease-out forwards;
+    }}
+    @keyframes cinnaBounceJump {{
+      0% {{ transform: translateY(0) scale(1); }}
+      35% {{ transform: translateY(-12px) scale(1.06, 0.96); }}
+      65% {{ transform: translateY(2px) scale(0.97, 1.03); }}
+      100% {{ transform: translateY(0) scale(1); }}
+    }}
+    .cinna-bounce {{
+      animation: cinnaBounceJump 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }}
+    @keyframes cinnaAuraGlow {{
+      0%, 100% {{ filter: drop-shadow(0 0 5px rgba(255, 230, 100, 0.5)); transform: scale(1); }}
+      50% {{ filter: drop-shadow(0 0 16px rgba(255, 220, 50, 0.95)) drop-shadow(0 0 26px rgba(130, 200, 255, 0.8)); transform: scale(1.04); }}
+    }}
+    .cinna-glow {{
+      animation: cinnaAuraGlow 1.2s ease-in-out infinite;
+    }}
+    @keyframes cinnaCuriousLeft {{
+      0% {{ transform: translate(0, 0) rotate(0deg); }}
+      35% {{ transform: translate(-8px, -4px) rotate(-5deg) scale(1.03); }}
+      65% {{ transform: translate(-8px, -4px) rotate(-5deg) scale(1.03); }}
+      100% {{ transform: translate(0, 0) rotate(0deg) scale(1); }}
+    }}
+    .cinna-curious-left {{
+      animation: cinnaCuriousLeft 0.8s ease-in-out;
+    }}
+    @keyframes cinnaLookAround {{
+      0%, 100% {{ transform: translateX(0) rotate(0deg); }}
+      25% {{ transform: translateX(-5px) rotate(-3deg); }}
+      50% {{ transform: translateX(0) rotate(0deg); }}
+      75% {{ transform: translateX(5px) rotate(3deg); }}
+    }}
+    .cinna-look-around {{
+      animation: cinnaLookAround 1.6s ease-in-out infinite;
+    }}
+    #detail-cinnamoroll-container {{
+      -webkit-touch-callout: none;
+      user-select: none;
+      touch-action: none;
+    }}
+
   </style>
 </head>
 <body class="text-slate-700 select-none">
@@ -659,41 +769,20 @@ html_content = f'''<!DOCTYPE html>
             </svg>
           </div>
 
-          <!-- Sleeping Cinnamoroll on bottom-right corner -->
-          <img src="{c_sleeping_bottom}" alt="Sleeping Cinnamoroll" class="absolute -bottom-[26px] right-0 w-[126px] h-auto pointer-events-none z-20">
         </div>
 
-      </div>
+        <!-- 7. Interactive Animated Cinnamoroll resting on the clouds -->
+        <div id="detail-cinnamoroll-container" class="relative w-full flex-1 min-h-[140px] max-h-[195px] flex flex-col items-center justify-center select-none pointer-events-auto touch-none z-20 pb-[max(6px,env(safe-area-inset-bottom,6px))]">
+          <!-- Floating Particles Layer (Music notes, stars, pink heart) -->
+          <div id="cinnamoroll-particles-layer" class="absolute inset-0 pointer-events-none overflow-visible"></div>
+          
+          <!-- Cinnamoroll Sprite Stage -->
+          <div id="cinnamoroll-sprite-stage" class="relative flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-95" title="Toca o desliza para interactuar con Cinnamoroll">
+            <div id="cinna-spinning-star" class="hidden absolute -top-3 text-xl animate-spin pointer-events-none select-none z-30">⭐</div>
+            <img id="cinnamoroll-active-frame" src="{cinna_f1}" alt="Cinnamoroll Interactivo" class="h-[125px] sm:h-[135px] w-auto select-none pointer-events-none transition-all" style="filter: drop-shadow(0 6px 14px rgba(70, 130, 200, 0.35));">
+          </div>
+        </div>
 
-      <!-- 7. Curved Cloud Bottom Navigation Bar (🎵 Music | 🔍 Search | 🎼 Library) -->
-      <div class="relative h-[64px] shrink-0 flex items-center justify-around px-10 pt-2 z-10">
-        <button id="detail-nav-music" class="flex flex-col items-center justify-center text-[#4a85e2] hover:scale-105 active:scale-95 transition" title="Reproductor / Inicio">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 18V5l12-2v13"></path>
-            <circle cx="6" cy="18" r="3" fill="currentColor"></circle>
-            <circle cx="18" cy="16" r="3" fill="currentColor"></circle>
-          </svg>
-          <div class="w-6 h-1 rounded-full bg-[#4a85e2] mt-1"></div>
-        </button>
-
-        <button id="detail-nav-search" class="flex flex-col items-center justify-center text-[#4e7ab5] hover:text-[#3b6db0] hover:scale-105 active:scale-95 transition" title="Ir a Buscar">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="7"></circle>
-            <line x1="20" y1="20" x2="16.2" y2="16.2"></line>
-          </svg>
-          <div class="w-6 h-1 rounded-full bg-transparent mt-1"></div>
-        </button>
-
-        <button id="detail-nav-library" class="flex flex-col items-center justify-center text-[#4e7ab5] hover:text-[#3b6db0] hover:scale-105 active:scale-95 transition" title="Ir a Descargas y Biblioteca">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" y1="7" x2="13" y2="7"></line>
-            <line x1="4" y1="12" x2="11" y2="12"></line>
-            <line x1="4" y1="17" x2="10" y2="17"></line>
-            <path d="M16 17V7l4-1v3"></path>
-            <circle cx="14.5" cy="17" r="2" fill="currentColor"></circle>
-          </svg>
-          <div class="w-6 h-1 rounded-full bg-transparent mt-1"></div>
-        </button>
       </div>
 
       <!-- Hidden compatibility elements -->
@@ -1120,8 +1209,10 @@ html_content = f'''<!DOCTYPE html>
       }}
     }}
 
+    let currentPlayRequestId = 0;
     async function loadAndPlayTrack(track) {{
       currentTrack = track;
+      const reqId = ++currentPlayRequestId;
       const idx = currentTracksList.findIndex(t =>
         (t.id && track.id && t.id === track.id) ||
         (t.title === track.title && t.artist === track.artist)
@@ -1142,9 +1233,12 @@ html_content = f'''<!DOCTYPE html>
       if (targetAudio) {{
         audio.src = targetAudio;
         audio.play().then(() => {{
+          if (reqId !== currentPlayRequestId) return;
           isPlaying = true;
           updatePlayerUI(track);
         }}).catch(e => {{
+          if (reqId !== currentPlayRequestId) return;
+          if (e && e.name === 'AbortError') return;
           isPlaying = false;
           updatePlayerUI(track);
         }});
@@ -1153,13 +1247,17 @@ html_content = f'''<!DOCTYPE html>
 
       try {{
         const res = await searchiTunes(`${{track.title}} ${{track.artist}}`, 1);
+        if (reqId !== currentPlayRequestId) return;
         if (res.length > 0 && res[0].preview) {{
           track.preview = res[0].preview;
           audio.src = track.preview;
           audio.play().then(() => {{
+            if (reqId !== currentPlayRequestId) return;
             isPlaying = true;
             updatePlayerUI(track);
           }}).catch(e => {{
+            if (reqId !== currentPlayRequestId) return;
+            if (e && e.name === 'AbortError') return;
             isPlaying = false;
             updatePlayerUI(track);
           }});
@@ -1172,10 +1270,12 @@ html_content = f'''<!DOCTYPE html>
       currentTrackIndex = computeNextQueueIndex(false);
       computeNextQueueIndex(true);
       loadAndPlayTrack(currentTracksList[currentTrackIndex]);
+      if (window.CinnamorollEngine) window.CinnamorollEngine.next();
     }}
 
     function playPrev() {{
       if (currentTracksList.length === 0) return;
+      if (window.CinnamorollEngine) window.CinnamorollEngine.prev();
       if (audio.currentTime && audio.currentTime > 3.5) {{
         audio.currentTime = 0;
         return;
@@ -1857,7 +1957,7 @@ html_content = f'''<!DOCTYPE html>
     // PWA Service Worker & Android Install Prompt
     if ('serviceWorker' in navigator) {{
       window.addEventListener('load', () => {{
-        navigator.serviceWorker.register('/sw.js').catch(() => {{}});
+        navigator.serviceWorker.register('/sw.js?v=3').catch(() => {{}});
       }});
     }}
 
@@ -1890,6 +1990,460 @@ html_content = f'''<!DOCTYPE html>
         btnInstallPwa.classList.add('hidden');
       }}
     }});
+  
+    // ========================================================
+    // CINNAMOROLL INTERACTIVO - STATE MACHINE & GESTURE ENGINE
+    // ========================================================
+    const CinnamorollEngine = (() => {{
+      const container = document.getElementById('detail-cinnamoroll-container');
+      const stage = document.getElementById('cinnamoroll-sprite-stage');
+      const frameImg = document.getElementById('cinnamoroll-active-frame');
+      const particlesLayer = document.getElementById('cinnamoroll-particles-layer');
+      const modalDetail = document.getElementById('modal-song-detail');
+      const spinningStar = document.getElementById('cinna-spinning-star');
+
+      if (!container || !stage || !frameImg) return null;
+
+      const FRAMES = {{
+        play: ['{cinna_f1}', '{cinna_f2}', '{cinna_f3}', '{cinna_f4}', '{cinna_f5}', '{cinna_f6}', '{cinna_f7}', '{cinna_f8}'],
+        paused: '{cinna_paused}',
+        next: '{cinna_next}',
+        prev: '{cinna_prev}',
+        tap: '{cinna_tap}',
+        cuddle: '{cinna_cuddle}',
+        love: '{cinna_love}',
+        loading: '{cinna_loading}',
+        idle: '{cinna_idle}'
+      }};
+
+      let currentState = 'IDLE';
+      let playFrameIndex = 0;
+      let playAnimTimer = null;
+      let noteSpawnTimer = null;
+      let transientTimer = null;
+      let idleBlinkTimer = null;
+      let isScreenActive = false;
+
+      function clearTransientClass() {{
+        stage.classList.remove('cinna-bounce', 'cinna-glow', 'cinna-breathe', 'cinna-look-around', 'cinna-curious-left');
+      }}
+
+      function startPlayAnimation(force = false) {{
+        if (transientTimer && !force) return;
+        if (transientTimer) {{
+          clearTimeout(transientTimer);
+          transientTimer = null;
+        }}
+        stopPlayAnimation();
+        stopIdleBlink();
+        currentState = 'PLAYING';
+        clearTransientClass();
+        if (spinningStar) spinningStar.classList.add('hidden');
+
+        // ~9 FPS loop: ~110ms per frame
+        playAnimTimer = setInterval(() => {{
+          if (!isScreenActive || modalDetail.classList.contains('hidden')) return;
+          playFrameIndex = (playFrameIndex + 1) % FRAMES.play.length;
+          frameImg.src = FRAMES.play[playFrameIndex];
+        }}, 110);
+
+        if (!noteSpawnTimer) {{
+          noteSpawnTimer = setInterval(() => {{
+            if (!isScreenActive || modalDetail.classList.contains('hidden') || currentState !== 'PLAYING') return;
+            spawnMusicNote();
+          }}, 1600);
+        }}
+      }}
+
+      function stopPlayAnimation() {{
+        if (playAnimTimer) {{
+          clearInterval(playAnimTimer);
+          playAnimTimer = null;
+        }}
+        if (noteSpawnTimer) {{
+          clearInterval(noteSpawnTimer);
+          noteSpawnTimer = null;
+        }}
+      }}
+
+      function stopIdleBlink() {{
+        if (idleBlinkTimer) {{
+          clearTimeout(idleBlinkTimer);
+          idleBlinkTimer = null;
+        }}
+      }}
+
+      function startIdleBlink() {{
+        stopIdleBlink();
+        function scheduleBlink() {{
+          const delay = 2600 + Math.random() * 1800;
+          idleBlinkTimer = setTimeout(() => {{
+            if (currentState !== 'IDLE' || !isScreenActive || modalDetail.classList.contains('hidden')) return;
+            frameImg.src = FRAMES.paused; // closed eyes blink
+            setTimeout(() => {{
+              if (currentState === 'IDLE' && isScreenActive && !modalDetail.classList.contains('hidden')) {{
+                frameImg.src = FRAMES.idle || FRAMES.paused;
+                scheduleBlink();
+              }}
+            }}, 180);
+          }}, delay);
+        }}
+        scheduleBlink();
+      }}
+
+      function setPausedState(force = false) {{
+        if (transientTimer && !force) return;
+        if (transientTimer) {{
+          clearTimeout(transientTimer);
+          transientTimer = null;
+        }}
+        stopPlayAnimation();
+        stopIdleBlink();
+        currentState = 'PAUSED';
+        clearTransientClass();
+        if (spinningStar) spinningStar.classList.add('hidden');
+        frameImg.src = FRAMES.paused;
+        stage.classList.add('cinna-breathe');
+      }}
+
+      function setLoadingState(force = false) {{
+        if (transientTimer && !force) return;
+        if (transientTimer) {{
+          clearTimeout(transientTimer);
+          transientTimer = null;
+        }}
+        stopPlayAnimation();
+        stopIdleBlink();
+        currentState = 'LOADING';
+        clearTransientClass();
+        if (spinningStar) spinningStar.classList.remove('hidden');
+        frameImg.src = FRAMES.loading || FRAMES.paused;
+        stage.classList.add('cinna-look-around');
+        spawnStars(2);
+      }}
+
+      function setIdleState(force = false) {{
+        if (transientTimer && !force) return;
+        if (transientTimer) {{
+          clearTimeout(transientTimer);
+          transientTimer = null;
+        }}
+        stopPlayAnimation();
+        stopIdleBlink();
+        currentState = 'IDLE';
+        clearTransientClass();
+        if (spinningStar) spinningStar.classList.add('hidden');
+        frameImg.src = FRAMES.idle || FRAMES.paused;
+        stage.classList.add('cinna-breathe');
+        startIdleBlink();
+      }}
+
+      function playTransientState(stateKey, durationMs, extraClass, callback) {{
+        stopPlayAnimation();
+        stopIdleBlink();
+        if (transientTimer) clearTimeout(transientTimer);
+        currentState = stateKey;
+        clearTransientClass();
+        if (spinningStar) spinningStar.classList.add('hidden');
+        frameImg.src = FRAMES[stateKey] || FRAMES.paused;
+
+        if (extraClass) {{
+          void stage.offsetWidth; // Force DOM reflow so CSS animation always replays cleanly
+          stage.classList.add(extraClass);
+        }}
+
+        transientTimer = setTimeout(() => {{
+          if (extraClass) stage.classList.remove(extraClass);
+          transientTimer = null;
+          if (callback) callback();
+          syncWithAudioState();
+        }}, durationMs);
+      }}
+
+      function triggerNextSong() {{
+        spawnStars(3);
+        playTransientState('next', 800, 'cinna-bounce');
+      }}
+
+      function triggerPrevSong() {{
+        spawnStars(2);
+        playTransientState('prev', 800, 'cinna-curious-left');
+      }}
+
+      function triggerTapHappy() {{
+        spawnStars(2);
+        playTransientState('tap', 700, null);
+      }}
+
+      function triggerDoubleTapFavorite() {{
+        spawnFloatingHeart();
+        if (currentTrack && typeof toggleFavorite === 'function') {{
+          toggleFavorite(currentTrack);
+        }}
+        playTransientState('love', 900, null);
+      }}
+
+      function triggerLongPressSpecial() {{
+        spawnStars(5);
+        playTransientState('cuddle', 1200, 'cinna-glow');
+      }}
+
+      function syncWithAudioState() {{
+        if (transientTimer) return;
+        if (!audio) return;
+        if (!audio.paused) {{
+          if (audio.readyState < 2 && isPlaying) {{
+            setLoadingState();
+          }} else {{
+            startPlayAnimation();
+          }}
+        }} else if (!audio.src) {{
+          setIdleState();
+        }} else {{
+          setPausedState();
+        }}
+      }}
+
+      function spawnMusicNote() {{
+        if (!particlesLayer) return;
+        const note = document.createElement('div');
+        note.className = 'cinna-floating-note';
+        const notes = ['🎵', '🎶'];
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        const isLeft = Math.random() > 0.5;
+        const posX = isLeft ? (28 + Math.random() * 20) : (52 + Math.random() * 25);
+        const posY = 25 + Math.random() * 30;
+        const dx = isLeft ? (-22 - Math.random() * 25) : (22 + Math.random() * 25);
+        note.style.left = `${{posX}}%`;
+        note.style.top = `${{posY}}%`;
+        note.style.setProperty('--note-dx', `${{dx}}px`);
+        particlesLayer.appendChild(note);
+        setTimeout(() => note.remove(), 2300);
+      }}
+
+      function spawnFloatingHeart() {{
+        if (!particlesLayer) return;
+        const heart = document.createElement('div');
+        heart.className = 'cinna-floating-heart';
+        heart.textContent = '💖';
+        heart.style.left = '50%';
+        heart.style.top = '35%';
+        particlesLayer.appendChild(heart);
+        setTimeout(() => heart.remove(), 1000);
+      }}
+
+      function spawnStars(count = 3) {{
+        if (!particlesLayer) return;
+        for (let i = 0; i < count; i++) {{
+          setTimeout(() => {{
+            const star = document.createElement('div');
+            star.className = 'cinna-pop-star';
+            star.textContent = Math.random() > 0.5 ? '✨' : '⭐';
+            star.style.left = `${{25 + Math.random() * 50}}%`;
+            star.style.top = `${{20 + Math.random() * 45}}%`;
+            particlesLayer.appendChild(star);
+            setTimeout(() => star.remove(), 900);
+          }}, i * 110);
+        }}
+      }}
+
+      // Touch & Mouse Gesture Engine
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchStartTime = 0;
+      let touchMoved = false;
+      let longPressTimer = null;
+      let longPressFired = false;
+      let tapTimer = null;
+      let lastTapTime = 0;
+      let isTouching = false;
+      let isMultiTouch = false;
+
+      function onTouchStart(e) {{
+        if (e.touches) {{
+          isTouching = true;
+          if (e.touches.length > 1) {{
+            isMultiTouch = true;
+            if (longPressTimer) {{ clearTimeout(longPressTimer); longPressTimer = null; }}
+            if (tapTimer) {{ clearTimeout(tapTimer); tapTimer = null; }}
+            return;
+          }}
+        }}
+        isMultiTouch = false;
+        const touch = e.touches ? e.touches[0] : e;
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchStartTime = Date.now();
+        touchMoved = false;
+        longPressFired = false;
+
+        if (longPressTimer) clearTimeout(longPressTimer);
+        longPressTimer = setTimeout(() => {{
+          if (!touchMoved && !isMultiTouch) {{
+            longPressFired = true;
+            longPressTimer = null;
+            triggerLongPressSpecial();
+          }}
+        }}, 520);
+      }}
+
+      function onTouchMove(e) {{
+        if (e.touches && e.touches.length > 1) {{
+          isMultiTouch = true;
+          if (longPressTimer) {{ clearTimeout(longPressTimer); longPressTimer = null; }}
+          return;
+        }}
+        const touch = e.touches ? e.touches[0] : e;
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+        if (Math.abs(dx) > 12 || Math.abs(dy) > 12) {{
+          touchMoved = true;
+          if (longPressTimer) {{
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+          }}
+        }}
+      }}
+
+      function onTouchCancel(e) {{
+        if (longPressTimer) {{ clearTimeout(longPressTimer); longPressTimer = null; }}
+        if (tapTimer) {{ clearTimeout(tapTimer); tapTimer = null; }}
+        longPressFired = false;
+        touchMoved = false;
+        isMultiTouch = false;
+        isTouching = false;
+      }}
+
+      function onTouchEnd(e) {{
+        if (longPressTimer) {{
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }}
+
+        if (isMultiTouch) {{
+          if (!e.touches || e.touches.length === 0) {{
+            isMultiTouch = false;
+            isTouching = false;
+          }}
+          return;
+        }}
+
+        if (longPressFired) {{
+          if (e.touches && e.touches.length === 0) {{
+            setTimeout(() => {{ isTouching = false; }}, 400);
+          }}
+          return;
+        }}
+
+        const touch = e.changedTouches ? e.changedTouches[0] : e;
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        const duration = Date.now() - touchStartTime;
+
+        if (e.touches && e.touches.length === 0) {{
+          setTimeout(() => {{ isTouching = false; }}, 400);
+        }}
+
+        // Horizontal Swipe: |deltaX| > 42px and |deltaX| > 1.4 * |deltaY|
+        if (Math.abs(deltaX) > 42 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4 && duration < 600) {{
+          if (tapTimer) {{ clearTimeout(tapTimer); tapTimer = null; }}
+          if (deltaX < 0) {{
+            playNext();
+          }} else {{
+            playPrev();
+          }}
+          return;
+        }}
+
+        if (duration >= 520 && !touchMoved) {{
+          return;
+        }}
+
+        // Tap & Double Tap (< 15px movement)
+        if (!touchMoved && Math.abs(deltaX) < 15 && Math.abs(deltaY) < 15) {{
+          const now = Date.now();
+          if (now - lastTapTime < 280) {{
+            if (tapTimer) {{ clearTimeout(tapTimer); tapTimer = null; }}
+            lastTapTime = 0;
+            triggerDoubleTapFavorite();
+          }} else {{
+            lastTapTime = now;
+            tapTimer = setTimeout(() => {{
+              tapTimer = null;
+              triggerTapHappy();
+            }}, 280);
+          }}
+        }}
+      }}
+
+      container.addEventListener('touchstart', onTouchStart, {{ passive: true }});
+      container.addEventListener('touchmove', onTouchMove, {{ passive: true }});
+      container.addEventListener('touchend', onTouchEnd, {{ passive: true }});
+      container.addEventListener('touchcancel', onTouchCancel, {{ passive: true }});
+
+      container.addEventListener('mousedown', (e) => {{
+        if (isTouching) return;
+        onTouchStart(e);
+      }});
+      window.addEventListener('mousemove', (e) => {{
+        if (touchStartTime && !isTouching) onTouchMove(e);
+      }});
+      window.addEventListener('mouseup', (e) => {{
+        if (touchStartTime && !isTouching) {{
+          onTouchEnd(e);
+          touchStartTime = 0;
+        }}
+      }});
+      container.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      if (audio) {{
+        audio.addEventListener('play', () => {{ if (isScreenActive && !transientTimer) startPlayAnimation(); }});
+        audio.addEventListener('playing', () => {{ if (isScreenActive && !transientTimer) startPlayAnimation(); }});
+        audio.addEventListener('pause', () => {{ if (isScreenActive && !transientTimer) setPausedState(); }});
+        audio.addEventListener('waiting', () => {{ if (isScreenActive && !transientTimer) setLoadingState(); }});
+        audio.addEventListener('loadstart', () => {{ if (isScreenActive && !transientTimer) setLoadingState(); }});
+        audio.addEventListener('ended', () => {{ if (isScreenActive && !transientTimer) setPausedState(); }});
+      }}
+
+      const observer = new MutationObserver(() => {{
+        isScreenActive = !modalDetail.classList.contains('hidden');
+        if (isScreenActive) {{
+          syncWithAudioState();
+        }} else {{
+          stopPlayAnimation();
+          stopIdleBlink();
+          if (transientTimer) {{
+            clearTimeout(transientTimer);
+            transientTimer = null;
+          }}
+          clearTransientClass();
+          if (spinningStar) spinningStar.classList.add('hidden');
+          if (particlesLayer) particlesLayer.innerHTML = '';
+        }}
+      }});
+      observer.observe(modalDetail, {{ attributes: true, attributeFilter: ['class'] }});
+
+      window.CinnamorollEngine = {{
+        sync: syncWithAudioState,
+        next: triggerNextSong,
+        prev: triggerPrevSong,
+        tap: triggerTapHappy,
+        doubleTap: triggerDoubleTapFavorite,
+        longPress: triggerLongPressSpecial,
+        setPlaying: () => startPlayAnimation(true),
+        setPaused: () => setPausedState(true),
+        setLoading: () => setLoadingState(true),
+        setIdle: () => setIdleState(true),
+        getState: () => currentState,
+        getFrames: () => FRAMES
+      }};
+
+      // Initial synchronization
+      setTimeout(syncWithAudioState, 200);
+
+      return window.CinnamorollEngine;
+    }})();
+
   </script>
 </body>
 </html>
