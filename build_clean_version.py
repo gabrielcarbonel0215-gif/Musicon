@@ -1957,7 +1957,7 @@ html_content = f'''<!DOCTYPE html>
     // PWA Service Worker & Android Install Prompt
     if ('serviceWorker' in navigator) {{
       window.addEventListener('load', () => {{
-        navigator.serviceWorker.register('/sw.js?v=4').catch(() => {{}});
+        navigator.serviceWorker.register('/sw.js?v=5').catch(() => {{}});
       }});
     }}
 
