@@ -41,6 +41,8 @@ cinna_cuddle = get_b64(os.path.join("cinnamoroll", "cinna_long_press.png"))
 cinna_love = get_b64(os.path.join("cinnamoroll", "cinna_double_tap.png"))
 cinna_loading = get_b64(os.path.join("cinnamoroll", "cinna_loading.png"))
 cinna_idle = get_b64(os.path.join("cinnamoroll", "cinna_idle.png"))
+heart_pink = get_b64(os.path.join("cinnamoroll", "heart_pink_retina.png"))
+heart_blue = get_b64(os.path.join("cinnamoroll", "heart_blue_retina.png"))
 
 # Load real songs metadata
 with open(os.path.join(base_dir, "songs_metadata.json"), "r", encoding="utf-8") as f:
@@ -248,17 +250,33 @@ html_content = f'''<!DOCTYPE html>
       animation: cinnaFloatNote 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     }}
     @keyframes cinnaFloatHeart {{
-      0% {{ opacity: 0; transform: translate(-50%, 0) scale(0.35); }}
-      25% {{ opacity: 1; transform: translate(-50%, -25px) scale(1.3); }}
-      70% {{ opacity: 0.95; transform: translate(-50%, -55px) scale(1.1); }}
-      100% {{ opacity: 0; transform: translate(-50%, -85px) scale(0.9); }}
+      0% {{
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0.3) rotate(var(--heart-rot, 0deg));
+      }}
+      25% {{
+        opacity: 1;
+        transform: translate(-50%, -24px) scale(calc(var(--heart-scale, 1.1) * 1.1)) rotate(calc(var(--heart-rot, 0deg) + 3deg));
+      }}
+      70% {{
+        opacity: 0.95;
+        transform: translate(-50%, -58px) scale(var(--heart-scale, 1.0)) rotate(calc(var(--heart-rot, 0deg) - 2deg));
+      }}
+      100% {{
+        opacity: 0;
+        transform: translate(-50%, -92px) scale(0.85) rotate(var(--heart-rot, 0deg));
+      }}
     }}
     .cinna-floating-heart {{
       position: absolute;
       pointer-events: none;
-      font-size: 34px;
+      width: 46px;
+      height: auto;
       z-index: 35;
-      animation: cinnaFloatHeart 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      animation: cinnaFloatHeart 1.0s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      filter: drop-shadow(0 4px 10px rgba(160, 190, 240, 0.45));
+      user-select: none;
+      -webkit-user-drag: none;
     }}
     @keyframes cinnaPopStar {{
       0% {{ opacity: 0; transform: scale(0.2) rotate(0deg); }}
@@ -1957,7 +1975,7 @@ html_content = f'''<!DOCTYPE html>
     // PWA Service Worker & Android Install Prompt
     if ('serviceWorker' in navigator) {{
       window.addEventListener('load', () => {{
-        navigator.serviceWorker.register('/sw.js?v=6').catch(() => {{}});
+        navigator.serviceWorker.register('/sw.js?v=7').catch(() => {{}});
       }});
     }}
 
@@ -2171,12 +2189,14 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       function triggerTapHappy() {{
+        spawnFloatingHeart();
         spawnStars(2);
         playTransientState('tap', 700, null);
       }}
 
       function triggerDoubleTapFavorite() {{
-        spawnFloatingHeart();
+        spawnFloatingHeart(44, 30, 1.2);
+        setTimeout(() => spawnFloatingHeart(56, 24, 1.1), 120);
         if (currentTrack && typeof toggleFavorite === 'function') {{
           toggleFavorite(currentTrack);
         }}
@@ -2184,6 +2204,7 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       function triggerLongPressSpecial() {{
+        spawnFloatingHeart();
         spawnStars(5);
         playTransientState('cuddle', 1200, 'cinna-glow');
       }}
@@ -2221,15 +2242,33 @@ html_content = f'''<!DOCTYPE html>
         setTimeout(() => note.remove(), 2300);
       }}
 
-      function spawnFloatingHeart() {{
+      const heartImages = [
+        '{heart_pink}',
+        '{heart_blue}'
+      ];
+      let heartAlternator = 0;
+
+      function spawnFloatingHeart(customLeft, customTop, customScale) {{
         if (!particlesLayer) return;
-        const heart = document.createElement('div');
-        heart.className = 'cinna-floating-heart';
-        heart.textContent = '💖';
-        heart.style.left = '50%';
-        heart.style.top = '35%';
-        particlesLayer.appendChild(heart);
-        setTimeout(() => heart.remove(), 1000);
+        const heartImg = document.createElement('img');
+        heartImg.className = 'cinna-floating-heart';
+        heartImg.src = heartImages[heartAlternator];
+        heartAlternator = (heartAlternator + 1) % heartImages.length;
+
+        const posX = customLeft !== undefined ? customLeft : (40 + Math.random() * 20);
+        const posY = customTop !== undefined ? customTop : (25 + Math.random() * 12);
+        const rot = (Math.random() * 24 - 12);
+        const scale = customScale !== undefined ? customScale : (0.95 + Math.random() * 0.25);
+
+        heartImg.style.left = `${{posX}}%`;
+        heartImg.style.top = `${{posY}}%`;
+        heartImg.style.setProperty('--heart-rot', `${{rot}}deg`);
+        heartImg.style.setProperty('--heart-scale', scale);
+
+        particlesLayer.appendChild(heartImg);
+        setTimeout(() => {{
+          if (heartImg.parentNode) heartImg.remove();
+        }}, 1100);
       }}
 
       function spawnStars(count = 3) {{
