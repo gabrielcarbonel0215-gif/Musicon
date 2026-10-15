@@ -43,6 +43,8 @@ cinna_loading = get_b64(os.path.join("cinnamoroll", "cinna_loading.png"))
 cinna_idle = get_b64(os.path.join("cinnamoroll", "cinna_idle.png"))
 heart_pink = get_b64(os.path.join("cinnamoroll", "heart_pink_retina.png"))
 heart_blue = get_b64(os.path.join("cinnamoroll", "heart_blue_retina.png"))
+star_sparkle = get_b64(os.path.join("cinnamoroll", "star_sparkle_retina.png"))
+star_single = get_b64(os.path.join("cinnamoroll", "star_single_retina.png"))
 
 # Load real songs metadata
 with open(os.path.join(base_dir, "songs_metadata.json"), "r", encoding="utf-8") as f:
@@ -279,17 +281,33 @@ html_content = f'''<!DOCTYPE html>
       -webkit-user-drag: none;
     }}
     @keyframes cinnaPopStar {{
-      0% {{ opacity: 0; transform: scale(0.2) rotate(0deg); }}
-      40% {{ opacity: 1; transform: scale(1.25) rotate(45deg); }}
-      80% {{ opacity: 0.85; transform: scale(1.0) rotate(90deg); }}
-      100% {{ opacity: 0; transform: scale(0.4) rotate(135deg); }}
+      0% {{
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2) rotate(var(--star-rot, 0deg));
+      }}
+      35% {{
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(calc(var(--star-scale, 1.0) * 1.25)) rotate(calc(var(--star-rot, 0deg) + 25deg));
+      }}
+      75% {{
+        opacity: 0.9;
+        transform: translate(-50%, -50%) scale(var(--star-scale, 1.0)) rotate(calc(var(--star-rot, 0deg) + 50deg));
+      }}
+      100% {{
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.35) rotate(calc(var(--star-rot, 0deg) + 75deg));
+      }}
     }}
     .cinna-pop-star {{
       position: absolute;
       pointer-events: none;
-      font-size: 22px;
-      z-index: 30;
-      animation: cinnaPopStar 0.85s ease-out forwards;
+      width: 32px;
+      height: auto;
+      z-index: 34;
+      animation: cinnaPopStar 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      filter: drop-shadow(0 2px 8px rgba(255, 215, 100, 0.55));
+      user-select: none;
+      -webkit-user-drag: none;
     }}
     @keyframes cinnaBounceJump {{
       0% {{ transform: translateY(0) scale(1); }}
@@ -1975,7 +1993,7 @@ html_content = f'''<!DOCTYPE html>
     // PWA Service Worker & Android Install Prompt
     if ('serviceWorker' in navigator) {{
       window.addEventListener('load', () => {{
-        navigator.serviceWorker.register('/sw.js?v=7').catch(() => {{}});
+        navigator.serviceWorker.register('/sw.js?v=8').catch(() => {{}});
       }});
     }}
 
@@ -2271,18 +2289,36 @@ html_content = f'''<!DOCTYPE html>
         }}, 1100);
       }}
 
+      const starImages = [
+        '{star_sparkle}',
+        '{star_single}'
+      ];
+      let starAlternator = 0;
+
       function spawnStars(count = 3) {{
         if (!particlesLayer) return;
         for (let i = 0; i < count; i++) {{
           setTimeout(() => {{
-            const star = document.createElement('div');
-            star.className = 'cinna-pop-star';
-            star.textContent = Math.random() > 0.5 ? '✨' : '⭐';
-            star.style.left = `${{25 + Math.random() * 50}}%`;
-            star.style.top = `${{20 + Math.random() * 45}}%`;
-            particlesLayer.appendChild(star);
-            setTimeout(() => star.remove(), 900);
-          }}, i * 110);
+            const starImg = document.createElement('img');
+            starImg.className = 'cinna-pop-star';
+            starImg.src = starImages[starAlternator];
+            starAlternator = (starAlternator + 1) % starImages.length;
+
+            const posX = 18 + Math.random() * 64;
+            const posY = 15 + Math.random() * 50;
+            const rot = (Math.random() * 50 - 25);
+            const scale = (0.85 + Math.random() * 0.35);
+
+            starImg.style.left = `${{posX}}%`;
+            starImg.style.top = `${{posY}}%`;
+            starImg.style.setProperty('--star-rot', `${{rot}}deg`);
+            starImg.style.setProperty('--star-scale', scale);
+
+            particlesLayer.appendChild(starImg);
+            setTimeout(() => {{
+              if (starImg.parentNode) starImg.remove();
+            }}, 900);
+          }}, i * 90);
         }}
       }}
 
