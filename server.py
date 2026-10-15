@@ -756,6 +756,7 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
         if path in ('/', '/index.html'):
             idx_path = os.path.join(BASE_DIR, 'index.html')
             if os.path.exists(idx_path):
