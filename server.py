@@ -756,7 +756,20 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
+        if path in ('/', '/index.html'):
+            idx_path = os.path.join(BASE_DIR, 'index.html')
+            if os.path.exists(idx_path):
+                with open(idx_path, 'rb') as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/html; charset=utf-8')
+                self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+                self.send_header('Pragma', 'no-cache')
+                self.send_header('Expires', '0')
+                self.send_header('Content-Length', str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
 
         if path == '/manifest.json':
             manifest_path = os.path.join(BASE_DIR, 'manifest.json')

@@ -1,8 +1,8 @@
-const CACHE_NAME = 'cinnamoroll-music-v9';
+const CACHE_NAME = 'cinnamoroll-music-v10';
 const PRECACHE_ASSETS = [
-  '/manifest.json?v=9',
-  '/assets/icon-192.png?v=9',
-  '/assets/icon-512.png?v=9'
+  '/manifest.json?v=10',
+  '/assets/icon-192.png?v=10',
+  '/assets/icon-512.png?v=10'
 ];
 
 self.addEventListener('install', (event) => {
@@ -38,6 +38,22 @@ self.addEventListener('fetch', (event) => {
     url.pathname.startsWith('/canciones/') ||
     req.headers.has('range')
   ) {
+    return;
+  }
+
+  // Network-First for main HTML page to ensure instant updates
+  if (req.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(
+      fetch(req, { cache: 'no-cache' })
+        .then((networkResp) => {
+          if (networkResp && networkResp.status === 200) {
+            const copy = networkResp.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, copy)).catch(() => {});
+          }
+          return networkResp;
+        })
+        .catch(() => caches.match(req).then((cached) => cached || caches.match('/')))
+    );
     return;
   }
 
