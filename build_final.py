@@ -130,6 +130,7 @@ html_content = f'''<!DOCTYPE html>
 
     #app-frame {{
       width: 100%;
+      max-width: 100%;
       height: 100%;
       height: 100dvh;
       max-height: 100dvh;
@@ -138,24 +139,28 @@ html_content = f'''<!DOCTYPE html>
       position: relative;
       overflow: hidden;
       background-color: #f4f8fe;
+      margin: 0;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
     }}
 
-    @media (min-width: 640px) {{
+    @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {{
       body {{
         overflow: auto;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 1rem;
         background-color: #eaf2fd;
       }}
       #app-frame {{
-        max-width: 420px;
-        height: 880px;
-        max-height: calc(100vh - 2rem);
-        border-radius: 40px;
-        border: 6px solid white;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        max-width: 440px;
+        height: 100dvh;
+        max-height: 920px;
+        border-radius: 36px;
+        border: 4px solid #ffffff;
+        box-shadow: 0 25px 50px -12px rgba(100, 140, 200, 0.25);
       }}
     }}
 
@@ -1993,7 +1998,7 @@ html_content = f'''<!DOCTYPE html>
     // PWA Service Worker & Android Install Prompt
     if ('serviceWorker' in navigator) {{
       window.addEventListener('load', () => {{
-        navigator.serviceWorker.register('/sw.js?v=8').catch(() => {{}});
+        navigator.serviceWorker.register('/sw.js?v=9').catch(() => {{}});
       }});
     }}
 
