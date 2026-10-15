@@ -658,12 +658,12 @@ html_content = f'''<!DOCTYPE html>
     <!-- ======================================================== -->
     <!-- 4. VISTA DE CANCIÓN (MODAL DETALLES - CLON EXACTO CINNAMOROLL) -->
     <!-- ======================================================== -->
-    <div id="modal-song-detail" class="hidden absolute inset-0 z-40 flex flex-col justify-between overflow-hidden select-none transition-all" style="background-image: url('{c_detail_bg}'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; background-color: #e6f2fe;">
+    <div id="modal-song-detail" class="hidden absolute inset-0 z-40 flex flex-col justify-between overflow-y-auto overscroll-contain select-none transition-all" style="background-image: url('{c_detail_bg}'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; background-color: #e6f2fe; -webkit-overflow-scrolling: touch;">
       <!-- Main Content Container -->
-      <div class="flex-1 min-h-0 flex flex-col justify-between px-5 pt-3.5 pb-1 z-10">
+      <div class="w-full min-h-full flex flex-col justify-between px-4 sm:px-5 pt-2.5 sm:pt-3.5 pb-1 z-10">
 
         <!-- 1. Top Header: < Back | ☆ Detalles ☆ | ♡ Favorite + ⤓ Download -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between shrink-0">
           <button id="btn-close-song-detail" class="w-10 h-10 rounded-full bg-white/95 border-[1.5px] border-[#b7d4f7] shadow-[0_3px_10px_rgba(115,160,220,0.22)] flex items-center justify-center text-[#396696] hover:scale-105 active:scale-95 transition" title="Volver">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6"></polyline>
@@ -697,36 +697,36 @@ html_content = f'''<!DOCTYPE html>
         </div>
 
         <!-- 2. Album Cover Card + Peeking Cinnamoroll Overlay -->
-        <div class="flex flex-col items-center mt-5 mb-1 relative">
-          <div class="relative w-[204px] h-[204px] sm:w-[218px] sm:h-[218px] rounded-[28px] p-[5px] bg-gradient-to-b from-white via-[#f5faff] to-[#dcebff] shadow-[0_10px_25px_rgba(95,145,210,0.28)] border-[1.5px] border-[#b8d6f8] cursor-pointer" id="detail-cover-card">
-            <img src="{c_peeking_top}" alt="Cinnamoroll" class="absolute -top-[40px] -left-[44px] w-[142px] sm:w-[150px] h-auto pointer-events-none z-20">
-            <img id="detail-cover-img" src="logos/Departamento_Bandalos_Chinos_Adanowsky.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1f/ba/06/1fba06ed-6294-453d-dc4c-f2a4c664d080/00602438925537_Cover.jpg/1000x1000bb.jpg'" alt="Cover" class="w-full h-full rounded-[22px] object-cover shadow-inner block">
+        <div class="flex flex-col items-center mt-1.5 sm:mt-2.5 mb-1 relative shrink-0">
+          <div class="relative w-[160px] h-[160px] sm:w-[190px] sm:h-[190px] rounded-[24px] p-[4px] bg-gradient-to-b from-white via-[#f5faff] to-[#dcebff] shadow-[0_8px_20px_rgba(95,145,210,0.25)] border-[1.5px] border-[#b8d6f8] cursor-pointer" id="detail-cover-card">
+            <img src="{c_peeking_top}" alt="Cinnamoroll" class="absolute -top-[32px] -left-[35px] w-[116px] sm:w-[134px] h-auto pointer-events-none z-20">
+            <img id="detail-cover-img" src="logos/Departamento_Bandalos_Chinos_Adanowsky.jpg" onerror="this.onerror=null;this.src='https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/1f/ba/06/1fba06ed-6294-453d-dc4c-f2a4c664d080/00602438925537_Cover.jpg/1000x1000bb.jpg'" alt="Cover" class="w-full h-full rounded-[20px] object-cover shadow-inner block">
           </div>
         </div>
 
         <!-- 3. Song Metadata (Title, Artist, Album | Year | Duration) -->
-        <div class="px-3.5 text-left space-y-0.5">
-          <h3 id="detail-title" class="text-[22px] leading-tight font-black text-[#254b77] truncate">Departamento</h3>
-          <p id="detail-artist" class="text-[14.5px] font-bold text-[#669ac6] truncate">Bandalos Chinos &amp; Adanowsky</p>
-          <p id="detail-meta" class="text-[11.5px] font-bold text-[#829cb6] truncate pt-0.5">
+        <div class="px-3 text-left space-y-0.5 shrink-0">
+          <h3 id="detail-title" class="text-[19px] sm:text-[21px] leading-tight font-black text-[#254b77] truncate">Departamento</h3>
+          <p id="detail-artist" class="text-[13.5px] sm:text-[14.5px] font-bold text-[#669ac6] truncate">Bandalos Chinos &amp; Adanowsky</p>
+          <p id="detail-meta" class="text-[11px] font-bold text-[#829cb6] truncate pt-0.5">
             Álbum: Departamento · Single | 2019 | 3:54
           </p>
-          <p id="detail-download-status" class="text-[10.5px] font-extrabold text-[#3b7dd8] truncate min-h-[14px]"></p>
+          <p id="detail-download-status" class="text-[10px] font-extrabold text-[#3b7dd8] truncate min-h-[14px]"></p>
         </div>
 
         <!-- 4. Progress Scrubber + Timestamps -->
-        <div class="px-1.5">
+        <div class="px-1 shrink-0">
           <input id="detail-audio-scrubber" type="range" min="0" max="100" value="4" class="detail-scrubber w-full cursor-pointer">
-          <div class="flex items-center justify-between text-[12px] font-extrabold text-[#476f9e] mt-1.5 px-0.5">
+          <div class="flex items-center justify-between text-[11.5px] font-extrabold text-[#476f9e] mt-1 px-0.5">
             <span id="detail-current-time">0:02</span>
             <span id="detail-duration-time">3:54</span>
           </div>
         </div>
 
         <!-- 5. 5 Circular Playback Control Buttons: Shuffle, Prev, Play/Pause, Next, Repeat -->
-        <div class="flex items-center justify-center gap-4 sm:gap-5 py-0.5">
-          <button id="detail-btn-shuffle" class="w-11 h-11 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#356396] hover:bg-[#cfe4fa] active:scale-90 transition" title="Aleatorio">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex items-center justify-center gap-3.5 sm:gap-4.5 py-0.5 shrink-0">
+          <button id="detail-btn-shuffle" class="w-10 h-10 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#356396] hover:bg-[#cfe4fa] active:scale-90 transition" title="Aleatorio">
+            <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="16 3 21 3 21 8"></polyline>
               <line x1="4" y1="20" x2="21" y2="3"></line>
               <polyline points="21 16 21 21 16 21"></polyline>
@@ -735,29 +735,29 @@ html_content = f'''<!DOCTYPE html>
             </svg>
           </button>
 
-          <button id="detail-btn-prev" class="w-12 h-12 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#315e91] hover:bg-[#cfe4fa] active:scale-90 transition" title="Anterior">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <button id="detail-btn-prev" class="w-11 h-11 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#315e91] hover:bg-[#cfe4fa] active:scale-90 transition" title="Anterior">
+            <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor">
               <polygon points="19 20 9 12 19 4 19 20"></polygon>
               <rect x="4.5" y="4.5" width="2.8" height="15" rx="1"></rect>
             </svg>
           </button>
 
-          <button id="detail-btn-play-mini" class="w-[62px] h-[62px] rounded-full bg-gradient-to-b from-[#7cb0ff] to-[#558ef0] border-[2px] border-[#437be0] shadow-[0_6px_16px_rgba(75,135,235,0.42)] flex items-center justify-center text-white hover:scale-105 active:scale-95 transition" title="Reproducir / Pausar">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+          <button id="detail-btn-play-mini" class="w-[56px] h-[56px] rounded-full bg-gradient-to-b from-[#7cb0ff] to-[#558ef0] border-[2px] border-[#437be0] shadow-[0_5px_15px_rgba(75,135,235,0.4)] flex items-center justify-center text-white hover:scale-105 active:scale-95 transition" title="Reproducir / Pausar">
+            <svg class="w-5.5 h-5.5" viewBox="0 0 24 24" fill="currentColor">
               <rect x="6" y="4" width="4.2" height="16" rx="1.5"></rect>
               <rect x="13.8" y="4" width="4.2" height="16" rx="1.5"></rect>
             </svg>
           </button>
 
-          <button id="detail-btn-next" class="w-12 h-12 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#315e91] hover:bg-[#cfe4fa] active:scale-90 transition" title="Siguiente">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <button id="detail-btn-next" class="w-11 h-11 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#315e91] hover:bg-[#cfe4fa] active:scale-90 transition" title="Siguiente">
+            <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="currentColor">
               <polygon points="5 4 15 12 5 20 5 4"></polygon>
               <rect x="16.7" y="4.5" width="2.8" height="15" rx="1"></rect>
             </svg>
           </button>
 
-          <button id="detail-btn-repeat" class="w-11 h-11 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#356396] hover:bg-[#cfe4fa] active:scale-90 transition" title="Repetir">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <button id="detail-btn-repeat" class="w-10 h-10 rounded-full bg-[#dcebfa]/90 border border-[#c5dffa] shadow-xs flex items-center justify-center text-[#356396] hover:bg-[#cfe4fa] active:scale-90 transition" title="Repetir">
+            <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="17 1 21 5 17 9"></polyline>
               <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
               <polyline points="7 23 3 19 7 15"></polyline>
@@ -766,42 +766,41 @@ html_content = f'''<!DOCTYPE html>
           </button>
         </div>
 
-        <!-- 6. "Próxima canción" Card + Sleeping Cinnamoroll Overlay -->
-        <div class="relative mx-0.5 mt-1 mb-2.5 rounded-[22px] bg-[#f2f8ff]/95 border-[2px] border-[#c6dffb] p-3 pb-3.5 shadow-[0_6px_18px_rgba(120,165,225,0.18)]">
+        <!-- 6. "Próxima canción" Card -->
+        <div class="relative mx-0.5 mt-0.5 mb-1 rounded-[18px] bg-[#f2f8ff]/95 border-[1.5px] border-[#c6dffb] p-2 sm:p-2.5 pb-2 sm:pb-2.5 shadow-xs shrink-0">
           <!-- Top-right star decoration -->
-          <svg class="absolute -top-3.5 right-2.5 w-6 h-6 text-[#85b2e6] drop-shadow-xs pointer-events-none" viewBox="0 0 24 24" fill="#fff6c5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="absolute -top-3 right-2.5 w-5 h-5 text-[#85b2e6] drop-shadow-xs pointer-events-none" viewBox="0 0 24 24" fill="#fff6c5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
           </svg>
 
-          <div class="flex items-center gap-2 px-0.5">
-            <svg class="w-5 h-5 text-[#85b2e6] shrink-0" viewBox="0 0 24 24" fill="#fff5bf" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <div class="flex items-center gap-1.5 px-0.5">
+            <svg class="w-4 h-4 text-[#85b2e6] shrink-0" viewBox="0 0 24 24" fill="#fff5bf" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
-            <span class="text-[14px] font-black text-[#2a507c]">Próxima canción</span>
+            <span class="text-[12.5px] font-black text-[#2a507c]">Próxima canción</span>
           </div>
 
-          <div id="detail-next-card" class="mt-2 rounded-2xl bg-[#e3effe]/90 hover:bg-[#d6e8fe] border border-[#cde2fc] p-2 pr-3.5 flex items-center justify-between gap-3 cursor-pointer transition active:scale-[0.99]" title="Toca para reproducir la próxima canción">
-            <img id="detail-next-cover" src="logos/Amor_De_Verano_Vacación_Adanowsky.jpg" onerror="this.onerror=null;this.src='logos/Fix_You.jpg'" alt="Next" class="w-11 h-11 rounded-xl object-cover shadow-xs border border-white shrink-0">
+          <div id="detail-next-card" class="mt-1.5 rounded-xl bg-[#e3effe]/90 hover:bg-[#d6e8fe] border border-[#cde2fc] p-1.5 pr-3 flex items-center justify-between gap-2.5 cursor-pointer transition active:scale-[0.99]" title="Toca para reproducir la próxima canción">
+            <img id="detail-next-cover" src="logos/Amor_De_Verano_Vacación_Adanowsky.jpg" onerror="this.onerror=null;this.src='logos/Fix_You.jpg'" alt="Next" class="w-9 h-9 rounded-lg object-cover shadow-xs border border-white shrink-0">
             <div class="flex-1 min-w-0 text-left">
-              <h5 id="detail-next-title" class="text-[13.5px] font-black text-[#254b77] truncate">Sácame de aquí</h5>
-              <p id="detail-next-artist" class="text-[11.5px] font-bold text-[#6295c2] truncate">Bandalos Chinos &amp; Adanowsky</p>
+              <h5 id="detail-next-title" class="text-[12.5px] font-black text-[#254b77] truncate">Sácame de aquí</h5>
+              <p id="detail-next-artist" class="text-[11px] font-bold text-[#6295c2] truncate">Bandalos Chinos &amp; Adanowsky</p>
             </div>
-            <svg class="w-4 h-4 text-[#356396] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-3.5 h-3.5 text-[#356396] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </div>
-
         </div>
 
         <!-- 7. Interactive Animated Cinnamoroll resting on the clouds -->
-        <div id="detail-cinnamoroll-container" class="relative w-full flex-1 min-h-[140px] max-h-[195px] flex flex-col items-center justify-center select-none pointer-events-auto touch-none z-20 pb-[max(6px,env(safe-area-inset-bottom,6px))]">
+        <div id="detail-cinnamoroll-container" class="relative w-full flex-1 min-h-[105px] max-h-[140px] flex flex-col items-center justify-center select-none pointer-events-auto touch-none z-20 pb-[max(8px,env(safe-area-inset-bottom,8px))] shrink-0">
           <!-- Floating Particles Layer (Music notes, stars, pink heart) -->
           <div id="cinnamoroll-particles-layer" class="absolute inset-0 pointer-events-none overflow-visible"></div>
           
           <!-- Cinnamoroll Sprite Stage -->
           <div id="cinnamoroll-sprite-stage" class="relative flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-95" title="Toca o desliza para interactuar con Cinnamoroll">
-            <div id="cinna-spinning-star" class="hidden absolute -top-3 text-xl animate-spin pointer-events-none select-none z-30">⭐</div>
-            <img id="cinnamoroll-active-frame" src="{cinna_f1}" alt="Cinnamoroll Interactivo" class="h-[125px] sm:h-[135px] w-auto select-none pointer-events-none transition-all" style="filter: drop-shadow(0 6px 14px rgba(70, 130, 200, 0.35));">
+            <div id="cinna-spinning-star" class="hidden absolute -top-2.5 text-lg animate-spin pointer-events-none select-none z-30">⭐</div>
+            <img id="cinnamoroll-active-frame" src="{cinna_f1}" alt="Cinnamoroll Interactivo" class="h-[105px] sm:h-[118px] w-auto select-none pointer-events-none transition-all" style="filter: drop-shadow(0 5px 12px rgba(70, 130, 200, 0.32));">
           </div>
         </div>
 
@@ -976,13 +975,14 @@ html_content = f'''<!DOCTYPE html>
 
     // Server check & Fetch real downloads
     async function checkServer() {{
+      if (serverActive) return true;
       try {{
-        const resp = await fetch(`${{SERVER_URL}}/api/status`, {{ signal: AbortSignal.timeout(3500) }});
+        const resp = await fetch(`${{SERVER_URL}}/api/status`, {{ signal: AbortSignal.timeout(2000) }});
         if (resp.ok) {{ serverActive = true; return true; }}
       }} catch (e) {{}}
       if (SERVER_URL !== CLOUD_URL) {{
         try {{
-          const resp = await fetch(`${{CLOUD_URL}}/api/status`, {{ signal: AbortSignal.timeout(3500) }});
+          const resp = await fetch(`${{CLOUD_URL}}/api/status`, {{ signal: AbortSignal.timeout(2000) }});
           if (resp.ok) {{ SERVER_URL = CLOUD_URL; serverActive = true; return true; }}
         }} catch (e) {{}}
       }}
@@ -1248,11 +1248,27 @@ html_content = f'''<!DOCTYPE html>
       detailAudioScrubber.style.setProperty('--seek-pct', '0%');
       updatePlayerUI(track);
 
-      let targetAudio = track.audioUrl || track.download_url || track.preview;
-      if (targetAudio && targetAudio.startsWith('/api/audio/') && SERVER_URL) {{
-        targetAudio = `${{SERVER_URL}}${{targetAudio}}`;
+      // 1. Check if track has already been resolved or exists in server downloads
+      const foundInServer = serverDownloads.find(s =>
+        (s.file && (s.file === track.file || s.audioUrl === track.audioUrl)) ||
+        (s.title && track.title && s.title.toLowerCase().trim() === track.title.toLowerCase().trim() &&
+         s.artist && track.artist && s.artist.toLowerCase().trim() === track.artist.toLowerCase().trim())
+      );
+      if (foundInServer) {{
+        track.audioUrl = foundInServer.audioUrl;
+        track.download_url = foundInServer.download_url || foundInServer.audioUrl;
+        track.file = foundInServer.file;
+        if (foundInServer.duration) track.duration = foundInServer.duration;
       }}
-      if (targetAudio) {{
+
+      let targetAudio = track.audioUrl || track.download_url;
+      const isKnownFullTrack = targetAudio && (targetAudio.includes('/api/audio/') || targetAudio.endsWith('.m4a') || targetAudio.endsWith('.mp3'));
+
+      // 2. If it is already a full-length local/server track, play immediately
+      if (isKnownFullTrack) {{
+        if (targetAudio.startsWith('/api/audio/') && SERVER_URL) {{
+          targetAudio = `${{SERVER_URL}}${{targetAudio}}`;
+        }}
         audio.src = targetAudio;
         audio.play().then(() => {{
           if (reqId !== currentPlayRequestId) return;
@@ -1264,27 +1280,135 @@ html_content = f'''<!DOCTYPE html>
           isPlaying = false;
           updatePlayerUI(track);
         }});
+        detailDownloadStatus.textContent = "🎵 Canción completa (320 kbps)";
+        setTimeout(() => {{
+          if (detailDownloadStatus.textContent.includes("320 kbps")) {{
+            detailDownloadStatus.textContent = "";
+          }}
+        }}, 2800);
         return;
       }}
 
-      try {{
-        const res = await searchiTunes(`${{track.title}} ${{track.artist}}`, 1);
-        if (reqId !== currentPlayRequestId) return;
-        if (res.length > 0 && res[0].preview) {{
-          track.preview = res[0].preview;
-          audio.src = track.preview;
-          audio.play().then(() => {{
-            if (reqId !== currentPlayRequestId) return;
-            isPlaying = true;
-            updatePlayerUI(track);
-          }}).catch(e => {{
-            if (reqId !== currentPlayRequestId) return;
-            if (e && e.name === 'AbortError') return;
-            isPlaying = false;
-            updatePlayerUI(track);
+      // 3. Otherwise: Smart On-Demand Audio Resolver (Full-length Streaming Engine)
+      // Step A: Instant playback with 30s preview (Zero Latency) if available
+      if (track.preview) {{
+        audio.src = track.preview;
+        audio.play().then(() => {{
+          if (reqId !== currentPlayRequestId) return;
+          isPlaying = true;
+          updatePlayerUI(track);
+        }}).catch(() => {{}});
+        detailDownloadStatus.textContent = "✨ Obteniendo versión completa (320 kbps)...";
+      }} else {{
+        detailDownloadStatus.textContent = "✨ Conectando con versión completa (320 kbps)...";
+        if (window.CinnamorollEngine) window.CinnamorollEngine.setPersistentState('LOADING');
+        // Quick fallback preview search in parallel for zero perceived latency
+        searchiTunes(`${{track.title}} ${{track.artist}}`, 1).then(res => {{
+          if (reqId !== currentPlayRequestId) return;
+          if (!track.audioUrl && res.length > 0 && res[0].preview) {{
+            track.preview = res[0].preview;
+            if (!audio.src || audio.src === "" || audio.paused) {{
+              audio.src = track.preview;
+              audio.play().catch(() => {{}});
+              isPlaying = true;
+              updatePlayerUI(track);
+            }}
+          }}
+        }}).catch(() => {{}});
+      }}
+
+      // Step B: Asynchronous Cloud CDN / YouTube resolution on server
+      (async () => {{
+        try {{
+          await checkServer();
+          const resp = await fetch(`${{SERVER_URL}}/api/download_song`, {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify({{
+              query: `${{track.title}} ${{track.artist}}`,
+              title: track.title,
+              artist: track.artist,
+              cover_url: track.fallback || track.cover || '',
+              preview_url: track.preview || ''
+            }})
           }});
+
+          if (resp.ok) {{
+            const data = await resp.json();
+            if (data && data.status === 'success' && data.download_url) {{
+              const fullUrl = data.download_url.startsWith('http') ? data.download_url : `${{SERVER_URL}}${{data.download_url}}`;
+              track.audioUrl = fullUrl;
+              track.download_url = data.download_url;
+              track.file = data.filename || data.file;
+              if (data.duration_s) track.duration = formatTime(data.duration_s);
+
+              // Register into library and download cache
+              if (!serverDownloads.some(s => s.title === track.title && s.artist === track.artist)) {{
+                serverDownloads.unshift({{
+                  id: data.filename || `${{track.title}}_${{track.artist}}`,
+                  title: track.title,
+                  artist: track.artist,
+                  album: track.album || 'Descargas',
+                  size: data.size_mb || '7.5 MB',
+                  cover: track.cover || track.fallback || 'logos/Fix_You.jpg',
+                  fallback: track.fallback || track.cover || 'logos/Fix_You.jpg',
+                  audioUrl: fullUrl,
+                  download_url: data.download_url,
+                  file: track.file
+                }});
+                saveDownload(track, data.size_mb || '7.5', fullUrl);
+              }}
+
+              // Smooth hot-swap to full track if this track is still active
+              if (reqId === currentPlayRequestId) {{
+                const currentSec = Math.max(0, audio.currentTime || 0);
+                const wasPlaying = isPlaying || !audio.paused;
+
+                const onLoaded = () => {{
+                  audio.removeEventListener('loadedmetadata', onLoaded);
+                  try {{
+                    if (currentSec > 0 && currentSec < (audio.duration || 999)) {{
+                      audio.currentTime = currentSec;
+                    }}
+                  }} catch (err) {{}}
+                  if (wasPlaying) {{
+                    audio.play().then(() => {{
+                      isPlaying = true;
+                      updatePlayerUI(track);
+                    }}).catch(() => {{}});
+                  }}
+                }};
+
+                audio.addEventListener('loadedmetadata', onLoaded);
+                audio.src = fullUrl;
+                if (wasPlaying) {{
+                  audio.play().then(() => {{
+                    isPlaying = true;
+                    updatePlayerUI(track);
+                  }}).catch(() => {{}});
+                }}
+
+                detailDownloadStatus.textContent = `🎵 Canción completa activa (${{data.size_mb || '320 kbps'}})`;
+                if (window.CinnamorollEngine) {{
+                  window.CinnamorollEngine.spawnBurst('⭐', 3);
+                  window.CinnamorollEngine.setPersistentState('PLAYING');
+                }}
+                setTimeout(() => {{
+                  if (detailDownloadStatus.textContent.includes("Canción completa")) {{
+                    detailDownloadStatus.textContent = "";
+                  }}
+                }}, 3500);
+              }}
+            }}
+          }}
+        }} catch (err) {{
+          console.warn("Smart full-track resolver warning:", err);
+          if (reqId === currentPlayRequestId && !track.audioUrl) {{
+            detailDownloadStatus.textContent = "Reproduciendo versión previa (30s)";
+            setTimeout(() => {{ detailDownloadStatus.textContent = ""; }}, 3000);
+          }}
         }}
-      }} catch (e) {{}}
+      }})();
     }}
 
     function playNext() {{
@@ -1979,7 +2103,7 @@ html_content = f'''<!DOCTYPE html>
     // PWA Service Worker & Android Install Prompt
     if ('serviceWorker' in navigator) {{
       window.addEventListener('load', () => {{
-        navigator.serviceWorker.register('/sw.js?v=10').then((reg) => {{
+        navigator.serviceWorker.register('/sw.js?v=11').then((reg) => {{
           reg.update();
         }}).catch(() => {{}});
       }});

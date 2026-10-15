@@ -940,7 +940,7 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
                         self.send_header('Content-Range', f'bytes {start}-{end}/{filesize}')
                         self.send_header('Content-Length', str(length))
                         self.send_header('Accept-Ranges', 'bytes')
-                        self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
+                        self.send_header('Content-Disposition', f'inline; filename="{filename}"')
                         self.send_header('Access-Control-Allow-Origin', '*')
                         self.end_headers()
                         try:
@@ -953,7 +953,7 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
 
                 self.send_response(200)
                 self.send_header('Content-Type', 'audio/mp4')
-                self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
+                self.send_header('Content-Disposition', f'inline; filename="{filename}"')
                 self.send_header('Content-Length', str(filesize))
                 self.send_header('Accept-Ranges', 'bytes')
                 self.send_header('Access-Control-Allow-Origin', '*')
